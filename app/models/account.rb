@@ -42,14 +42,31 @@ class Account < ApplicationRecord
   def plan_limits
     case plan
     when "free"
-      { contacts: 100, campaigns_per_month: 5, templates: 3 }
+      { contacts: 100, campaigns_per_month: 5, templates: 3, team_members: 1 }
     when "starter"
-      { contacts: 1000, campaigns_per_month: 50, templates: 10 }
-    when "professional"
-      { contacts: 10000, campaigns_per_month: 200, templates: 50 }
+      { contacts: 1000, campaigns_per_month: 50, templates: 10, team_members: 3 }
+    when "professional" 
+      { contacts: 10000, campaigns_per_month: 200, templates: 50, team_members: 10 }
     when "enterprise"
-      { contacts: Float::INFINITY, campaigns_per_month: Float::INFINITY, templates: Float::INFINITY }
+      { contacts: Float::INFINITY, campaigns_per_month: Float::INFINITY, templates: Float::INFINITY, team_members: Float::INFINITY }
     end
+  end
+  
+  # SME-focused helper methods
+  def can_have_team_members?
+    plan_limits[:team_members] > users.count
+  end
+  
+  def is_solo_business?
+    users.count == 1
+  end
+  
+  def team_size
+    users.active.count
+  end
+  
+  def indie_friendly_plan?
+    %w[free starter].include?(plan)
   end
 
   private

@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  include Authorization
+  include SimpleAuthorization
   
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -15,7 +15,7 @@ class User < ApplicationRecord
 
   # Validations
   validates :first_name, :last_name, presence: true
-  validates :role, inclusion: { in: %w[owner admin member viewer] }
+  validates :role, inclusion: { in: %w[owner member viewer] }
   validates :email, uniqueness: { scope: :account_id }
   validates :status, inclusion: { in: %w[active inactive suspended] }
 
@@ -26,7 +26,7 @@ class User < ApplicationRecord
 
   # Scopes
   scope :active, -> { where(status: "active") }
-  scope :admins, -> { where(role: [ "owner", "admin" ]) }
+  scope :admins, -> { where(role: "owner") }
   scope :members, -> { where(role: "member") }
   scope :viewers, -> { where(role: "viewer") }
   scope :by_role, ->(role) { where(role: role) }
