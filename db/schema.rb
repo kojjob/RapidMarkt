@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_14_213812) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_14_223350) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,6 +52,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_213812) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "audit_logs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "action", null: false
+    t.jsonb "details", default: {}
+    t.string "ip_address"
+    t.text "user_agent"
+    t.datetime "performed_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.string "resource_type"
+    t.bigint "resource_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action"], name: "index_audit_logs_on_action"
+    t.index ["details"], name: "index_audit_logs_on_details", using: :gin
+    t.index ["performed_at"], name: "index_audit_logs_on_performed_at"
+    t.index ["resource_type", "resource_id"], name: "index_audit_logs_on_resource_type_and_resource_id"
+    t.index ["user_id", "action"], name: "index_audit_logs_on_user_id_and_action"
+    t.index ["user_id"], name: "index_audit_logs_on_user_id"
   end
 
   create_table "campaign_contacts", force: :cascade do |t|
@@ -192,6 +211,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_213812) do
     t.index ["user_id"], name: "index_templates_on_user_id"
   end
 
+  create_table "user_sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "session_id", null: false
+    t.string "ip_address"
+    t.text "user_agent"
+    t.datetime "last_activity_at", null: false
+    t.datetime "expires_at", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expires_at"], name: "index_user_sessions_on_expires_at"
+    t.index ["last_activity_at"], name: "index_user_sessions_on_last_activity_at"
+    t.index ["session_id"], name: "index_user_sessions_on_session_id", unique: true
+    t.index ["user_id", "active"], name: "index_user_sessions_on_user_id_and_active"
+    t.index ["user_id"], name: "index_user_sessions_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -204,13 +240,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_213812) do
     t.string "first_name"
     t.string "last_name"
     t.string "role", default: "member"
+    t.string "status", default: "active", null: false
+    t.index ["account_id", "status"], name: "index_users_on_account_id_and_status"
     t.index ["account_id"], name: "index_users_on_account_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["status"], name: "index_users_on_status"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "audit_logs", "users"
   add_foreign_key "campaign_contacts", "campaigns"
   add_foreign_key "campaign_contacts", "contacts"
   add_foreign_key "campaign_tags", "campaigns"
@@ -225,5 +265,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_213812) do
   add_foreign_key "tags", "accounts"
   add_foreign_key "templates", "accounts"
   add_foreign_key "templates", "users"
+  add_foreign_key "user_sessions", "users"
   add_foreign_key "users", "accounts"
 end
