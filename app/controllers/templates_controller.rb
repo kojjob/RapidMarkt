@@ -10,10 +10,10 @@ class TemplatesController < ApplicationController
 
   def marketplace
     @templates = filter_templates(Template.public_templates.active)
-    @featured_templates = @templates.highest_rated.limit(6)
-    @popular_templates = @templates.popular.limit(6)
-    @free_templates = @templates.free.limit(10)
-    @premium_templates = @templates.premium.limit(10)
+    @featured_templates = Template.public_templates.active.highest_rated.limit(6)
+    @popular_templates = Template.public_templates.active.popular.limit(6)
+    @free_templates = Template.public_templates.active.free.limit(10)
+    @premium_templates = Template.public_templates.active.premium.limit(10)
     @categories = Template.categories.keys
     @design_systems = %w[modern classic minimal]
   end
@@ -166,7 +166,8 @@ class TemplatesController < ApplicationController
       templates = templates.premium
     end
 
-    templates
+    # Add pagination
+    templates.page(params[:page]).per(12)
   end
 
   def set_template

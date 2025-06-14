@@ -155,7 +155,9 @@
       </div>
       
       <!-- Pagination -->
-      <%= paginate @templates if defined?(Kaminari) %>
+      <% if @templates.respond_to?(:total_pages) %>
+        <%= paginate @templates %>
+      <% end %>
     <% else %>
       <!-- Empty state -->
       <div class="text-center py-12">

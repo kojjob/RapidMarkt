@@ -97,14 +97,20 @@ class CampaignsController < ApplicationController
     campaign_ids = params[:campaign_ids] || []
 
     if campaign_ids.empty?
-      redirect_to campaigns_path, alert: "No campaigns selected."
+      respond_to do |format|
+        format.html { redirect_to campaigns_path, alert: "No campaigns selected." }
+        format.json { render json: { success: false, message: "No campaigns selected." }, status: :bad_request }
+      end
       return
     end
 
-    campaigns = @current_account.campaigns.where(id: campaign_ids, status: "draft")
+    campaigns = @current_account.campaigns.where(id: campaign_ids, status: ["draft", "scheduled"])
 
     if campaigns.empty?
-      redirect_to campaigns_path, alert: "No valid campaigns found to send."
+      respond_to do |format|
+        format.html { redirect_to campaigns_path, alert: "No valid campaigns found to send." }
+        format.json { render json: { success: false, message: "No valid campaigns found to send." }, status: :bad_request }
+      end
       return
     end
 
@@ -113,33 +119,98 @@ class CampaignsController < ApplicationController
 
     campaigns.each do |campaign|
       if campaign.can_be_sent?
-        CampaignSenderJob.perform_later(campaign.id)
-        sent_count += 1
+        begin
+          campaign.update!(status: "sending")
+          CampaignSenderJob.perform_later(campaign.id)
+          sent_count += 1
+        rescue => e
+          failed_campaigns << { name: campaign.name, error: e.message }
+        end
       else
-        failed_campaigns << campaign.name
+        failed_campaigns << { name: campaign.name, error: "Campaign not ready to send" }
       end
     end
 
     if sent_count > 0
-      notice = "#{sent_count} campaign#{'s' if sent_count != 1} queued for sending!"
-      notice += " Failed: #{failed_campaigns.join(', ')}" if failed_campaigns.any?
-      redirect_to campaigns_path, notice: notice
+      message = "#{sent_count} campaign#{'s' if sent_count != 1} queued for sending!"
+      if failed_campaigns.any?
+        message += " Failed: #{failed_campaigns.map { |f| f[:name] }.join(', ')}"
+      end
+      
+      respond_to do |format|
+        format.html { redirect_to campaigns_path, notice: message }
+        format.json { render json: { success: true, message: message, sent_count: sent_count, failed_campaigns: failed_campaigns } }
+      end
     else
-      redirect_to campaigns_path, alert: "Failed to send campaigns: #{failed_campaigns.join(', ')}"
+      error_message = "Failed to send campaigns: #{failed_campaigns.map { |f| "#{f[:name]} (#{f[:error]})" }.join(', ')}"
+      
+      respond_to do |format|
+        format.html { redirect_to campaigns_path, alert: error_message }
+        format.json { render json: { success: false, message: error_message, failed_campaigns: failed_campaigns }, status: :unprocessable_entity }
+      end
     end
   end
 
   def bulk_schedule
     campaign_ids = params[:campaign_ids] || []
-
+    scheduled_at = params[:scheduled_at]
+    
     if campaign_ids.empty?
-      redirect_to campaigns_path, alert: "No campaigns selected."
+      render json: { success: false, message: "No campaigns selected." }, status: :bad_request
       return
     end
-
-    # For now, redirect to a scheduling interface
-    # In a full implementation, you'd show a modal or form to select the schedule time
-    redirect_to campaigns_path, notice: "Bulk scheduling feature coming soon! Please schedule campaigns individually for now."
+    
+    if scheduled_at.blank?
+      render json: { success: false, message: "Schedule time is required." }, status: :bad_request
+      return
+    end
+    
+    begin
+      schedule_time = Time.parse(scheduled_at)
+      
+      if schedule_time <= Time.current
+        render json: { success: false, message: "Schedule time must be in the future." }, status: :bad_request
+        return
+      end
+      
+      campaigns = @current_account.campaigns.where(id: campaign_ids, status: "draft")
+      
+      if campaigns.empty?
+        render json: { success: false, message: "No valid campaigns found to schedule." }, status: :bad_request
+        return
+      end
+      
+      scheduled_count = 0
+      failed_campaigns = []
+      
+      campaigns.each do |campaign|
+        if campaign.can_be_scheduled?
+          campaign.update!(
+            status: "scheduled",
+            scheduled_at: schedule_time
+          )
+          
+          # Queue the campaign for sending at the scheduled time
+          ScheduledCampaignProcessorJob.perform_at(schedule_time, campaign.id)
+          scheduled_count += 1
+        else
+          failed_campaigns << campaign.name
+        end
+      end
+      
+      if scheduled_count > 0
+        message = "#{scheduled_count} campaign#{'s' if scheduled_count != 1} scheduled for #{schedule_time.strftime('%B %d, %Y at %I:%M %p')}!"
+        message += " Failed: #{failed_campaigns.join(', ')}" if failed_campaigns.any?
+        render json: { success: true, message: message, scheduled_count: scheduled_count }
+      else
+        render json: { success: false, message: "Failed to schedule campaigns: #{failed_campaigns.join(', ')}" }, status: :unprocessable_entity
+      end
+      
+    rescue ArgumentError => e
+      render json: { success: false, message: "Invalid date format." }, status: :bad_request
+    rescue => e
+      render json: { success: false, message: "Error scheduling campaigns: #{e.message}" }, status: :internal_server_error
+    end
   end
 
   def dashboard

@@ -109,6 +109,10 @@ class Campaign < ApplicationRecord
     draft? || scheduled?
   end
 
+  def can_be_scheduled?
+    draft? && template.present? && from_email.present?
+  end
+
   # Media and Social Platform Methods
   def media_urls_array
     return [] if media_urls.blank?
