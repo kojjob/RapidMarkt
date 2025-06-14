@@ -48,6 +48,12 @@ Rails.application.routes.draw do
     member do
       get :preview
       post :duplicate
+      post :use_template
+      post :rate
+    end
+    
+    collection do
+      get :marketplace
     end
   end
 

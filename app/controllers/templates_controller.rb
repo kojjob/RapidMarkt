@@ -2,21 +2,20 @@ class TemplatesController < ApplicationController
   before_action :set_template, only: [ :show, :edit, :update, :destroy, :duplicate, :preview ]
 
   def index
-    @templates = @current_account.templates
-                                .order(created_at: :desc)
-                                .page(params[:page])
-
-    # Filter by category
-    if params[:category].present?
-      @templates = @templates.where(template_type: params[:category])
-    end
-
-    # Filter by status
-    if params[:status].present?
-      @templates = @templates.where(status: params[:status])
-    end
-
+    @templates = filter_templates(@current_account.templates)
+    @public_templates = filter_templates(Template.public_templates) if params[:include_public]
     @categories = Template.categories.keys
+    @design_systems = %w[modern classic minimal]
+  end
+
+  def marketplace
+    @templates = filter_templates(Template.public_templates.active)
+    @featured_templates = @templates.highest_rated.limit(6)
+    @popular_templates = @templates.popular.limit(6)
+    @free_templates = @templates.free.limit(10)
+    @premium_templates = @templates.premium.limit(10)
+    @categories = Template.categories.keys
+    @design_systems = %w[modern classic minimal]
   end
 
   def show
@@ -77,7 +76,98 @@ class TemplatesController < ApplicationController
     render layout: false
   end
 
+  def preview
+    sample_data = {
+      "contact.first_name" => params[:first_name] || "John",
+      "contact.last_name" => params[:last_name] || "Doe",
+      "contact.email" => params[:email] || "john.doe@example.com"
+    }
+    
+    @preview = @template.render_preview(sample_data: sample_data)
+    
+    respond_to do |format|
+      format.html { render layout: false }
+      format.json { render json: @preview }
+    end
+  end
+
+  def use_template
+    source_template = Template.find(params[:id])
+    
+    # Check if template is accessible (public or belongs to account)
+    unless source_template.public? || source_template.account == @current_account
+      redirect_to templates_path, alert: "Template not accessible."
+      return
+    end
+
+    # Create a copy for the current account
+    @template = source_template.duplicate
+    @template.account = @current_account
+    @template.user = current_user
+    @template.name = "#{source_template.name} (Copy)"
+    
+    if @template.save
+      # Increment usage count on source template
+      source_template.increment_usage! if source_template.public?
+      
+      redirect_to edit_template_path(@template), notice: "Template copied successfully!"
+    else
+      redirect_to templates_path, alert: "Failed to copy template."
+    end
+  end
+
+  def rate
+    rating = params[:rating].to_i
+    
+    if rating.between?(1, 5)
+      @template.add_rating(rating)
+      render json: { success: true, new_rating: @template.rating }
+    else
+      render json: { success: false, error: "Invalid rating" }, status: :bad_request
+    end
+  end
+
   private
+
+  def filter_templates(base_scope)
+    templates = base_scope.order(created_at: :desc)
+
+    # Filter by category
+    if params[:category].present?
+      templates = templates.where(template_type: params[:category])
+    end
+
+    # Filter by status
+    if params[:status].present?
+      templates = templates.where(status: params[:status])
+    end
+
+    # Filter by design system
+    if params[:design_system].present?
+      templates = templates.by_design_system(params[:design_system])
+    end
+
+    # Filter by tags
+    if params[:tags].present?
+      tag_list = params[:tags].split(',').map(&:strip)
+      templates = templates.by_tags(tag_list)
+    end
+
+    # Search
+    if params[:search].present?
+      templates = templates.search(params[:search])
+    end
+
+    # Filter by premium/free
+    case params[:pricing]
+    when 'free'
+      templates = templates.free
+    when 'premium'
+      templates = templates.premium
+    end
+
+    templates
+  end
 
   def set_template
     @template = @current_account.templates.find(params[:id])
@@ -86,6 +176,10 @@ class TemplatesController < ApplicationController
   end
 
   def template_params
-    params.require(:template).permit(:name, :subject, :body, :template_type, :status)
+    params.require(:template).permit(
+      :name, :subject, :body, :template_type, :status, :description,
+      :design_system, :is_public, :is_premium,
+      color_scheme: {}, variables: {}, tags: []
+    )
   end
 end

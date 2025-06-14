@@ -104,6 +104,21 @@ class Contact < ApplicationRecord
     end
   end
 
+  def unsubscribe!
+    update!(
+      status: "unsubscribed",
+      unsubscribed_at: Time.current
+    )
+  end
+
+  def resubscribe!
+    update!(
+      status: "subscribed",
+      subscribed_at: Time.current,
+      unsubscribed_at: nil
+    )
+  end
+
   private
 
   def set_default_status

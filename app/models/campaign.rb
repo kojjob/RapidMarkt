@@ -147,7 +147,21 @@ class Campaign < ApplicationRecord
   private
 
   def calculate_rates
-    # This would be implemented based on actual tracking data
-    # For now, we'll keep the existing values
+    return unless sent?
+    
+    # Calculate actual rates based on campaign_contacts
+    total_sent = campaign_contacts.sent.count
+    return if total_sent.zero?
+    
+    total_opened = campaign_contacts.opened.count
+    total_clicked = campaign_contacts.clicked.count
+    
+    calculated_open_rate = (total_opened.to_f / total_sent * 100).round(2)
+    calculated_click_rate = (total_clicked.to_f / total_sent * 100).round(2)
+    
+    update_columns(
+      open_rate: calculated_open_rate,
+      click_rate: calculated_click_rate
+    )
   end
 end

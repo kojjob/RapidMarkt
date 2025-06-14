@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_14_205034) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_14_213812) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -64,6 +64,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_205034) do
     t.datetime "unsubscribed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "failure_reason"
     t.index ["campaign_id"], name: "index_campaign_contacts_on_campaign_id"
     t.index ["contact_id"], name: "index_campaign_contacts_on_contact_id"
   end
@@ -172,7 +173,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_205034) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.text "description"
+    t.string "thumbnail_url"
+    t.string "design_system", default: "modern"
+    t.jsonb "color_scheme", default: {}
+    t.jsonb "content_blocks", default: []
+    t.jsonb "variables", default: {}
+    t.boolean "is_premium", default: false
+    t.boolean "is_public", default: false
+    t.integer "usage_count", default: 0
+    t.decimal "rating", precision: 3, scale: 2, default: "0.0"
+    t.text "tags", default: [], array: true
     t.index ["account_id"], name: "index_templates_on_account_id"
+    t.index ["color_scheme"], name: "index_templates_on_color_scheme", using: :gin
+    t.index ["design_system"], name: "index_templates_on_design_system"
+    t.index ["is_public"], name: "index_templates_on_is_public"
+    t.index ["tags"], name: "index_templates_on_tags", using: :gin
     t.index ["user_id"], name: "index_templates_on_user_id"
   end
 
