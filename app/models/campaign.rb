@@ -21,6 +21,7 @@ class Campaign < ApplicationRecord
   scope :active, -> { where(status: ['draft', 'scheduled', 'sending']) }
   scope :completed, -> { where(status: 'sent') }
   scope :ready_to_send, -> { where(status: 'scheduled', scheduled_at: ..Time.current) }
+  scope :recent, -> { order(created_at: :desc) }
   
   # Methods
   def draft?
@@ -91,6 +92,10 @@ class Campaign < ApplicationRecord
   
   def cancel!
     update!(status: 'cancelled') unless sent?
+  end
+  
+  def can_be_sent?
+    draft? || scheduled?
   end
   
   private

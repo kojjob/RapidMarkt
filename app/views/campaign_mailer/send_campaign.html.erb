@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= @campaign.subject %></title>
+    <style>
+      /* Email-safe CSS */
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 20px;
+      }
+      .header {
+        text-align: center;
+        padding: 20px 0;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 20px;
+      }
+      .content {
+        padding: 20px 0;
+      }
+      .footer {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #666;
+        text-align: center;
+      }
+      .tracking-pixel {
+        width: 1px;
+        height: 1px;
+        border: 0;
+      }
+      a {
+        color: #2563eb;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <h1 style="margin: 0; color: #2563eb;"><%= @account.name %></h1>
+      </div>
+      
+      <div class="content">
+        <%= raw @content %>
+      </div>
+      
+      <div class="footer">
+        <p>You received this email because you subscribed to updates from <%= @account.name %>.</p>
+        <p>
+          <a href="<%= Rails.application.routes.url_helpers.root_url %>unsubscribe?token=<%= @contact.id %>&campaign=<%= @campaign.id %>">
+            Unsubscribe
+          </a>
+          |
+          <a href="<%= Rails.application.routes.url_helpers.root_url %>">
+            Visit our website
+          </a>
+        </p>
+        <p style="margin-top: 20px; font-size: 11px; color: #999;">
+          © <%= Date.current.year %> <%= @account.name %>. All rights reserved.
+        </p>
+      </div>
+    </div>
+    
+    <!-- Tracking pixel for open tracking -->
+    <img src="<%= Rails.application.routes.url_helpers.root_url %>track/open?token=<%= @tracking_params[:token] %>&campaign=<%= @tracking_params[:campaign_id] %>&contact=<%= @tracking_params[:contact_id] %>" 
+         alt="" class="tracking-pixel" />
+  </body>
+</html>

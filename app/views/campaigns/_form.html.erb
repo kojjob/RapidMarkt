@@ -1,0 +1,239 @@
+<%= form_with model: campaign, local: true, class: "space-y-6" do |form| %>
+  <% if campaign.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            There <%= campaign.errors.count == 1 ? 'was' : 'were' %> <%= pluralize(campaign.errors.count, "error") %> with your submission:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul role="list" class="list-disc pl-5 space-y-1">
+              <% campaign.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+      <div class="md:col-span-1">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Campaign Details</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          Basic information about your email campaign.
+        </p>
+      </div>
+      <div class="mt-5 md:mt-0 md:col-span-2">
+        <div class="grid grid-cols-6 gap-6">
+          <div class="col-span-6">
+            <%= form.label :name, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :name, 
+                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                placeholder: "Enter campaign name" %>
+          </div>
+
+          <div class="col-span-6">
+            <%= form.label :subject, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :subject, 
+                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                placeholder: "Enter email subject line" %>
+          </div>
+
+          <div class="col-span-6">
+            <%= form.label :from_name, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :from_name, 
+                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                placeholder: "Sender name" %>
+          </div>
+
+          <div class="col-span-6">
+            <%= form.label :from_email, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.email_field :from_email, 
+                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                placeholder: "sender@example.com" %>
+          </div>
+
+          <div class="col-span-6">
+            <%= form.label :reply_to, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.email_field :reply_to, 
+                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                placeholder: "reply@example.com (optional)" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+      <div class="md:col-span-1">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Email Content</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          Design your email content or select a template.
+        </p>
+      </div>
+      <div class="mt-5 md:mt-0 md:col-span-2">
+        <div class="space-y-6">
+          <div>
+            <%= form.label :template_id, "Template (optional)", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.collection_select :template_id, 
+                current_account.templates.order(:name), 
+                :id, :name, 
+                { prompt: "Select a template or create custom content" },
+                { class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" } %>
+          </div>
+
+          <div>
+            <%= form.label :content, "Email Content", class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1">
+              <%= form.text_area :content, 
+                  rows: 15,
+                  class: "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md",
+                  placeholder: "Enter your email content here. You can use HTML for formatting." %>
+            </div>
+            <p class="mt-2 text-sm text-gray-500">
+              You can use HTML tags for formatting. Variables like {{first_name}} and {{email}} will be replaced with contact information.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+      <div class="md:col-span-1">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Recipients & Scheduling</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          Choose who will receive this campaign and when to send it.
+        </p>
+      </div>
+      <div class="mt-5 md:mt-0 md:col-span-2">
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Send to</label>
+            <div class="mt-2 space-y-2">
+              <div class="flex items-center">
+                <%= form.radio_button :recipient_type, "all", 
+                    class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" %>
+                <%= form.label :recipient_type_all, "All contacts", 
+                    class: "ml-3 block text-sm font-medium text-gray-700" %>
+              </div>
+              <div class="flex items-center">
+                <%= form.radio_button :recipient_type, "subscribed", 
+                    class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" %>
+                <%= form.label :recipient_type_subscribed, "Subscribed contacts only", 
+                    class: "ml-3 block text-sm font-medium text-gray-700" %>
+              </div>
+              <div class="flex items-center">
+                <%= form.radio_button :recipient_type, "tags", 
+                    class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" %>
+                <%= form.label :recipient_type_tags, "Contacts with specific tags", 
+                    class: "ml-3 block text-sm font-medium text-gray-700" %>
+              </div>
+            </div>
+          </div>
+
+          <div id="tag-selection" class="<%= 'hidden' unless campaign.recipient_type == 'tags' %>">
+            <%= form.label :tag_ids, "Select Tags", class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-2 space-y-2 max-h-40 overflow-y-auto border border-gray-300 rounded-md p-3">
+              <% current_account.tags.each do |tag| %>
+                <div class="flex items-center">
+                  <%= check_box_tag "campaign[tag_ids][]", tag.id, 
+                      campaign.tag_ids.include?(tag.id),
+                      class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" %>
+                  <%= label_tag "campaign_tag_ids_#{tag.id}", tag.name, 
+                      class: "ml-3 block text-sm text-gray-700" %>
+                  <span class="ml-2 text-xs text-gray-500">(<%= tag.contacts.count %> contacts)</span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Scheduling</label>
+            <div class="mt-2 space-y-2">
+              <div class="flex items-center">
+                <%= form.radio_button :send_type, "now", 
+                    class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" %>
+                <%= form.label :send_type_now, "Send immediately", 
+                    class: "ml-3 block text-sm font-medium text-gray-700" %>
+              </div>
+              <div class="flex items-center">
+                <%= form.radio_button :send_type, "scheduled", 
+                    class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" %>
+                <%= form.label :send_type_scheduled, "Schedule for later", 
+                    class: "ml-3 block text-sm font-medium text-gray-700" %>
+              </div>
+            </div>
+          </div>
+
+          <div id="schedule-datetime" class="<%= 'hidden' unless campaign.send_type == 'scheduled' %>">
+            <%= form.label :scheduled_at, "Schedule Date & Time", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.datetime_local_field :scheduled_at, 
+                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end space-x-3">
+    <%= link_to "Cancel", campaigns_path, 
+        class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    
+    <%= form.submit "Save as Draft", 
+        name: "commit", value: "Save as Draft",
+        class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    
+    <% if campaign.persisted? && campaign.draft? %>
+      <%= form.submit "Send Campaign", 
+          name: "commit", value: "Send Campaign",
+          class: "ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
+          data: { confirm: "Are you sure you want to send this campaign? This action cannot be undone." } %>
+    <% else %>
+      <%= form.submit campaign.persisted? ? "Update Campaign" : "Create Campaign", 
+          class: "ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    <% end %>
+  </div>
+<% end %>
+
+<script>
+  // Show/hide tag selection based on recipient type
+  document.addEventListener('DOMContentLoaded', function() {
+    const recipientRadios = document.querySelectorAll('input[name="campaign[recipient_type]"]');
+    const tagSelection = document.getElementById('tag-selection');
+    
+    recipientRadios.forEach(radio => {
+      radio.addEventListener('change', function() {
+        if (this.value === 'tags') {
+          tagSelection.classList.remove('hidden');
+        } else {
+          tagSelection.classList.add('hidden');
+        }
+      });
+    });
+    
+    // Show/hide schedule datetime based on send type
+    const sendTypeRadios = document.querySelectorAll('input[name="campaign[send_type]"]');
+    const scheduleDatetime = document.getElementById('schedule-datetime');
+    
+    sendTypeRadios.forEach(radio => {
+      radio.addEventListener('change', function() {
+        if (this.value === 'scheduled') {
+          scheduleDatetime.classList.remove('hidden');
+        } else {
+          scheduleDatetime.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>

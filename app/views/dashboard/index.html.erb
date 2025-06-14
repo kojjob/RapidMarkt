@@ -1,0 +1,213 @@
+<% content_for :title, "Dashboard - RapidMarkt" %>
+
+<div class="px-4 sm:px-6 lg:px-8">
+  <!-- Page header -->
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
+      <p class="mt-2 text-sm text-gray-700">
+        Welcome back! Here's what's happening with your marketing campaigns.
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+      <%= link_to "New Campaign", new_campaign_path, 
+          class: "inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto" %>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="mt-8">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Total Campaigns -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Total Campaigns</dt>
+                <dd class="text-lg font-medium text-gray-900"><%= @campaigns_count %></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <div class="text-sm">
+            <%= link_to "View all", campaigns_path, class: "font-medium text-indigo-700 hover:text-indigo-900" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Contacts -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Total Contacts</dt>
+                <dd class="text-lg font-medium text-gray-900"><%= @contacts_count %></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <div class="text-sm">
+            <%= link_to "View all", contacts_path, class: "font-medium text-indigo-700 hover:text-indigo-900" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emails Sent -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Emails Sent</dt>
+                <dd class="text-lg font-medium text-gray-900"><%= number_with_delimiter(@campaign_stats[:total_sent]) %></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <div class="text-sm">
+            <%= link_to "View analytics", analytics_path, class: "font-medium text-indigo-700 hover:text-indigo-900" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Open Rate -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Open Rate</dt>
+                <dd class="text-lg font-medium text-gray-900">
+                  <% if @campaign_stats[:total_sent] > 0 %>
+                    <%= number_to_percentage((@campaign_stats[:total_opened].to_f / @campaign_stats[:total_sent] * 100), precision: 1) %>
+                  <% else %>
+                    0%
+                  <% end %>
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <div class="text-sm">
+            <%= link_to "View details", analytics_path, class: "font-medium text-indigo-700 hover:text-indigo-900" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Campaigns -->
+  <div class="mt-8">
+    <div class="sm:flex sm:items-center">
+      <div class="sm:flex-auto">
+        <h2 class="text-lg font-medium text-gray-900">Recent Campaigns</h2>
+        <p class="mt-1 text-sm text-gray-700">Your latest email marketing campaigns and their performance.</p>
+      </div>
+      <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+        <%= link_to "View all campaigns", campaigns_path, 
+            class: "inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto" %>
+      </div>
+    </div>
+
+    <div class="mt-6 bg-white shadow overflow-hidden sm:rounded-md">
+      <% if @recent_campaigns.any? %>
+        <ul role="list" class="divide-y divide-gray-200">
+          <% @recent_campaigns.each do |campaign| %>
+            <li>
+              <div class="px-4 py-4 sm:px-6">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                        <%= case campaign.status
+                            when 'draft' then 'bg-gray-100 text-gray-800'
+                            when 'sending' then 'bg-yellow-100 text-yellow-800'
+                            when 'sent' then 'bg-green-100 text-green-800'
+                            when 'scheduled' then 'bg-blue-100 text-blue-800'
+                            else 'bg-gray-100 text-gray-800'
+                            end %>">
+                        <%= campaign.status.humanize %>
+                      </span>
+                    </div>
+                    <div class="ml-4">
+                      <div class="flex items-center">
+                        <p class="text-sm font-medium text-indigo-600 truncate">
+                          <%= link_to campaign.name, campaign_path(campaign), class: "hover:text-indigo-900" %>
+                        </p>
+                      </div>
+                      <div class="mt-1 flex items-center text-sm text-gray-500">
+                        <p>
+                          Subject: <%= truncate(campaign.subject, length: 50) %>
+                        </p>
+                        <span class="mx-2">•</span>
+                        <p>
+                          Created <%= time_ago_in_words(campaign.created_at) %> ago
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-4">
+                    <% if campaign.sent? %>
+                      <div class="text-right">
+                        <p class="text-sm text-gray-900">
+                          <%= campaign.campaign_contacts.where.not(sent_at: nil).count %> sent
+                        </p>
+                        <p class="text-sm text-gray-500">
+                          <%= campaign.campaign_contacts.where.not(opened_at: nil).count %> opened
+                        </p>
+                      </div>
+                    <% end %>
+                    <div class="flex-shrink-0">
+                      <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="text-center py-12">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">No campaigns</h3>
+          <p class="mt-1 text-sm text-gray-500">Get started by creating your first email campaign.</p>
+          <div class="mt-6">
+            <%= link_to "New Campaign", new_campaign_path, 
+                class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

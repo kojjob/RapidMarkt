@@ -1,0 +1,122 @@
+<%= form_with model: contact, local: true, class: "space-y-6" do |form| %>
+  <% if contact.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            There <%= contact.errors.count == 1 ? 'was' : 'were' %> <%= pluralize(contact.errors.count, "error") %> with your submission:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul role="list" class="list-disc pl-5 space-y-1">
+              <% contact.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+      <div class="md:col-span-1">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Contact Information</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          Basic information about the contact.
+        </p>
+      </div>
+      <div class="mt-5 md:mt-0 md:col-span-2">
+        <div class="grid grid-cols-6 gap-6">
+          <div class="col-span-6 sm:col-span-3">
+            <%= form.label :first_name, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :first_name, 
+                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                placeholder: "First name" %>
+          </div>
+
+          <div class="col-span-6 sm:col-span-3">
+            <%= form.label :last_name, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :last_name, 
+                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                placeholder: "Last name" %>
+          </div>
+
+          <div class="col-span-6">
+            <%= form.label :email, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.email_field :email, 
+                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                placeholder: "email@example.com" %>
+          </div>
+
+          <div class="col-span-6">
+            <%= form.label :status, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.select :status, 
+                options_for_select([
+                  ['Subscribed', 'subscribed'],
+                  ['Unsubscribed', 'unsubscribed']
+                ], contact.status),
+                {},
+                { class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+      <div class="md:col-span-1">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Tags</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          Organize contacts with tags for better targeting.
+        </p>
+      </div>
+      <div class="mt-5 md:mt-0 md:col-span-2">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Select existing tags</label>
+            <div class="mt-2 space-y-2 max-h-40 overflow-y-auto border border-gray-300 rounded-md p-3">
+              <% if current_account.tags.any? %>
+                <% current_account.tags.order(:name).each do |tag| %>
+                  <div class="flex items-center">
+                    <%= check_box_tag "contact[tag_ids][]", tag.id, 
+                        contact.tag_ids.include?(tag.id),
+                        class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" %>
+                    <%= label_tag "contact_tag_ids_#{tag.id}", tag.name, 
+                        class: "ml-3 block text-sm text-gray-700" %>
+                  </div>
+                <% end %>
+              <% else %>
+                <p class="text-sm text-gray-500">No tags available. Create tags first to organize your contacts.</p>
+              <% end %>
+            </div>
+          </div>
+          
+          <div>
+            <%= form.label :new_tags, "Add new tags (comma-separated)", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :new_tags, 
+                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                placeholder: "tag1, tag2, tag3" %>
+            <p class="mt-2 text-sm text-gray-500">
+              Enter new tag names separated by commas. They will be created automatically.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end space-x-3">
+    <%= link_to "Cancel", contacts_path, 
+        class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    
+    <%= form.submit contact.persisted? ? "Update Contact" : "Add Contact", 
+        class: "ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+  </div>
+<% end %>

@@ -1,0 +1,138 @@
+<%= form_with model: template, local: true, class: "space-y-6" do |form| %>
+  <% if template.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            There <%= template.errors.count == 1 ? 'was' : 'were' %> <%= pluralize(template.errors.count, "error") %> with your submission:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul role="list" class="list-disc pl-5 space-y-1">
+              <% template.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+      <div class="md:col-span-1">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Template Details</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          Basic information about your email template.
+        </p>
+      </div>
+      <div class="mt-5 md:mt-0 md:col-span-2">
+        <div class="grid grid-cols-6 gap-6">
+          <div class="col-span-6">
+            <%= form.label :name, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :name, 
+                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                placeholder: "Template name" %>
+            <p class="mt-2 text-sm text-gray-500">A descriptive name for your template.</p>
+          </div>
+
+          <div class="col-span-6">
+            <%= form.label :subject, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :subject, 
+                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md",
+                placeholder: "Email subject line" %>
+            <p class="mt-2 text-sm text-gray-500">The default subject line for emails using this template.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+      <div class="md:col-span-1">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Email Content</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          The HTML content of your email template.
+        </p>
+        <div class="mt-4 p-3 bg-blue-50 rounded-md">
+          <h4 class="text-sm font-medium text-blue-900">Available Variables</h4>
+          <div class="mt-2 text-xs text-blue-700 space-y-1">
+            <div><code>{{first_name}}</code> - Contact's first name</div>
+            <div><code>{{last_name}}</code> - Contact's last name</div>
+            <div><code>{{email}}</code> - Contact's email</div>
+            <div><code>{{unsubscribe_url}}</code> - Unsubscribe link</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5 md:mt-0 md:col-span-2">
+        <div class="space-y-4">
+          <div>
+            <%= form.label :content, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_area :content, 
+                rows: 20,
+                class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md font-mono",
+                placeholder: "Enter your HTML email content here..." %>
+            <p class="mt-2 text-sm text-gray-500">
+              You can use HTML tags and the variables listed on the left.
+            </p>
+          </div>
+          
+          <div class="flex items-center space-x-4">
+            <% if template.persisted? %>
+              <%= link_to preview_template_path(template), 
+                  target: "_blank",
+                  class: "inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+                <svg class="-ml-0.5 mr-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12z" clip-rule="evenodd" />
+                </svg>
+                Preview
+              <% end %>
+            <% end %>
+            
+            <button type="button" 
+                    onclick="insertVariable(this)" 
+                    data-variable="{{first_name}}"
+                    class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              Insert First Name
+            </button>
+            
+            <button type="button" 
+                    onclick="insertVariable(this)" 
+                    data-variable="{{unsubscribe_url}}"
+                    class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              Insert Unsubscribe
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end space-x-3">
+    <%= link_to "Cancel", templates_path, 
+        class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    
+    <%= form.submit template.persisted? ? "Update Template" : "Create Template", 
+        class: "ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+  </div>
+<% end %>
+
+<script>
+  function insertVariable(button) {
+    const variable = button.dataset.variable;
+    const textarea = document.getElementById('template_content');
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    
+    textarea.value = text.substring(0, start) + variable + text.substring(end);
+    textarea.focus();
+    textarea.setSelectionRange(start + variable.length, start + variable.length);
+  }
+</script>

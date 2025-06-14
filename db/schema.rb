@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_14_115737) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_14_125708) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -51,7 +51,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_115737) do
     t.decimal "click_rate"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "template_id"
     t.index ["account_id"], name: "index_campaigns_on_account_id"
+    t.index ["template_id"], name: "index_campaigns_on_template_id"
   end
 
   create_table "contacts", force: :cascade do |t|
@@ -114,6 +116,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_115737) do
   add_foreign_key "campaign_contacts", "campaigns"
   add_foreign_key "campaign_contacts", "contacts"
   add_foreign_key "campaigns", "accounts"
+  add_foreign_key "campaigns", "templates"
   add_foreign_key "contacts", "accounts"
   add_foreign_key "subscriptions", "accounts"
   add_foreign_key "templates", "accounts"
