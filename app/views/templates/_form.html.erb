@@ -73,8 +73,8 @@
       <div class="mt-5 md:mt-0 md:col-span-2">
         <div class="space-y-4">
           <div>
-            <%= form.label :content, class: "block text-sm font-medium text-gray-700" %>
-            <%= form.text_area :content, 
+            <%= form.label :body, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_area :body, 
                 rows: 20,
                 class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md font-mono",
                 placeholder: "Enter your HTML email content here..." %>
@@ -126,7 +126,7 @@
 <script>
   function insertVariable(button) {
     const variable = button.dataset.variable;
-    const textarea = document.getElementById('template_content');
+    const textarea = document.getElementById('template_body');
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const text = textarea.value;

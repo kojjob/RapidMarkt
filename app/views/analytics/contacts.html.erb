@@ -1,0 +1,358 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Page header -->
+    <div class="md:flex md:items-center md:justify-between">
+      <div class="flex-1 min-w-0">
+        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+          Contact Analytics
+        </h2>
+        <p class="mt-1 text-sm text-gray-500">
+          Track contact growth, engagement patterns, and audience insights.
+        </p>
+      </div>
+      <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
+        <%= form_with url: analytics_contacts_path, method: :get, local: true, class: "flex items-center space-x-2" do |form| %>
+          <%= form.select :period, 
+              options_for_select([
+                ['Last 7 days', 'week'],
+                ['Last 30 days', 'month'],
+                ['Last 3 months', '3months'],
+                ['Last year', 'year']
+              ], params[:period] || 'month'),
+              {},
+              { class: "block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" } %>
+          <%= form.submit "Update", 
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+        <% end %>
+        
+        <%= link_to analytics_path, 
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+          <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          Dashboard
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Contact Growth Overview -->
+    <div class="mt-8">
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Contact Growth Trends</h3>
+          <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+            <% if @contact_growth.present? %>
+              <% new_contacts = @contact_growth[:new_contacts] || 0 %>
+              <% total_contacts = @contact_growth[:total_contacts] || 0 %>
+              <% daily_growth_values = @contact_growth[:daily_growth]&.values || [] %>
+              <% growth_rate = daily_growth_values.length > 1 ? ((daily_growth_values.last - daily_growth_values.first).to_f / daily_growth_values.first * 100).round(2) : 0 %>
+              
+              <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                  <div class="ml-4">
+                    <dt class="text-sm font-medium text-gray-600">Total New Contacts</dt>
+                    <dd class="text-2xl font-bold text-gray-900"><%= number_with_delimiter(new_contacts) %></dd>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                  </div>
+                  <div class="ml-4">
+                    <dt class="text-sm font-medium text-gray-600">Growth Rate</dt>
+                    <dd class="text-2xl font-bold text-gray-900">
+                      <span class="<%= growth_rate >= 0 ? 'text-green-600' : 'text-red-600' %>">
+                        <%= growth_rate >= 0 ? '+' : '' %><%= growth_rate %>%
+                      </span>
+                    </dd>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg p-4">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <svg class="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div class="ml-4">
+                    <dt class="text-sm font-medium text-gray-600">Avg Daily Growth</dt>
+                    <dd class="text-2xl font-bold text-gray-900"><%= daily_growth_values.any? ? (daily_growth_values.sum.to_f / daily_growth_values.length).round(1) : 0 %></dd>
+                  </div>
+                </div>
+              </div>
+            <% else %>
+              <div class="col-span-3 text-center py-8">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <p class="mt-2 text-sm text-gray-500">No contact data available for the selected period.</p>
+              </div>
+            <% end %>
+          </div>
+          
+          <!-- Growth Chart Visualization -->
+          <% if @contact_growth.present? && @contact_growth[:daily_growth]&.any? %>
+            <div class="mt-8">
+              <div class="bg-gray-50 rounded-lg p-6">
+                <h4 class="text-sm font-medium text-gray-700 mb-4">Daily Contact Growth</h4>
+                <div class="h-64 flex items-end justify-between space-x-1">
+                  <% daily_growth = @contact_growth[:daily_growth] %>
+                  <% max_value = daily_growth.values.max %>
+                  <% daily_growth.each do |date, count| %>
+                    <% height_percentage = max_value > 0 ? (count.to_f / max_value * 100).round(2) : 0 %>
+                    <% parsed_date = Date.parse(date.to_s) %>
+                    <div class="flex flex-col items-center group relative">
+                      <div class="bg-indigo-500 hover:bg-indigo-600 transition-colors duration-200 rounded-t" 
+                           style="height: <%= height_percentage %>%; min-height: 4px; width: 20px;"
+                           title="<%= parsed_date.strftime('%b %d') %>: <%= count %> contacts">
+                      </div>
+                      <div class="text-xs text-gray-500 mt-2 transform -rotate-45 origin-top-left">
+                        <%= parsed_date.strftime('%m/%d') %>
+                      </div>
+                      <!-- Tooltip -->
+                      <div class="absolute bottom-full mb-2 hidden group-hover:block bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                        <%= parsed_date.strftime('%b %d') %>: <%= pluralize(count, 'contact') %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Engagement Analysis -->
+    <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <!-- Top Engaged Contacts -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Most Engaged Contacts</h3>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              Top Performers
+            </span>
+          </div>
+          
+          <% if @top_engaged_contacts.present? && @top_engaged_contacts.any? %>
+            <div class="space-y-4">
+              <% @top_engaged_contacts.each_with_index do |contact, index| %>
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                  <div class="flex items-center space-x-3">
+                    <div class="flex-shrink-0">
+                      <div class="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center">
+                        <span class="text-white font-medium text-sm"><%= index + 1 %></span>
+                      </div>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-sm font-medium text-gray-900 truncate"><%= contact[:name] %></p>
+                      <p class="text-sm text-gray-500 truncate"><%= contact[:email] %></p>
+                    </div>
+                  </div>
+                  <div class="flex-shrink-0 text-right">
+                    <div class="text-sm font-medium text-gray-900">
+                      Score: <%= contact[:engagement_score] %>%
+                    </div>
+                    <div class="text-xs text-gray-500">
+                      <%= contact[:opened] %>/<%= contact[:sent] %> opens
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="text-center py-8">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              <p class="mt-2 text-sm text-gray-500">No engagement data available for the selected period.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Engagement Distribution -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <h3 class="text-lg leading-6 font-medium text-gray-900 mb-6">Engagement Distribution</h3>
+          
+          <% if @engagement_by_contact.present? && @engagement_by_contact.any? %>
+            <% total_contacts = @engagement_by_contact.length %>
+            <% high_engagement = @engagement_by_contact.count { |c| c[:engagement_score] >= 70 } %>
+            <% medium_engagement = @engagement_by_contact.count { |c| c[:engagement_score] >= 30 && c[:engagement_score] < 70 } %>
+            <% low_engagement = @engagement_by_contact.count { |c| c[:engagement_score] < 30 } %>
+            
+            <div class="space-y-4">
+              <!-- High Engagement -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="w-4 h-4 bg-green-500 rounded-full"></div>
+                  <span class="text-sm font-medium text-gray-700">High Engagement (70%+)</span>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-medium text-gray-900"><%= high_engagement %> contacts</div>
+                  <div class="text-xs text-gray-500"><%= total_contacts > 0 ? (high_engagement.to_f / total_contacts * 100).round(1) : 0 %>%</div>
+                </div>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-500 h-2 rounded-full" style="width: <%= total_contacts > 0 ? (high_engagement.to_f / total_contacts * 100).round(1) : 0 %>%"></div>
+              </div>
+              
+              <!-- Medium Engagement -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                  <span class="text-sm font-medium text-gray-700">Medium Engagement (30-69%)</span>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-medium text-gray-900"><%= medium_engagement %> contacts</div>
+                  <div class="text-xs text-gray-500"><%= total_contacts > 0 ? (medium_engagement.to_f / total_contacts * 100).round(1) : 0 %>%</div>
+                </div>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-yellow-500 h-2 rounded-full" style="width: <%= total_contacts > 0 ? (medium_engagement.to_f / total_contacts * 100).round(1) : 0 %>%"></div>
+              </div>
+              
+              <!-- Low Engagement -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="w-4 h-4 bg-red-500 rounded-full"></div>
+                  <span class="text-sm font-medium text-gray-700">Low Engagement (<30%)</span>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-medium text-gray-900"><%= low_engagement %> contacts</div>
+                  <div class="text-xs text-gray-500"><%= total_contacts > 0 ? (low_engagement.to_f / total_contacts * 100).round(1) : 0 %>%</div>
+                </div>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-red-500 h-2 rounded-full" style="width: <%= total_contacts > 0 ? (low_engagement.to_f / total_contacts * 100).round(1) : 0 %>%"></div>
+              </div>
+            </div>
+          <% else %>
+            <div class="text-center py-8">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <p class="mt-2 text-sm text-gray-500">No engagement data available for analysis.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Contact Engagement Table -->
+    <div class="mt-8">
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Contact Engagement Details</h3>
+            <div class="flex items-center space-x-2">
+              <span class="text-sm text-gray-500">Showing top 50 contacts</span>
+            </div>
+          </div>
+          
+          <% if @engagement_by_contact.present? && @engagement_by_contact.any? %>
+            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+              <table class="min-w-full divide-y divide-gray-300">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Contact
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Emails Sent
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Opens
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Clicks
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Engagement Score
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <% @engagement_by_contact.first(50).each_with_index do |contact, index| %>
+                    <tr class="<%= index.even? ? 'bg-white' : 'bg-gray-50' %> hover:bg-indigo-50 transition-colors duration-200">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                          <div class="flex-shrink-0 h-10 w-10">
+                            <div class="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 flex items-center justify-center">
+                              <span class="text-white font-medium text-sm"><%= contact[:name].split(' ').map(&:first).join('').upcase %></span>
+                            </div>
+                          </div>
+                          <div class="ml-4">
+                            <div class="text-sm font-medium text-gray-900"><%= contact[:name] %></div>
+                            <div class="text-sm text-gray-500"><%= contact[:email] %></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <%= contact[:sent] %>
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <%= contact[:opened] %>
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                          <%= contact[:clicked] %>
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                          <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                              <span class="text-sm font-medium text-gray-900"><%= contact[:engagement_score] %>%</span>
+                            </div>
+                            <div class="mt-1 w-full bg-gray-200 rounded-full h-2">
+                              <% score = contact[:engagement_score] %>
+                              <% color_class = score >= 70 ? 'bg-green-500' : score >= 30 ? 'bg-yellow-500' : 'bg-red-500' %>
+                              <div class="<%= color_class %> h-2 rounded-full" style="width: <%= [score, 100].min %>%"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <div class="text-center py-12">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">No contact engagement data</h3>
+              <p class="mt-1 text-sm text-gray-500">Get started by sending your first email campaign to see engagement metrics.</p>
+              <%= link_to new_campaign_path, class: "mt-6 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+                <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Create Campaign
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

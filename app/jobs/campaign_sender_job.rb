@@ -42,11 +42,31 @@ class CampaignSenderJob < ApplicationJob
   private
 
   def get_campaign_contacts(campaign)
-    # Get all subscribed contacts for the account
+    # Start with subscribed contacts for the account
     contacts = campaign.account.contacts.where(status: 'subscribed')
     
-    # Filter by any campaign-specific criteria if needed
-    # For now, send to all subscribed contacts
+    # Filter by recipient type
+    case campaign.recipient_type
+    when 'all'
+      # Send to all contacts (subscribed and unsubscribed)
+      contacts = campaign.account.contacts
+    when 'subscribed'
+      # Already filtered to subscribed contacts above
+      contacts
+    when 'tags'
+      # Filter by selected tags
+      if campaign.tags.any?
+        tag_ids = campaign.tags.pluck(:id)
+        contacts = contacts.joins(:contact_tags).where(contact_tags: { tag_id: tag_ids }).distinct
+      else
+        # No tags selected, return empty collection
+        contacts = contacts.none
+      end
+    else
+      # Default to subscribed contacts
+      contacts
+    end
+    
     contacts
   end
 

@@ -55,6 +55,38 @@
     </div>
   </div>
 
+  <!-- Bulk Actions -->
+  <% if @campaigns.any? %>
+    <div class="mt-6 bg-white shadow rounded-lg p-4" data-controller="bulk-actions">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <label class="flex items-center">
+            <input type="checkbox" data-action="change->bulk-actions#toggleAll" data-bulk-actions-target="selectAll" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+            <span class="ml-2 text-sm text-gray-700">Select All</span>
+          </label>
+          <span class="text-sm text-gray-500" data-bulk-actions-target="selectedCount">0 selected</span>
+        </div>
+        <div class="flex items-center space-x-2" data-bulk-actions-target="actions" style="display: none;">
+          <%= button_to "Send Selected", bulk_send_campaigns_path, 
+              params: { campaign_ids: [] },
+              data: { 
+                turbo_method: :post, 
+                turbo_confirm: "Are you sure you want to send the selected campaigns? This action cannot be undone.",
+                bulk_actions_target: "sendButton"
+              },
+              class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+          <%= button_to "Schedule Selected", bulk_schedule_campaigns_path,
+              params: { campaign_ids: [] },
+              data: { 
+                turbo_method: :post,
+                bulk_actions_target: "scheduleButton"
+              },
+              class: "inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <!-- Campaigns list -->
   <div class="mt-8 bg-white shadow overflow-hidden sm:rounded-md">
     <% if @campaigns.any? %>
@@ -64,6 +96,14 @@
             <div class="px-4 py-4 sm:px-6">
               <div class="flex items-center justify-between">
                 <div class="flex items-center min-w-0 flex-1">
+                  <div class="flex-shrink-0 mr-4">
+                    <input type="checkbox" 
+                           data-action="change->bulk-actions#updateSelection" 
+                           data-bulk-actions-target="campaignCheckbox" 
+                           data-campaign-id="<%= campaign.id %>"
+                           data-campaign-status="<%= campaign.status %>"
+                           class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                  </div>
                   <div class="flex-shrink-0">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
                       <%= case campaign.status
@@ -141,13 +181,12 @@
                             target: "_blank" %>
                         <% if campaign.draft? %>
                           <%= link_to "Send Test", send_test_campaign_path(campaign), 
-                              method: :post,
+                              data: { turbo_method: :post },
                               class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
                         <% end %>
                         <% unless campaign.sent? %>
                           <%= link_to "Delete", campaign_path(campaign), 
-                              method: :delete,
-                              data: { confirm: "Are you sure you want to delete this campaign?" },
+                              data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this campaign?" },
                               class: "block px-4 py-2 text-sm text-red-700 hover:bg-red-100" %>
                         <% end %>
                       </div>
@@ -187,7 +226,7 @@
                 </p>
               </div>
               <div>
-                <%= paginate @campaigns, theme: 'twitter_bootstrap_4' if defined?(Kaminari) %>
+                <%= paginate @campaigns if defined?(Kaminari) %>
               </div>
             </div>
           </div>

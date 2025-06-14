@@ -20,6 +20,12 @@ Rails.application.routes.draw do
     member do
       get :preview
       post :send_campaign
+      post :send_test
+    end
+    
+    collection do
+      post :bulk_send
+      post :bulk_schedule
     end
   end
 

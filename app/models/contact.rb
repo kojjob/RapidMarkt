@@ -3,6 +3,8 @@ class Contact < ApplicationRecord
   belongs_to :account
   has_many :campaign_contacts, dependent: :destroy
   has_many :campaigns, through: :campaign_contacts
+  has_many :contact_tags, dependent: :destroy
+  has_many :tags, through: :contact_tags
   
   # Validations
   validates :email, presence: true, uniqueness: { scope: :account_id, case_sensitive: false },
@@ -20,7 +22,7 @@ class Contact < ApplicationRecord
   scope :bounced, -> { where(status: 'bounced') }
   scope :complained, -> { where(status: 'complained') }
   scope :active, -> { where(status: 'subscribed') }
-  scope :with_tag, ->(tag) { where("tags LIKE ?", "%#{tag}%") }
+  scope :with_tag, ->(tag_name) { joins(:tags).where(tags: { name: tag_name }) }
   scope :search, ->(query) {
     where("email ILIKE ? OR first_name ILIKE ? OR last_name ILIKE ?", 
           "%#{query}%", "%#{query}%", "%#{query}%")
@@ -71,36 +73,34 @@ class Contact < ApplicationRecord
     update!(status: 'complained')
   end
   
-  def tag_list
-    return [] if tags.blank?
-    
-    tags.split(',').map(&:strip).reject(&:blank?)
+  def tag_names
+    tags.pluck(:name)
   end
   
-  def tag_list=(new_tags)
-    if new_tags.is_a?(Array)
-      self.tags = new_tags.map(&:strip).reject(&:blank?).join(', ')
+  def add_tag(tag_or_name)
+    if tag_or_name.is_a?(Tag)
+      tags << tag_or_name unless tags.include?(tag_or_name)
     else
-      self.tags = new_tags.to_s
+      tag = account.tags.find_or_create_by(name: tag_or_name.to_s.strip.downcase)
+      tags << tag unless tags.include?(tag)
     end
   end
   
-  def add_tag(tag)
-    current_tags = tag_list
-    current_tags << tag.strip unless current_tags.include?(tag.strip)
-    self.tag_list = current_tags
-    save
+  def remove_tag(tag_or_name)
+    if tag_or_name.is_a?(Tag)
+      tags.delete(tag_or_name)
+    else
+      tag = account.tags.find_by(name: tag_or_name.to_s.strip.downcase)
+      tags.delete(tag) if tag
+    end
   end
   
-  def remove_tag(tag)
-    current_tags = tag_list
-    current_tags.delete(tag.strip)
-    self.tag_list = current_tags
-    save
-  end
-  
-  def has_tag?(tag)
-    tag_list.include?(tag.strip)
+  def has_tag?(tag_or_name)
+    if tag_or_name.is_a?(Tag)
+      tags.include?(tag_or_name)
+    else
+      tags.exists?(name: tag_or_name.to_s.strip.downcase)
+    end
   end
   
   private

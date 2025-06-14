@@ -8,7 +8,7 @@ class TemplatesController < ApplicationController
     
     # Filter by category
     if params[:category].present?
-      @templates = @templates.where(category: params[:category])
+      @templates = @templates.where(template_type: params[:category])
     end
 
     # Filter by status
@@ -25,7 +25,7 @@ class TemplatesController < ApplicationController
 
   def new
     @template = @current_account.templates.build
-    @template.category = params[:category] if params[:category].present?
+    @template.template_type = params[:category] if params[:category].present?
   end
 
   def create
@@ -81,9 +81,11 @@ class TemplatesController < ApplicationController
 
   def set_template
     @template = @current_account.templates.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to templates_path, alert: 'Template not found or you do not have permission to access it.'
   end
 
   def template_params
-    params.require(:template).permit(:name, :subject, :content, :category, :status, :description)
+    params.require(:template).permit(:name, :subject, :body, :template_type, :status)
   end
 end

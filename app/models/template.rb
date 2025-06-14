@@ -3,11 +3,23 @@ class Template < ApplicationRecord
   belongs_to :account
   has_many :campaigns, dependent: :nullify
   
+  # Enums
+  enum :template_type, {
+    email: 'email',
+    newsletter: 'newsletter', 
+    promotional: 'promotional',
+    transactional: 'transactional'
+  }, prefix: :category
+  
+  # Alias for categories (used by controller)
+  class << self
+    alias_method :categories, :template_types
+  end
+  
   # Validations
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }
   validates :subject, presence: true, length: { maximum: 255 }
   validates :body, presence: true
-  validates :template_type, inclusion: { in: %w[email newsletter promotional transactional] }
   validates :status, inclusion: { in: %w[draft active archived] }
   
   # Scopes

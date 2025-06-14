@@ -29,6 +29,7 @@ class ContactsController < ApplicationController
   end
 
   def show
+    @contact.update_column(:last_opened_at, Time.current)
     @campaign_history = @contact.campaign_contacts
                                .includes(:campaign)
                                .order(created_at: :desc)
@@ -102,6 +103,8 @@ class ContactsController < ApplicationController
 
   def set_contact
     @contact = @current_account.contacts.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to contacts_path, alert: 'Contact not found or you do not have permission to access it.'
   end
 
   def contact_params

@@ -76,19 +76,27 @@
                     target: "_blank" %>
                 <% if @campaign.draft? %>
                   <%= link_to "Send Test", send_test_campaign_path(@campaign), 
-                      method: :post,
+                      data: { turbo_method: :post },
                       class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
-                  <%= link_to "Send Campaign", send_campaign_path(@campaign), 
-                      method: :post,
-                      data: { confirm: "Are you sure you want to send this campaign? This action cannot be undone." },
+                  <% recipient_count = case @campaign.recipient_type
+                                       when 'all'
+                                         @campaign.account.contacts.count
+                                       when 'subscribed'
+                                         @campaign.account.contacts.where(status: 'subscribed').count
+                                       when 'tags'
+                                         @campaign.tags.any? ? @campaign.tags.joins(:contacts).distinct.count('contacts.id') : 0
+                                       else
+                                         @campaign.account.contacts.where(status: 'subscribed').count
+                                       end %>
+                  <%= link_to "Send Campaign", send_campaign_campaign_path(@campaign), 
+                      data: { turbo_method: :post, turbo_confirm: "Are you sure you want to send this campaign to #{number_with_delimiter(recipient_count)} recipient#{'s' if recipient_count != 1}? This action cannot be undone." },
                       class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
                 <% end %>
                 <%= link_to "Duplicate", new_campaign_path(duplicate: @campaign.id), 
                     class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
                 <% unless @campaign.sent? %>
                   <%= link_to "Delete", campaign_path(@campaign), 
-                      method: :delete,
-                      data: { confirm: "Are you sure you want to delete this campaign?" },
+                      data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this campaign?" },
                       class: "block px-4 py-2 text-sm text-red-700 hover:bg-red-100" %>
                 <% end %>
               </div>
@@ -115,7 +123,7 @@
               <div class="ml-5 w-0 flex-1">
                 <dl>
                   <dt class="text-sm font-medium text-gray-500 truncate">Total Sent</dt>
-                  <dd class="text-lg font-medium text-gray-900"><%= number_with_delimiter(@stats[:total_sent]) %></dd>
+                  <dd class="text-lg font-medium text-gray-900"><%= number_with_delimiter(@campaign_stats[:total_sent]) %></dd>
                 </dl>
               </div>
             </div>
@@ -136,9 +144,9 @@
                 <dl>
                   <dt class="text-sm font-medium text-gray-500 truncate">Opened</dt>
                   <dd class="text-lg font-medium text-gray-900">
-                    <%= number_with_delimiter(@stats[:total_opened]) %>
-                    <span class="text-sm text-gray-500">
-                      (<%= @stats[:total_sent] > 0 ? number_to_percentage((@stats[:total_opened].to_f / @stats[:total_sent] * 100), precision: 1) : '0%' %>)
+                    <%= number_with_delimiter(@campaign_stats[:total_opened]) %>
+            <span class="text-sm text-gray-500">
+              (<%= @campaign_stats[:total_sent] > 0 ? number_to_percentage((@campaign_stats[:total_opened].to_f / @campaign_stats[:total_sent] * 100), precision: 1) : '0%' %>)
                     </span>
                   </dd>
                 </dl>
@@ -160,9 +168,9 @@
                 <dl>
                   <dt class="text-sm font-medium text-gray-500 truncate">Clicked</dt>
                   <dd class="text-lg font-medium text-gray-900">
-                    <%= number_with_delimiter(@stats[:total_clicked]) %>
-                    <span class="text-sm text-gray-500">
-                      (<%= @stats[:total_sent] > 0 ? number_to_percentage((@stats[:total_clicked].to_f / @stats[:total_sent] * 100), precision: 1) : '0%' %>)
+                    <%= number_with_delimiter(@campaign_stats[:total_clicked]) %>
+            <span class="text-sm text-gray-500">
+              (<%= @campaign_stats[:total_sent] > 0 ? number_to_percentage((@campaign_stats[:total_clicked].to_f / @campaign_stats[:total_sent] * 100), precision: 1) : '0%' %>)
                     </span>
                   </dd>
                 </dl>
@@ -184,9 +192,9 @@
                 <dl>
                   <dt class="text-sm font-medium text-gray-500 truncate">Unsubscribed</dt>
                   <dd class="text-lg font-medium text-gray-900">
-                    <%= number_with_delimiter(@stats[:total_unsubscribed]) %>
-                    <span class="text-sm text-gray-500">
-                      (<%= @stats[:total_sent] > 0 ? number_to_percentage((@stats[:total_unsubscribed].to_f / @stats[:total_sent] * 100), precision: 1) : '0%' %>)
+                    <%= number_with_delimiter(@campaign_stats[:total_unsubscribed]) %>
+            <span class="text-sm text-gray-500">
+              (<%= @campaign_stats[:total_sent] > 0 ? number_to_percentage((@campaign_stats[:total_unsubscribed].to_f / @campaign_stats[:total_sent] * 100), precision: 1) : '0%' %>)
                     </span>
                   </dd>
                 </dl>
@@ -277,7 +285,11 @@
         </div>
         <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
           <div class="prose max-w-none">
-            <%= simple_format(@campaign.content) %>
+            <% if @campaign.template %>
+              <%= simple_format(@campaign.template.body) %>
+            <% else %>
+              <p class="text-gray-500 italic">No template associated with this campaign.</p>
+            <% end %>
           </div>
         </div>
       </div>
@@ -294,10 +306,10 @@
         <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
           <% if @campaign.recipient_type == 'all' %>
             <p class="text-sm text-gray-900">All contacts</p>
-            <p class="text-xs text-gray-500"><%= current_account.contacts.count %> contacts</p>
+            <p class="text-xs text-gray-500"><%= @current_account.contacts.count %> contacts</p>
           <% elsif @campaign.recipient_type == 'subscribed' %>
             <p class="text-sm text-gray-900">Subscribed contacts only</p>
-            <p class="text-xs text-gray-500"><%= current_account.contacts.subscribed.count %> contacts</p>
+            <p class="text-xs text-gray-500"><%= @current_account.contacts.subscribed.count %> contacts</p>
           <% elsif @campaign.recipient_type == 'tags' && @campaign.tags.any? %>
             <p class="text-sm text-gray-900">Contacts with tags:</p>
             <div class="mt-2 flex flex-wrap gap-1">
@@ -335,7 +347,7 @@
             
             <% if @campaign.draft? %>
               <%= link_to send_test_campaign_path(@campaign), 
-                  method: :post,
+                  data: { turbo_method: :post },
                   class: "w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
                 <svg class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

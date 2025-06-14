@@ -1,5 +1,5 @@
 class CampaignsController < ApplicationController
-  before_action :set_campaign, only: [:show, :edit, :update, :destroy, :send_campaign, :preview]
+  before_action :set_campaign, only: [:show, :edit, :update, :destroy, :send_campaign, :send_test, :preview]
 
   def index
     @campaigns = @current_account.campaigns.includes(:template)
@@ -67,14 +67,97 @@ class CampaignsController < ApplicationController
     end
   end
 
+  def send_test
+    if @campaign.draft?
+      # Send test email to current user
+      test_contact = Contact.new(
+        first_name: current_user.first_name || 'Test',
+        last_name: current_user.last_name || 'User',
+        email: current_user.email
+      )
+      
+      begin
+        CampaignMailer.send_campaign(
+          campaign: @campaign,
+          contact: test_contact,
+          subject: @campaign.subject,
+          content: @campaign.template&.body || "Test content"
+        ).deliver_now
+        
+        redirect_to @campaign, notice: 'Test email sent successfully!'
+      rescue => e
+        redirect_to @campaign, alert: "Failed to send test email: #{e.message}"
+      end
+    else
+      redirect_to @campaign, alert: 'Test emails can only be sent for draft campaigns.'
+    end
+  end
+
+  def bulk_send
+    campaign_ids = params[:campaign_ids] || []
+    
+    if campaign_ids.empty?
+      redirect_to campaigns_path, alert: 'No campaigns selected.'
+      return
+    end
+
+    campaigns = @current_account.campaigns.where(id: campaign_ids, status: 'draft')
+    
+    if campaigns.empty?
+      redirect_to campaigns_path, alert: 'No valid campaigns found to send.'
+      return
+    end
+
+    sent_count = 0
+    failed_campaigns = []
+
+    campaigns.each do |campaign|
+      if campaign.can_be_sent?
+        CampaignSenderJob.perform_later(campaign.id)
+        sent_count += 1
+      else
+        failed_campaigns << campaign.name
+      end
+    end
+
+    if sent_count > 0
+      notice = "#{sent_count} campaign#{'s' if sent_count != 1} queued for sending!"
+      notice += " Failed: #{failed_campaigns.join(', ')}" if failed_campaigns.any?
+      redirect_to campaigns_path, notice: notice
+    else
+      redirect_to campaigns_path, alert: "Failed to send campaigns: #{failed_campaigns.join(', ')}"
+    end
+  end
+
+  def bulk_schedule
+    campaign_ids = params[:campaign_ids] || []
+    
+    if campaign_ids.empty?
+      redirect_to campaigns_path, alert: 'No campaigns selected.'
+      return
+    end
+
+    # For now, redirect to a scheduling interface
+    # In a full implementation, you'd show a modal or form to select the schedule time
+    redirect_to campaigns_path, notice: 'Bulk scheduling feature coming soon! Please schedule campaigns individually for now.'
+  end
+
   private
 
   def set_campaign
     @campaign = @current_account.campaigns.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to campaigns_path, alert: 'Campaign not found or you do not have permission to access it.'
   end
 
   def campaign_params
-    params.require(:campaign).permit(:name, :subject, :template_id, :scheduled_at, :status)
+    params.require(:campaign).permit(
+      :name, :subject, :template_id, :scheduled_at, :status, :from_name, :from_email, :reply_to, 
+      :recipient_type, :send_type, :media_type, :media_urls, :design_theme, :background_color, 
+      :text_color, :font_family, :header_image_url, :logo_url, :call_to_action_text, 
+      :call_to_action_url, :social_sharing_enabled, :social_platforms,
+      tag_ids: [], media_urls_array: [], social_platforms_array: []
+    )
   end
 
   def calculate_campaign_stats(campaign)
@@ -82,11 +165,13 @@ class CampaignsController < ApplicationController
     total_sent = campaign_contacts.where.not(sent_at: nil).count
     total_opened = campaign_contacts.where.not(opened_at: nil).count
     total_clicked = campaign_contacts.where.not(clicked_at: nil).count
+    total_unsubscribed = campaign_contacts.where.not(unsubscribed_at: nil).count
 
     {
       total_sent: total_sent,
       total_opened: total_opened,
       total_clicked: total_clicked,
+      total_unsubscribed: total_unsubscribed,
       open_rate: total_sent > 0 ? (total_opened.to_f / total_sent * 100).round(2) : 0,
       click_rate: total_sent > 0 ? (total_clicked.to_f / total_sent * 100).round(2) : 0
     }

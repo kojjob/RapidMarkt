@@ -7,7 +7,7 @@ class AnalyticsController < ApplicationController
     @overview_stats = @analytics_service.overview_stats(@date_range)
     
     # Recent campaign performance
-    @recent_campaigns = @analytics_service.campaign_performance(@date_range).first(10)
+    @campaign_performance = @analytics_service.campaign_performance(@date_range).first(10) || []
     
     # Contact growth
     @contact_growth = @analytics_service.contact_growth(@date_range)
@@ -132,17 +132,26 @@ class AnalyticsController < ApplicationController
   end
 
   def top_performing_campaigns
-    @current_account.campaigns
-                   .joins(:campaign_contacts)
-                   .where(created_at: @date_range)
-                   .group('campaigns.id, campaigns.name')
-                   .having('COUNT(campaign_contacts.id) > 0')
-                   .order('(COUNT(CASE WHEN campaign_contacts.opened_at IS NOT NULL THEN 1 END)::float / COUNT(campaign_contacts.id)) DESC')
-                   .limit(5)
-                   .pluck('campaigns.name, COUNT(campaign_contacts.id), COUNT(CASE WHEN campaign_contacts.opened_at IS NOT NULL THEN 1 END)')
-                   .map do |name, sent, opened|
+    campaigns_with_stats = @current_account.campaigns
+                                          .joins(:campaign_contacts)
+                                          .where(created_at: @date_range)
+                                          .group(:id, :name)
+                                          .having('COUNT(campaign_contacts.id) > 0')
+                                          .select(
+                                            'campaigns.*',
+                                            'COUNT(campaign_contacts.id) as sent_count',
+                                            'COUNT(CASE WHEN campaign_contacts.opened_at IS NOT NULL THEN 1 END) as opened_count',
+                                            '(COUNT(CASE WHEN campaign_contacts.opened_at IS NOT NULL THEN 1 END)::float / COUNT(campaign_contacts.id)) as open_rate_calc'
+                                          )
+                                          .order('open_rate_calc DESC')
+                                          .limit(5)
+
+    campaigns_with_stats.map do |campaign|
+      sent = campaign.sent_count
+      opened = campaign.opened_count
+      
       {
-        name: name,
+        name: campaign.name,
         sent: sent,
         opened: opened,
         open_rate: sent > 0 ? (opened.to_f / sent * 100).round(2) : 0
@@ -151,31 +160,51 @@ class AnalyticsController < ApplicationController
   end
 
   def calculate_contact_growth
-    contacts_by_day = @current_account.contacts
-                                     .where(created_at: @date_range)
-                                     .group_by_day(:created_at)
-                                     .count
-
-    # Calculate cumulative growth
-    cumulative_count = @current_account.contacts.where('created_at < ?', @date_range.begin).count
+    # Get contacts within the date range
+    contacts = @current_account.contacts.where(created_at: @date_range)
     
-    contacts_by_day.transform_values do |daily_count|
-      cumulative_count += daily_count
-    end
+    # Group contacts by day manually
+    contacts_by_day = contacts.group("DATE(created_at)").count
+    
+    # Get basic stats for the period
+    new_contacts = contacts.count
+    total_contacts = @current_account.contacts.count
+    subscribed = @current_account.contacts.where(status: 'subscribed').count
+    unsubscribed = @current_account.contacts.where(status: 'unsubscribed').count
+    total_unsubscribed = @current_account.contacts.where(status: 'unsubscribed').count
+    
+    {
+      new_contacts: new_contacts,
+      total_contacts: total_contacts,
+      subscribed: subscribed,
+      unsubscribed: unsubscribed,
+      total_unsubscribed: total_unsubscribed,
+      daily_growth: contacts_by_day
+    }
   end
 
   def calculate_contact_engagement
-    @current_account.contacts
-                   .joins(:campaign_contacts)
-                   .where(campaign_contacts: { created_at: @date_range })
-                   .group('contacts.id, contacts.first_name, contacts.last_name, contacts.email')
-                   .order('COUNT(CASE WHEN campaign_contacts.opened_at IS NOT NULL THEN 1 END) DESC')
-                   .limit(10)
-                   .pluck('contacts.first_name, contacts.last_name, contacts.email, COUNT(campaign_contacts.id), COUNT(CASE WHEN campaign_contacts.opened_at IS NOT NULL THEN 1 END), COUNT(CASE WHEN campaign_contacts.clicked_at IS NOT NULL THEN 1 END)')
-                   .map do |first_name, last_name, email, sent, opened, clicked|
+    contacts_with_stats = @current_account.contacts
+                                         .joins(:campaign_contacts)
+                                         .where(campaign_contacts: { created_at: @date_range })
+                                         .group(:id, :first_name, :last_name, :email)
+                                         .select(
+                                           'contacts.*',
+                                           'COUNT(campaign_contacts.id) as sent_count',
+                                           'COUNT(CASE WHEN campaign_contacts.opened_at IS NOT NULL THEN 1 END) as opened_count',
+                                           'COUNT(CASE WHEN campaign_contacts.clicked_at IS NOT NULL THEN 1 END) as clicked_count'
+                                         )
+                                         .order('opened_count DESC')
+                                         .limit(10)
+
+    contacts_with_stats.map do |contact|
+      sent = contact.sent_count
+      opened = contact.opened_count
+      clicked = contact.clicked_count
+      
       {
-        name: "#{first_name} #{last_name}",
-        email: email,
+        name: "#{contact.first_name} #{contact.last_name}",
+        email: contact.email,
         sent: sent,
         opened: opened,
         clicked: clicked,

@@ -5,6 +5,7 @@ class Account < ApplicationRecord
   has_many :campaigns, dependent: :destroy
   has_many :contacts, dependent: :destroy
   has_many :templates, dependent: :destroy
+  has_many :tags, dependent: :destroy
   
   # Validations
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }

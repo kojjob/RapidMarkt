@@ -82,8 +82,8 @@
           <div>
             <label class="block text-sm font-medium text-gray-700">Select existing tags</label>
             <div class="mt-2 space-y-2 max-h-40 overflow-y-auto border border-gray-300 rounded-md p-3">
-              <% if current_account.tags.any? %>
-                <% current_account.tags.order(:name).each do |tag| %>
+              <% if @current_account.tags.any? %>
+    <% @current_account.tags.order(:name).each do |tag| %>
                   <div class="flex items-center">
                     <%= check_box_tag "contact[tag_ids][]", tag.id, 
                         contact.tag_ids.include?(tag.id),

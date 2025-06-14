@@ -109,26 +109,32 @@ contacts_data = [
 ]
 
 contacts_data.each do |contact_data|
-  Contact.create!(
+  contact = Contact.create!(
     account: account1,
     first_name: contact_data[:first_name],
     last_name: contact_data[:last_name],
     email: contact_data[:email],
-    status: contact_data[:status],
-    tags: contact_data[:tags]
+    status: contact_data[:status]
   )
+  
+  # Add tags using the proper association
+  contact_data[:tags].each do |tag_name|
+    contact.add_tag(tag_name)
+  end
 end
 
 # Create some contacts for account2
 3.times do |i|
-  Contact.create!(
+  contact = Contact.create!(
     account: account2,
     first_name: "User#{i + 1}",
     last_name: "Test",
     email: "user#{i + 1}@test.com",
-    status: "subscribed",
-    tags: ["beta_user"]
+    status: "subscribed"
   )
+  
+  # Add tags using the proper association
+  contact.add_tag("beta_user")
 end
 
 puts "Created #{Contact.count} contacts"
@@ -201,6 +207,26 @@ sent_campaigns.each do |campaign|
       clicked_at: clicked ? campaign.sent_at + rand(2..72).hours : nil
     )
   end
+end
+
+# Create campaign contacts for account2
+account2_contacts = account2.contacts.where(status: "subscribed")
+campaign4_contacts = account2_contacts.to_a
+sent_count = campaign4_contacts.size
+opened_count = (sent_count * (campaign4.open_rate || 0) / 100).round
+clicked_count = (opened_count * (campaign4.click_rate || 0) / 100).round
+
+campaign4_contacts.each_with_index do |contact, index|
+  opened = index < opened_count
+  clicked = opened && index < clicked_count
+  
+  CampaignContact.create!(
+    campaign: campaign4,
+    contact: contact,
+    sent_at: campaign4.scheduled_at,
+    opened_at: opened ? campaign4.scheduled_at + rand(1..48).hours : nil,
+    clicked_at: clicked ? campaign4.scheduled_at + rand(2..72).hours : nil
+  )
 end
 
 puts "Created #{CampaignContact.count} campaign contacts"

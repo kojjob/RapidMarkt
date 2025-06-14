@@ -29,6 +29,15 @@ gem "stripe" # Payment processing
 # Content and File Processing
 gem "image_processing", "~> 1.2" # Active Storage image variants
 gem "friendly_id" # SEO-friendly URLs
+gem "kaminari" # Pagination
+gem "groupdate" # Date/time grouping for analytics
+gem "csv" # CSV parsing
+gem "css_parser" # CSS parsing for Tailwind customization
+gem "redcarpet" # Markdown rendering
+gem "html2text" # HTML to plain text conversion
+gem "nokogiri" # HTML/XML parsing
+gem "pdfkit" # PDF generation
+
 
 # API and External Integrations
 gem "faraday" # HTTP client library
