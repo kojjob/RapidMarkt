@@ -1,5 +1,5 @@
 class CampaignsController < ApplicationController
-  before_action :set_campaign, only: [ :show, :edit, :update, :destroy, :send_campaign, :send_test, :preview ]
+  before_action :set_campaign, only: [ :show, :edit, :update, :destroy, :send_campaign, :send_test, :preview, :pause, :resume, :stop, :duplicate ]
 
   def index
     @campaigns = @current_account.campaigns.includes(:template)
@@ -142,12 +142,103 @@ class CampaignsController < ApplicationController
     redirect_to campaigns_path, notice: "Bulk scheduling feature coming soon! Please schedule campaigns individually for now."
   end
 
+  def dashboard
+    @campaigns = @current_account.campaigns.includes(:template, :campaign_contacts)
+    @campaign_stats = calculate_dashboard_stats
+    
+    # Set instance variables for template compatibility
+    @total_campaigns = @campaign_stats[:total_campaigns]
+    @active_campaigns = @campaign_stats[:active_campaigns]
+    @sent_campaigns = @campaign_stats[:sent_campaigns]
+    @paused_campaigns = @campaign_stats[:paused_campaigns]
+    @recent_campaigns = @campaigns.recent.limit(5)
+    
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: @campaign_stats.merge(
+          performance_data: {
+            daily_sends: [],
+            weekly_opens: [],
+            monthly_clicks: []
+          },
+          status_distribution: {
+            draft: @current_account.campaigns.where(status: 'draft').count,
+            scheduled: @current_account.campaigns.where(status: 'scheduled').count,
+            sending: @current_account.campaigns.where(status: 'sending').count,
+            sent: @current_account.campaigns.where(status: 'sent').count,
+            paused: @current_account.campaigns.where(status: 'paused').count,
+            cancelled: @current_account.campaigns.where(status: 'cancelled').count
+          }
+        )
+      end
+    end
+  end
+
+  def pause
+    if @campaign.sending?
+      @campaign.pause!
+      render json: { success: true, message: 'Campaign paused successfully' }
+    else
+      render json: { success: false, message: 'Campaign cannot be paused in its current state' }, status: :unprocessable_entity
+    end
+  end
+
+  def resume
+    if @campaign.paused?
+      @campaign.update!(status: 'sending')
+      render json: { success: true, message: 'Campaign resumed successfully' }
+    else
+      render json: { success: false, message: 'Campaign cannot be resumed in its current state' }, status: :unprocessable_entity
+    end
+  end
+
+  def stop
+    if @campaign.sending?
+      @campaign.update!(status: 'cancelled')
+      render json: { success: true, message: 'Campaign stopped successfully' }
+    else
+      render json: { success: false, message: 'Campaign cannot be stopped in its current state' }, status: :unprocessable_entity
+    end
+  end
+
+  def duplicate
+    new_campaign = @campaign.dup
+    new_campaign.name = "#{@campaign.name} (Copy)"
+    new_campaign.status = 'draft'
+    new_campaign.sent_at = nil
+    new_campaign.scheduled_at = nil
+    new_campaign.user = current_user
+    
+    if new_campaign.save
+      render json: { 
+        success: true, 
+        message: 'Campaign duplicated successfully',
+        campaign: {
+          id: new_campaign.id,
+          name: new_campaign.name,
+          status: new_campaign.status
+        }
+      }
+    else
+      render json: { 
+        success: false, 
+        message: 'Failed to duplicate campaign',
+        errors: new_campaign.errors.full_messages
+      }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_campaign
     @campaign = @current_account.campaigns.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    redirect_to campaigns_path, alert: "Campaign not found or you do not have permission to access it."
+    if request.format.json? || params[:format] == 'json'
+      raise ActiveRecord::RecordNotFound
+    else
+      redirect_to campaigns_path, alert: "Campaign not found or you do not have permission to access it."
+    end
   end
 
   def campaign_params
@@ -174,6 +265,26 @@ class CampaignsController < ApplicationController
       total_unsubscribed: total_unsubscribed,
       open_rate: total_sent > 0 ? (total_opened.to_f / total_sent * 100).round(2) : 0,
       click_rate: total_sent > 0 ? (total_clicked.to_f / total_sent * 100).round(2) : 0
+    }
+  end
+
+  def calculate_dashboard_stats
+    campaigns = @current_account.campaigns
+    
+    {
+      total_campaigns: campaigns.count,
+      active_campaigns: campaigns.where(status: ['draft', 'scheduled', 'sending']).count,
+      sent_campaigns: campaigns.where(status: 'sent').count,
+      paused_campaigns: campaigns.where(status: 'paused').count,
+      recent_campaigns: campaigns.recent.limit(5).map do |campaign|
+        {
+          id: campaign.id,
+          name: campaign.name,
+          status: campaign.status,
+          created_at: campaign.created_at,
+          sent_at: campaign.sent_at
+        }
+      end
     }
   end
 end

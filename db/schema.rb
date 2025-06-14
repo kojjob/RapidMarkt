@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_14_143352) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_14_205034) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -24,6 +24,34 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_143352) do
     t.datetime "updated_at", null: false
     t.index ["status"], name: "index_accounts_on_status"
     t.index ["subdomain"], name: "index_accounts_on_subdomain", unique: true
+  end
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "campaign_contacts", force: :cascade do |t|
@@ -80,6 +108,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_143352) do
     t.string "call_to_action_url"
     t.boolean "social_sharing_enabled", default: false
     t.bigint "user_id", null: false
+    t.text "content"
+    t.text "preview_text"
     t.index ["account_id"], name: "index_campaigns_on_account_id"
     t.index ["template_id"], name: "index_campaigns_on_template_id"
     t.index ["user_id"], name: "index_campaigns_on_user_id"
@@ -141,7 +171,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_143352) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["account_id"], name: "index_templates_on_account_id"
+    t.index ["user_id"], name: "index_templates_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -161,6 +193,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_143352) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "campaign_contacts", "campaigns"
   add_foreign_key "campaign_contacts", "contacts"
   add_foreign_key "campaign_tags", "campaigns"
@@ -174,5 +208,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_143352) do
   add_foreign_key "subscriptions", "accounts"
   add_foreign_key "tags", "accounts"
   add_foreign_key "templates", "accounts"
+  add_foreign_key "templates", "users"
   add_foreign_key "users", "accounts"
 end

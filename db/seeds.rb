@@ -96,16 +96,16 @@ puts "Created #{Template.count} templates"
 
 # Create contacts for account1
 contacts_data = [
-  { first_name: "Alice", last_name: "Williams", email: "alice@example.com", status: "subscribed", tags: ["customer", "vip"] },
-  { first_name: "Bob", last_name: "Davis", email: "bob@example.com", status: "subscribed", tags: ["prospect"] },
-  { first_name: "Carol", last_name: "Miller", email: "carol@example.com", status: "subscribed", tags: ["customer"] },
-  { first_name: "David", last_name: "Wilson", email: "david@example.com", status: "unsubscribed", tags: ["former_customer"] },
-  { first_name: "Emma", last_name: "Brown", email: "emma@example.com", status: "subscribed", tags: ["prospect", "newsletter"] },
-  { first_name: "Frank", last_name: "Taylor", email: "frank@example.com", status: "subscribed", tags: ["customer"] },
-  { first_name: "Grace", last_name: "Anderson", email: "grace@example.com", status: "subscribed", tags: ["vip", "customer"] },
-  { first_name: "Henry", last_name: "Thomas", email: "henry@example.com", status: "subscribed", tags: ["prospect"] },
-  { first_name: "Ivy", last_name: "Jackson", email: "ivy@example.com", status: "subscribed", tags: ["newsletter"] },
-  { first_name: "Jack", last_name: "White", email: "jack@example.com", status: "subscribed", tags: ["customer", "newsletter"] }
+  { first_name: "Alice", last_name: "Williams", email: "alice@example.com", status: "subscribed", tags: [ "customer", "vip" ] },
+  { first_name: "Bob", last_name: "Davis", email: "bob@example.com", status: "subscribed", tags: [ "prospect" ] },
+  { first_name: "Carol", last_name: "Miller", email: "carol@example.com", status: "subscribed", tags: [ "customer" ] },
+  { first_name: "David", last_name: "Wilson", email: "david@example.com", status: "unsubscribed", tags: [ "former_customer" ] },
+  { first_name: "Emma", last_name: "Brown", email: "emma@example.com", status: "subscribed", tags: [ "prospect", "newsletter" ] },
+  { first_name: "Frank", last_name: "Taylor", email: "frank@example.com", status: "subscribed", tags: [ "customer" ] },
+  { first_name: "Grace", last_name: "Anderson", email: "grace@example.com", status: "subscribed", tags: [ "vip", "customer" ] },
+  { first_name: "Henry", last_name: "Thomas", email: "henry@example.com", status: "subscribed", tags: [ "prospect" ] },
+  { first_name: "Ivy", last_name: "Jackson", email: "ivy@example.com", status: "subscribed", tags: [ "newsletter" ] },
+  { first_name: "Jack", last_name: "White", email: "jack@example.com", status: "subscribed", tags: [ "customer", "newsletter" ] }
 ]
 
 contacts_data.each do |contact_data|
@@ -116,7 +116,7 @@ contacts_data.each do |contact_data|
     email: contact_data[:email],
     status: contact_data[:status]
   )
-  
+
   # Add tags using the proper association
   contact_data[:tags].each do |tag_name|
     contact.add_tag(tag_name)
@@ -132,7 +132,7 @@ end
     email: "user#{i + 1}@test.com",
     status: "subscribed"
   )
-  
+
   # Add tags using the proper association
   contact.add_tag("beta_user")
 end
@@ -185,7 +185,7 @@ campaign4 = Campaign.create!(
 puts "Created #{Campaign.count} campaigns"
 
 # Create campaign contacts for sent campaigns
-sent_campaigns = [campaign1, campaign2]
+sent_campaigns = [ campaign1, campaign2 ]
 subscribed_contacts = account1.contacts.where(status: "subscribed")
 
 sent_campaigns.each do |campaign|
@@ -194,11 +194,11 @@ sent_campaigns.each do |campaign|
   sent_count = contacts_to_send.size
   opened_count = (sent_count * (campaign.open_rate || 0) / 100).round
   clicked_count = (opened_count * (campaign.click_rate || 0) / 100).round
-  
+
   contacts_to_send.each_with_index do |contact, index|
     opened = index < opened_count
     clicked = opened && index < clicked_count
-    
+
     CampaignContact.create!(
       campaign: campaign,
       contact: contact,
@@ -219,7 +219,7 @@ clicked_count = (opened_count * (campaign4.click_rate || 0) / 100).round
 campaign4_contacts.each_with_index do |contact, index|
   opened = index < opened_count
   clicked = opened && index < clicked_count
-  
+
   CampaignContact.create!(
     campaign: campaign4,
     contact: contact,

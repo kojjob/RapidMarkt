@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
 
   def set_current_account
     return unless user_signed_in?
-    
+
     @current_account = current_user.account
     Current.account = @current_account
   end
@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   private
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:first_name, :last_name])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :first_name, :last_name ])
+    devise_parameter_sanitizer.permit(:account_update, keys: [ :first_name, :last_name ])
   end
 end

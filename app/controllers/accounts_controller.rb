@@ -1,6 +1,6 @@
 class AccountsController < ApplicationController
-  before_action :require_account_owner, except: [:show]
-  before_action :set_account, only: [:show, :edit, :update]
+  before_action :require_account_owner, except: [ :show ]
+  before_action :set_account, only: [ :show, :edit, :update ]
 
   def show
     @subscription = @current_account.subscription
@@ -13,7 +13,7 @@ class AccountsController < ApplicationController
 
   def update
     if @current_account.update(account_params)
-      redirect_to account_path, notice: 'Account was successfully updated.'
+      redirect_to account_path, notice: "Account was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -36,7 +36,7 @@ class AccountsController < ApplicationController
 
     if @invitation.save
       UserInvitationMailer.invite(@invitation).deliver_later
-      redirect_to team_account_path, notice: 'Invitation sent successfully.'
+      redirect_to team_account_path, notice: "Invitation sent successfully."
     else
       @team_members = @current_account.users.includes(:user_roles).order(:created_at)
       @pending_invitations = @current_account.user_invitations.pending.order(:created_at)
@@ -46,21 +46,21 @@ class AccountsController < ApplicationController
 
   def remove_user
     user = @current_account.users.find(params[:user_id])
-    
+
     if user == current_user
-      redirect_to team_account_path, alert: 'You cannot remove yourself from the account.'
+      redirect_to team_account_path, alert: "You cannot remove yourself from the account."
     elsif user.owner?
-      redirect_to team_account_path, alert: 'Cannot remove the account owner.'
+      redirect_to team_account_path, alert: "Cannot remove the account owner."
     else
       user.user_roles.where(account: @current_account).destroy_all
-      redirect_to team_account_path, notice: 'User removed from account.'
+      redirect_to team_account_path, notice: "User removed from account."
     end
   end
 
   def cancel_invitation
     invitation = @current_account.user_invitations.pending.find(params[:invitation_id])
-    invitation.update(status: 'cancelled')
-    redirect_to team_account_path, notice: 'Invitation cancelled.'
+    invitation.update(status: "cancelled")
+    redirect_to team_account_path, notice: "Invitation cancelled."
   end
 
   def settings
@@ -69,7 +69,7 @@ class AccountsController < ApplicationController
 
   def update_settings
     if current_user.update(settings_params)
-      redirect_to account_settings_path, notice: 'Settings updated successfully.'
+      redirect_to account_settings_path, notice: "Settings updated successfully."
     else
       @notification_preferences = current_user.notification_preferences || {}
       render :settings, status: :unprocessable_entity
@@ -104,7 +104,7 @@ class AccountsController < ApplicationController
 
   def calculate_usage_stats
     current_month = Date.current.beginning_of_month..Date.current.end_of_month
-    
+
     {
       campaigns_this_month: @current_account.campaigns.where(created_at: current_month).count,
       emails_sent_this_month: CampaignContact.joins(:campaign)

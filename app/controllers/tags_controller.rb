@@ -1,11 +1,11 @@
 class TagsController < ApplicationController
-  before_action :set_tag, only: [:show, :edit, :update, :destroy]
+  before_action :set_tag, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @tags = @current_account.tags
                            .left_joins(:contact_tags)
-                           .group('tags.id')
-                           .select('tags.*, COUNT(contact_tags.id) as contacts_count')
+                           .group("tags.id")
+                           .select("tags.*, COUNT(contact_tags.id) as contacts_count")
                            .order(:name)
                            .page(params[:page])
   end
@@ -22,7 +22,7 @@ class TagsController < ApplicationController
     @tag = @current_account.tags.build(tag_params)
 
     if @tag.save
-      redirect_to tags_path, notice: 'Tag was successfully created.'
+      redirect_to tags_path, notice: "Tag was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -33,7 +33,7 @@ class TagsController < ApplicationController
 
   def update
     if @tag.update(tag_params)
-      redirect_to @tag, notice: 'Tag was successfully updated.'
+      redirect_to @tag, notice: "Tag was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -41,7 +41,7 @@ class TagsController < ApplicationController
 
   def destroy
     @tag.destroy
-    redirect_to tags_url, notice: 'Tag was successfully deleted.'
+    redirect_to tags_url, notice: "Tag was successfully deleted."
   end
 
   private
