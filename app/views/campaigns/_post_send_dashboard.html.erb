@@ -1,0 +1,443 @@
+<!-- Post-Send Campaign Management Dashboard -->
+<div class="space-y-8" data-controller="campaign-monitor" data-campaign-monitor-campaign-id-value="<%= campaign.id %>">
+  <!-- Header with Campaign Status -->
+  <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-8 text-white shadow-xl border-0 overflow-hidden relative">
+    <div class="absolute inset-0 bg-black bg-opacity-10"></div>
+    <div class="relative z-10">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-3xl font-bold mb-2"><%= campaign.name %></h1>
+          <p class="text-white text-opacity-90 text-lg">Campaign Performance Dashboard</p>
+        </div>
+        
+        <!-- Campaign Status Badge -->
+        <div class="flex items-center space-x-4">
+          <div class="campaign-status-badge bg-white bg-opacity-20 rounded-xl px-4 py-2">
+            <div class="flex items-center">
+              <div class="w-3 h-3 bg-green-400 rounded-full mr-2 animate-pulse"></div>
+              <span class="text-sm font-semibold" data-campaign-monitor-target="statusText">
+                <%= campaign.status.humanize %>
+              </span>
+            </div>
+          </div>
+          
+          <!-- Last Updated -->
+          <div class="text-sm text-white text-opacity-80">
+            Last updated: <span data-campaign-monitor-target="lastUpdated">Just now</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quick Stats Row -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white bg-opacity-20 rounded-xl p-4">
+          <div class="text-2xl font-bold" data-campaign-monitor-target="sentCount">
+            <%= number_with_delimiter(campaign.sent_count || 0) %>
+          </div>
+          <div class="text-sm text-white text-opacity-80">Emails Sent</div>
+        </div>
+        
+        <div class="bg-white bg-opacity-20 rounded-xl p-4">
+          <div class="text-2xl font-bold" data-campaign-monitor-target="openRate">
+            <%= number_to_percentage(campaign.open_rate || 0, precision: 1) %>
+          </div>
+          <div class="text-sm text-white text-opacity-80">Open Rate</div>
+        </div>
+        
+        <div class="bg-white bg-opacity-20 rounded-xl p-4">
+          <div class="text-2xl font-bold" data-campaign-monitor-target="clickRate">
+            <%= number_to_percentage(campaign.click_rate || 0, precision: 1) %>
+          </div>
+          <div class="text-sm text-white text-opacity-80">Click Rate</div>
+        </div>
+        
+        <div class="bg-white bg-opacity-20 rounded-xl p-4">
+          <div class="text-2xl font-bold" data-campaign-monitor-target="revenue">
+            $<%= number_with_delimiter(campaign.revenue || 0) %>
+          </div>
+          <div class="text-sm text-white text-opacity-80">Revenue</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Real-time Performance Charts -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Opens Over Time Chart -->
+    <div class="bg-white rounded-2xl shadow-lg border-0 overflow-hidden">
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-100">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+              <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Email Opens</h3>
+              <p class="text-sm text-gray-600">Opens over time</p>
+            </div>
+          </div>
+          
+          <!-- Time Range Selector -->
+          <select class="text-sm border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  data-action="change->campaign-monitor#updateTimeRange"
+                  data-campaign-monitor-target="timeRange">
+            <option value="1h">Last Hour</option>
+            <option value="24h" selected>Last 24 Hours</option>
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="p-6">
+        <div class="h-64" data-campaign-monitor-target="opensChart">
+          <!-- Chart will be rendered here -->
+          <div class="flex items-center justify-center h-full text-gray-500">
+            <div class="text-center">
+              <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <p class="text-sm">Loading chart data...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clicks Over Time Chart -->
+    <div class="bg-white rounded-2xl shadow-lg border-0 overflow-hidden">
+      <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-100">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+              <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Link Clicks</h3>
+              <p class="text-sm text-gray-600">Clicks over time</p>
+            </div>
+          </div>
+          
+          <!-- Export Button -->
+          <button type="button" 
+                  class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200"
+                  data-action="click->campaign-monitor#exportData">
+            <svg class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Export
+          </button>
+        </div>
+      </div>
+      
+      <div class="p-6">
+        <div class="h-64" data-campaign-monitor-target="clicksChart">
+          <!-- Chart will be rendered here -->
+          <div class="flex items-center justify-center h-full text-gray-500">
+            <div class="text-center">
+              <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <p class="text-sm">Loading chart data...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Metrics Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Delivery Metrics -->
+    <div class="bg-white rounded-2xl shadow-lg border-0 overflow-hidden">
+      <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-100">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+            <svg class="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-gray-900">Delivery</h4>
+            <p class="text-sm text-gray-600">Email delivery status</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-6 space-y-4">
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-medium text-gray-600">Delivered:</span>
+          <span class="text-sm font-bold text-green-600" data-campaign-monitor-target="deliveredCount">
+            <%= number_with_delimiter(campaign.delivered_count || 0) %>
+          </span>
+        </div>
+        
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-medium text-gray-600">Bounced:</span>
+          <span class="text-sm font-bold text-red-600" data-campaign-monitor-target="bouncedCount">
+            <%= number_with_delimiter(campaign.bounced_count || 0) %>
+          </span>
+        </div>
+        
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-medium text-gray-600">Pending:</span>
+          <span class="text-sm font-bold text-yellow-600" data-campaign-monitor-target="pendingCount">
+            <%= number_with_delimiter(campaign.pending_count || 0) %>
+          </span>
+        </div>
+        
+        <div class="pt-4 border-t border-gray-100">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold text-gray-700">Delivery Rate:</span>
+            <span class="text-sm font-bold text-purple-600" data-campaign-monitor-target="deliveryRate">
+              <%= number_to_percentage(campaign.delivery_rate || 0, precision: 1) %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Engagement Metrics -->
+    <div class="bg-white rounded-2xl shadow-lg border-0 overflow-hidden">
+      <div class="bg-gradient-to-r from-orange-50 to-red-50 px-6 py-4 border-b border-gray-100">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+            <svg class="w-5 h-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-gray-900">Engagement</h4>
+            <p class="text-sm text-gray-600">Recipient interactions</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-6 space-y-4">
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-medium text-gray-600">Unique Opens:</span>
+          <span class="text-sm font-bold text-blue-600" data-campaign-monitor-target="uniqueOpens">
+            <%= number_with_delimiter(campaign.unique_opens || 0) %>
+          </span>
+        </div>
+        
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-medium text-gray-600">Total Opens:</span>
+          <span class="text-sm font-bold text-blue-600" data-campaign-monitor-target="totalOpens">
+            <%= number_with_delimiter(campaign.total_opens || 0) %>
+          </span>
+        </div>
+        
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-medium text-gray-600">Unique Clicks:</span>
+          <span class="text-sm font-bold text-green-600" data-campaign-monitor-target="uniqueClicks">
+            <%= number_with_delimiter(campaign.unique_clicks || 0) %>
+          </span>
+        </div>
+        
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-medium text-gray-600">Total Clicks:</span>
+          <span class="text-sm font-bold text-green-600" data-campaign-monitor-target="totalClicks">
+            <%= number_with_delimiter(campaign.total_clicks || 0) %>
+          </span>
+        </div>
+        
+        <div class="pt-4 border-t border-gray-100">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold text-gray-700">CTOR:</span>
+            <span class="text-sm font-bold text-orange-600" data-campaign-monitor-target="ctor">
+              <%= number_to_percentage(campaign.click_to_open_rate || 0, precision: 1) %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue & Conversions -->
+    <div class="bg-white rounded-2xl shadow-lg border-0 overflow-hidden">
+      <div class="bg-gradient-to-r from-teal-50 to-cyan-50 px-6 py-4 border-b border-gray-100">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center mr-3">
+            <svg class="w-5 h-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-gray-900">Revenue</h4>
+            <p class="text-sm text-gray-600">Campaign performance</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-6 space-y-4">
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-medium text-gray-600">Total Revenue:</span>
+          <span class="text-sm font-bold text-green-600" data-campaign-monitor-target="totalRevenue">
+            $<%= number_with_delimiter(campaign.total_revenue || 0) %>
+          </span>
+        </div>
+        
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-medium text-gray-600">Conversions:</span>
+          <span class="text-sm font-bold text-purple-600" data-campaign-monitor-target="conversions">
+            <%= number_with_delimiter(campaign.conversions || 0) %>
+          </span>
+        </div>
+        
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-medium text-gray-600">Conversion Rate:</span>
+          <span class="text-sm font-bold text-purple-600" data-campaign-monitor-target="conversionRate">
+            <%= number_to_percentage(campaign.conversion_rate || 0, precision: 1) %>
+          </span>
+        </div>
+        
+        <div class="pt-4 border-t border-gray-100">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold text-gray-700">Revenue per Email:</span>
+            <span class="text-sm font-bold text-teal-600" data-campaign-monitor-target="revenuePerEmail">
+              $<%= number_with_precision(campaign.revenue_per_email || 0, precision: 2) %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Campaign Management Actions -->
+  <div class="bg-white rounded-2xl shadow-lg border-0 overflow-hidden">
+    <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-100">
+      <div class="flex items-center">
+        <div class="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center mr-3">
+          <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+          </svg>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold text-gray-900">Campaign Actions</h4>
+          <p class="text-sm text-gray-600">Manage your campaign</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Pause/Resume Campaign -->
+        <% if campaign.status == 'sending' %>
+          <button type="button"
+                  class="inline-flex items-center justify-center px-4 py-3 border border-orange-300 rounded-xl shadow-sm text-sm font-semibold text-orange-700 bg-orange-50 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all duration-200"
+                  data-action="click->campaign-monitor#pauseCampaign">
+            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Pause Campaign
+          </button>
+        <% elsif campaign.status == 'paused' %>
+          <button type="button"
+                  class="inline-flex items-center justify-center px-4 py-3 border border-green-300 rounded-xl shadow-sm text-sm font-semibold text-green-700 bg-green-50 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200"
+                  data-action="click->campaign-monitor#resumeCampaign">
+            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m6-6a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Resume Campaign
+          </button>
+        <% end %>
+
+        <!-- Duplicate Campaign -->
+        <%= link_to new_campaign_path(duplicate: campaign.id),
+            class: "inline-flex items-center justify-center px-4 py-3 border border-blue-300 rounded-xl shadow-sm text-sm font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200" do %>
+          <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+          Duplicate Campaign
+        <% end %>
+
+        <!-- View Report -->
+        <%= link_to campaign_path(campaign, format: :pdf),
+            class: "inline-flex items-center justify-center px-4 py-3 border border-purple-300 rounded-xl shadow-sm text-sm font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200",
+            target: "_blank" do %>
+          <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Download Report
+        <% end %>
+
+        <!-- Archive Campaign -->
+        <button type="button"
+                class="inline-flex items-center justify-center px-4 py-3 border border-gray-300 rounded-xl shadow-sm text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200"
+                data-action="click->campaign-monitor#archiveCampaign">
+          <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l6 6 6-6" />
+          </svg>
+          Archive Campaign
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity Feed -->
+  <div class="bg-white rounded-2xl shadow-lg border-0 overflow-hidden">
+    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-4 border-b border-gray-100">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
+            <svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-gray-900">Recent Activity</h4>
+            <p class="text-sm text-gray-600">Latest campaign events</p>
+          </div>
+        </div>
+
+        <!-- Auto-refresh Toggle -->
+        <label class="flex items-center">
+          <input type="checkbox"
+                 checked
+                 class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                 data-action="change->campaign-monitor#toggleAutoRefresh"
+                 data-campaign-monitor-target="autoRefresh">
+          <span class="ml-2 text-sm text-gray-700">Auto-refresh</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="p-6">
+      <div class="space-y-4" data-campaign-monitor-target="activityFeed">
+        <!-- Activity items will be loaded here -->
+        <div class="text-center py-8 text-gray-500">
+          <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p class="text-sm">Loading recent activity...</p>
+        </div>
+      </div>
+
+      <!-- Load More Button -->
+      <div class="text-center mt-6">
+        <button type="button"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200"
+                data-action="click->campaign-monitor#loadMoreActivity"
+                data-campaign-monitor-target="loadMoreButton">
+          <svg class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Load More
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Real-time Update Indicator -->
+<div class="fixed bottom-4 right-4 z-50" data-campaign-monitor-target="updateIndicator" style="display: none;">
+  <div class="bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center">
+    <div class="w-2 h-2 bg-green-300 rounded-full mr-2 animate-pulse"></div>
+    <span class="text-sm font-medium">Live updates active</span>
+  </div>
+</div>

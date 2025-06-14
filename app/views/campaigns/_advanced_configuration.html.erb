@@ -1,0 +1,598 @@
+<!-- Advanced Campaign Configuration -->
+<div class="space-y-6 mt-8">
+  <div class="text-center mb-8">
+    <h3 class="text-xl font-semibold text-gray-900 mb-2">Advanced Configuration</h3>
+    <p class="text-gray-600">Fine-tune your campaign settings for optimal performance</p>
+  </div>
+
+  <!-- Sender Information -->
+  <div class="bg-white rounded-2xl shadow-lg border-0 overflow-hidden" 
+       data-controller="collapsible" 
+       data-collapsible-expanded-value="true"
+       data-collapsible-storage-key-value="campaign_sender_info">
+    
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-100">
+      <button type="button" 
+              class="w-full flex items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-lg p-2 -m-2"
+              data-collapsible-target="toggle"
+              data-action="click->collapsible#toggle keydown->collapsible#keydown"
+              aria-expanded="true">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+            <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-gray-900">Sender Information</h4>
+            <p class="text-sm text-gray-600">Configure sender details and reply settings</p>
+          </div>
+        </div>
+        <svg class="w-5 h-5 text-gray-400 transition-transform duration-200" 
+             data-collapsible-target="icon"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div data-collapsible-target="content" class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <%= form.label :from_name, "From Name", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+          <%= form.text_field :from_name, 
+              placeholder: "Your Company Name",
+              required: true,
+              class: "block w-full px-4 py-3 border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200" %>
+          <p class="mt-1 text-xs text-gray-500">This will appear as the sender name</p>
+        </div>
+
+        <div>
+          <%= form.label :from_email, "From Email", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+          <%= form.email_field :from_email, 
+              placeholder: "hello@yourcompany.com",
+              required: true,
+              class: "block w-full px-4 py-3 border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200" %>
+          <p class="mt-1 text-xs text-gray-500">Must be a verified email address</p>
+        </div>
+
+        <div>
+          <%= form.label :reply_to_email, "Reply-To Email (Optional)", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+          <%= form.email_field :reply_to_email, 
+              placeholder: "replies@yourcompany.com",
+              class: "block w-full px-4 py-3 border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200" %>
+          <p class="mt-1 text-xs text-gray-500">If different from the sender email</p>
+        </div>
+
+        <div>
+          <%= form.label :sender_organization, "Organization (Optional)", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+          <%= form.text_field :sender_organization, 
+              placeholder: "Your Company Inc.",
+              class: "block w-full px-4 py-3 border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200" %>
+          <p class="mt-1 text-xs text-gray-500">Appears in email headers</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Email Tracking Settings -->
+  <div class="bg-white rounded-2xl shadow-lg border-0 overflow-hidden" 
+       data-controller="collapsible" 
+       data-collapsible-expanded-value="false"
+       data-collapsible-storage-key-value="campaign_tracking">
+    
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-100">
+      <button type="button" 
+              class="w-full flex items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded-lg p-2 -m-2"
+              data-collapsible-target="toggle"
+              data-action="click->collapsible#toggle keydown->collapsible#keydown"
+              aria-expanded="false">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+            <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-gray-900">Email Tracking</h4>
+            <p class="text-sm text-gray-600">Configure tracking and analytics settings</p>
+          </div>
+        </div>
+        <svg class="w-5 h-5 text-gray-400 transition-transform duration-200" 
+             data-collapsible-target="icon"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div data-collapsible-target="content" class="p-6" style="display: none;">
+      <div class="space-y-6">
+        <!-- Tracking Options -->
+        <div>
+          <h5 class="text-sm font-semibold text-gray-700 mb-4">Tracking Options</h5>
+          <div class="space-y-3">
+            <label class="flex items-start">
+              <%= form.check_box :track_opens, 
+                  checked: true,
+                  class: "mt-1 rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50" %>
+              <div class="ml-3">
+                <span class="text-sm font-medium text-gray-700">Track email opens</span>
+                <p class="text-xs text-gray-500">Monitor when recipients open your emails</p>
+              </div>
+            </label>
+            
+            <label class="flex items-start">
+              <%= form.check_box :track_clicks, 
+                  checked: true,
+                  class: "mt-1 rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50" %>
+              <div class="ml-3">
+                <span class="text-sm font-medium text-gray-700">Track link clicks</span>
+                <p class="text-xs text-gray-500">Monitor which links recipients click</p>
+              </div>
+            </label>
+            
+            <label class="flex items-start">
+              <%= form.check_box :track_bounces, 
+                  checked: true,
+                  class: "mt-1 rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50" %>
+              <div class="ml-3">
+                <span class="text-sm font-medium text-gray-700">Track bounces</span>
+                <p class="text-xs text-gray-500">Automatically handle bounced emails</p>
+              </div>
+            </label>
+            
+            <label class="flex items-start">
+              <%= form.check_box :track_unsubscribes, 
+                  checked: true,
+                  class: "mt-1 rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50" %>
+              <div class="ml-3">
+                <span class="text-sm font-medium text-gray-700">Track unsubscribes</span>
+                <p class="text-xs text-gray-500">Monitor unsubscribe requests</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- UTM Parameters -->
+        <div>
+          <h5 class="text-sm font-semibold text-gray-700 mb-4">UTM Parameters (Optional)</h5>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <%= form.label :utm_source, "UTM Source", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.text_field :utm_source, 
+                  placeholder: "newsletter",
+                  class: "block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm" %>
+            </div>
+            
+            <div>
+              <%= form.label :utm_medium, "UTM Medium", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.text_field :utm_medium, 
+                  placeholder: "email",
+                  class: "block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm" %>
+            </div>
+            
+            <div>
+              <%= form.label :utm_campaign, "UTM Campaign", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.text_field :utm_campaign, 
+                  placeholder: "summer-sale",
+                  class: "block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm" %>
+            </div>
+            
+            <div>
+              <%= form.label :utm_content, "UTM Content", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.text_field :utm_content, 
+                  placeholder: "header-cta",
+                  class: "block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- A/B Testing -->
+  <div class="bg-white rounded-2xl shadow-lg border-0 overflow-hidden" 
+       data-controller="collapsible" 
+       data-collapsible-expanded-value="false"
+       data-collapsible-storage-key-value="campaign_ab_testing">
+    
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-100">
+      <button type="button" 
+              class="w-full flex items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded-lg p-2 -m-2"
+              data-collapsible-target="toggle"
+              data-action="click->collapsible#toggle keydown->collapsible#keydown"
+              aria-expanded="false">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+            <svg class="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-gray-900">A/B Testing</h4>
+            <p class="text-sm text-gray-600">Test different versions to optimize performance</p>
+          </div>
+        </div>
+        <svg class="w-5 h-5 text-gray-400 transition-transform duration-200" 
+             data-collapsible-target="icon"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div data-collapsible-target="content" class="p-6" style="display: none;">
+      <div class="space-y-6">
+        <!-- Enable A/B Testing -->
+        <div>
+          <label class="flex items-start">
+            <%= form.check_box :ab_testing_enabled, 
+                class: "mt-1 rounded border-gray-300 text-purple-600 shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50",
+                data: { action: "change->collapsible#toggleABSettings" } %>
+            <div class="ml-3">
+              <span class="text-sm font-semibold text-gray-700">Enable A/B Testing</span>
+              <p class="text-xs text-gray-500">Test different versions of your campaign</p>
+            </div>
+          </label>
+        </div>
+
+        <!-- A/B Testing Settings (shown when enabled) -->
+        <div class="ab-testing-settings space-y-4" style="display: none;">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <%= form.label :ab_test_percentage, "Test Percentage", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.range_field :ab_test_percentage, 
+                  min: 10, max: 50, step: 5, value: 20,
+                  class: "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider" %>
+              <div class="flex justify-between text-xs text-gray-500 mt-1">
+                <span>10%</span>
+                <span id="ab-percentage-display">20%</span>
+                <span>50%</span>
+              </div>
+            </div>
+            
+            <div>
+              <%= form.label :ab_winner_criteria, "Winner Selection", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.select :ab_winner_criteria, 
+                  options_for_select([
+                    ['Highest Open Rate', 'open_rate'],
+                    ['Highest Click Rate', 'click_rate'],
+                    ['Manual Selection', 'manual']
+                  ], 'open_rate'),
+                  {},
+                  { class: "block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm" } %>
+            </div>
+          </div>
+
+          <!-- Subject Line Variants -->
+          <div>
+            <h6 class="text-sm font-semibold text-gray-700 mb-3">Subject Line Variants</h6>
+            <div class="space-y-3">
+              <div>
+                <%= form.label :subject_variant_a, "Version A (Original)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+                <%= form.text_field :subject_variant_a, 
+                    placeholder: "Your original subject line",
+                    class: "block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm" %>
+              </div>
+              
+              <div>
+                <%= form.label :subject_variant_b, "Version B", class: "block text-sm font-medium text-gray-700 mb-1" %>
+                <%= form.text_field :subject_variant_b, 
+                    placeholder: "Alternative subject line to test",
+                    class: "block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Social Media Integration -->
+  <div class="bg-white rounded-2xl shadow-lg border-0 overflow-hidden"
+       data-controller="collapsible"
+       data-collapsible-expanded-value="false"
+       data-collapsible-storage-key-value="campaign_social_media">
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-orange-50 to-red-50 px-6 py-4 border-b border-gray-100">
+      <button type="button"
+              class="w-full flex items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg p-2 -m-2"
+              data-collapsible-target="toggle"
+              data-action="click->collapsible#toggle keydown->collapsible#keydown"
+              aria-expanded="false">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+            <svg class="w-5 h-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-gray-900">Social Media Integration</h4>
+            <p class="text-sm text-gray-600">Cross-post to social platforms automatically</p>
+          </div>
+        </div>
+        <svg class="w-5 h-5 text-gray-400 transition-transform duration-200"
+             data-collapsible-target="icon"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div data-collapsible-target="content" class="p-6" style="display: none;">
+      <div class="space-y-6">
+        <!-- Platform Selection -->
+        <div>
+          <h5 class="text-sm font-semibold text-gray-700 mb-4">Select Platforms</h5>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Instagram -->
+            <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-pink-300 hover:bg-pink-50 cursor-pointer transition-all duration-200">
+              <%= form.check_box :social_instagram_enabled,
+                  class: "rounded border-gray-300 text-pink-600 shadow-sm focus:border-pink-300 focus:ring focus:ring-pink-200 focus:ring-opacity-50" %>
+              <div class="ml-3 flex items-center">
+                <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg>
+                </div>
+                <div>
+                  <span class="text-sm font-semibold text-gray-900">Instagram</span>
+                  <p class="text-xs text-gray-600">Post to Instagram feed</p>
+                </div>
+              </div>
+            </label>
+
+            <!-- Twitter/X -->
+            <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-gray-400 hover:bg-gray-50 cursor-pointer transition-all duration-200">
+              <%= form.check_box :social_twitter_enabled,
+                  class: "rounded border-gray-300 text-gray-600 shadow-sm focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50" %>
+              <div class="ml-3 flex items-center">
+                <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center mr-3">
+                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                </div>
+                <div>
+                  <span class="text-sm font-semibold text-gray-900">X (Twitter)</span>
+                  <p class="text-xs text-gray-600">Post to X timeline</p>
+                </div>
+              </div>
+            </label>
+
+            <!-- Facebook -->
+            <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all duration-200">
+              <%= form.check_box :social_facebook_enabled,
+                  class: "rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" %>
+              <div class="ml-3 flex items-center">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                </div>
+                <div>
+                  <span class="text-sm font-semibold text-gray-900">Facebook</span>
+                  <p class="text-xs text-gray-600">Post to Facebook page</p>
+                </div>
+              </div>
+            </label>
+
+            <!-- LinkedIn -->
+            <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all duration-200">
+              <%= form.check_box :social_linkedin_enabled,
+                  class: "rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" %>
+              <div class="ml-3 flex items-center">
+                <div class="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center mr-3">
+                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                </div>
+                <div>
+                  <span class="text-sm font-semibold text-gray-900">LinkedIn</span>
+                  <p class="text-xs text-gray-600">Post to LinkedIn profile</p>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Social Content Customization -->
+        <div>
+          <h5 class="text-sm font-semibold text-gray-700 mb-4">Social Content</h5>
+          <div class="space-y-4">
+            <div>
+              <%= form.label :social_message, "Social Media Message", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.text_area :social_message,
+                  rows: 3,
+                  placeholder: "Customize the message for social media posts...",
+                  class: "block w-full px-4 py-3 border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm resize-none" %>
+              <p class="mt-1 text-xs text-gray-500">This will be used for all selected platforms</p>
+            </div>
+
+            <div>
+              <%= form.label :social_hashtags, "Hashtags", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.text_field :social_hashtags,
+                  placeholder: "#marketing #newsletter #business",
+                  class: "block w-full px-4 py-3 border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm" %>
+              <p class="mt-1 text-xs text-gray-500">Separate hashtags with spaces</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delivery Optimization -->
+  <div class="bg-white rounded-2xl shadow-lg border-0 overflow-hidden"
+       data-controller="collapsible"
+       data-collapsible-expanded-value="false"
+       data-collapsible-storage-key-value="campaign_delivery">
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-teal-50 to-cyan-50 px-6 py-4 border-b border-gray-100">
+      <button type="button"
+              class="w-full flex items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-lg p-2 -m-2"
+              data-collapsible-target="toggle"
+              data-action="click->collapsible#toggle keydown->collapsible#keydown"
+              aria-expanded="false">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center mr-3">
+            <svg class="w-5 h-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-gray-900">Delivery Optimization</h4>
+            <p class="text-sm text-gray-600">Optimize send timing and delivery rates</p>
+          </div>
+        </div>
+        <svg class="w-5 h-5 text-gray-400 transition-transform duration-200"
+             data-collapsible-target="icon"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div data-collapsible-target="content" class="p-6" style="display: none;">
+      <div class="space-y-6">
+        <!-- Send Rate Control -->
+        <div>
+          <h5 class="text-sm font-semibold text-gray-700 mb-4">Send Rate Control</h5>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <%= form.label :send_rate_limit, "Emails per Hour", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.select :send_rate_limit,
+                  options_for_select([
+                    ['No Limit', ''],
+                    ['100 per hour', '100'],
+                    ['500 per hour', '500'],
+                    ['1,000 per hour', '1000'],
+                    ['2,500 per hour', '2500'],
+                    ['5,000 per hour', '5000']
+                  ], '1000'),
+                  {},
+                  { class: "block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm" } %>
+              <p class="mt-1 text-xs text-gray-500">Helps maintain good sender reputation</p>
+            </div>
+
+            <div>
+              <%= form.label :delivery_timezone, "Delivery Timezone", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.select :delivery_timezone,
+                  options_for_select([
+                    ['Recipient\'s Timezone', 'recipient'],
+                    ['Eastern Time (ET)', 'America/New_York'],
+                    ['Central Time (CT)', 'America/Chicago'],
+                    ['Mountain Time (MT)', 'America/Denver'],
+                    ['Pacific Time (PT)', 'America/Los_Angeles'],
+                    ['UTC', 'UTC']
+                  ], 'recipient'),
+                  {},
+                  { class: "block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm" } %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Optimal Send Time -->
+        <div>
+          <h5 class="text-sm font-semibold text-gray-700 mb-4">Optimal Send Time</h5>
+          <div class="space-y-3">
+            <label class="flex items-start">
+              <%= form.check_box :use_send_time_optimization,
+                  class: "mt-1 rounded border-gray-300 text-teal-600 shadow-sm focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50" %>
+              <div class="ml-3">
+                <span class="text-sm font-medium text-gray-700">Use Send Time Optimization</span>
+                <p class="text-xs text-gray-500">Automatically send at the best time for each recipient</p>
+              </div>
+            </label>
+
+            <div class="ml-6 space-y-3">
+              <div>
+                <%= form.label :preferred_send_time, "Fallback Send Time", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= form.time_field :preferred_send_time,
+                    value: "09:00",
+                    class: "block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm" %>
+                <p class="mt-1 text-xs text-gray-500">Used when optimal time is not available</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delivery Options -->
+        <div>
+          <h5 class="text-sm font-semibold text-gray-700 mb-4">Delivery Options</h5>
+          <div class="space-y-3">
+            <label class="flex items-start">
+              <%= form.check_box :skip_weekends,
+                  class: "mt-1 rounded border-gray-300 text-teal-600 shadow-sm focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50" %>
+              <div class="ml-3">
+                <span class="text-sm font-medium text-gray-700">Skip Weekends</span>
+                <p class="text-xs text-gray-500">Don't send emails on Saturday and Sunday</p>
+              </div>
+            </label>
+
+            <label class="flex items-start">
+              <%= form.check_box :respect_quiet_hours,
+                  checked: true,
+                  class: "mt-1 rounded border-gray-300 text-teal-600 shadow-sm focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50" %>
+              <div class="ml-3">
+                <span class="text-sm font-medium text-gray-700">Respect Quiet Hours</span>
+                <p class="text-xs text-gray-500">Avoid sending between 10 PM and 6 AM</p>
+              </div>
+            </label>
+
+            <label class="flex items-start">
+              <%= form.check_box :auto_retry_failed,
+                  checked: true,
+                  class: "mt-1 rounded border-gray-300 text-teal-600 shadow-sm focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50" %>
+              <div class="ml-3">
+                <span class="text-sm font-medium text-gray-700">Auto-retry Failed Sends</span>
+                <p class="text-xs text-gray-500">Automatically retry failed deliveries up to 3 times</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // A/B Testing percentage slider
+    const percentageSlider = document.querySelector('[name="campaign[ab_test_percentage]"]')
+    const percentageDisplay = document.getElementById('ab-percentage-display')
+    
+    if (percentageSlider && percentageDisplay) {
+      percentageSlider.addEventListener('input', function() {
+        percentageDisplay.textContent = this.value + '%'
+      })
+    }
+
+    // A/B Testing toggle
+    const abTestingCheckbox = document.querySelector('[name="campaign[ab_testing_enabled]"]')
+    const abTestingSettings = document.querySelector('.ab-testing-settings')
+    
+    if (abTestingCheckbox && abTestingSettings) {
+      function toggleABSettings() {
+        if (abTestingCheckbox.checked) {
+          abTestingSettings.style.display = 'block'
+        } else {
+          abTestingSettings.style.display = 'none'
+        }
+      }
+      
+      abTestingCheckbox.addEventListener('change', toggleABSettings)
+      toggleABSettings() // Initialize
+    }
+  })
+</script>
