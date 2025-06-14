@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_many :templates, dependent: :destroy
   has_many :user_sessions, dependent: :destroy
   has_many :audit_logs, dependent: :destroy
+  has_one :onboarding_progress, dependent: :destroy
 
   # Validations
   validates :first_name, :last_name, presence: true

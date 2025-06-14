@@ -69,6 +69,23 @@ Rails.application.routes.draw do
   get "analytics/chart_data", to: "analytics#chart_data"
   get "analytics/dashboard_summary", to: "analytics#dashboard_summary"
 
+  # Onboarding (indie-focused)
+  get "onboarding", to: "onboarding#show"
+  get "onboarding/welcome", to: "onboarding#welcome"
+  get "onboarding/business_info", to: "onboarding#business_info"
+  get "onboarding/first_contacts", to: "onboarding#first_contacts"
+  get "onboarding/choose_template", to: "onboarding#choose_template"
+  get "onboarding/first_campaign", to: "onboarding#first_campaign"
+  get "onboarding/explore_features", to: "onboarding#explore_features"
+  post "onboarding/welcome", to: "onboarding#complete_welcome"
+  post "onboarding/business_info", to: "onboarding#complete_business_info"
+  post "onboarding/first_contacts", to: "onboarding#complete_first_contacts"
+  post "onboarding/choose_template", to: "onboarding#complete_choose_template"
+  post "onboarding/first_campaign", to: "onboarding#complete_first_campaign"
+  post "onboarding/complete", to: "onboarding#complete"
+  post "onboarding/skip_step", to: "onboarding#skip_step"
+  post "onboarding/restart", to: "onboarding#restart"
+
   # Account management
   resource :account, only: [ :show, :edit, :update ] do
     get :billing

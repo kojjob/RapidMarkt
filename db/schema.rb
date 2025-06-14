@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_14_223350) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_14_225807) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,6 +22,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_223350) do
     t.text "settings"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "business_type"
+    t.string "website"
+    t.string "industry"
     t.index ["status"], name: "index_accounts_on_status"
     t.index ["subdomain"], name: "index_accounts_on_subdomain", unique: true
   end
@@ -158,6 +161,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_223350) do
     t.index ["account_id"], name: "index_contacts_on_account_id"
   end
 
+  create_table "onboarding_progresses", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "current_step", default: "welcome", null: false
+    t.boolean "completed", default: false, null: false
+    t.datetime "completed_at"
+    t.datetime "started_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.integer "completion_percentage", default: 0, null: false
+    t.float "total_time_minutes", default: 0.0
+    t.jsonb "completed_steps", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["completed"], name: "index_onboarding_progresses_on_completed"
+    t.index ["completed_steps"], name: "index_onboarding_progresses_on_completed_steps", using: :gin
+    t.index ["current_step"], name: "index_onboarding_progresses_on_current_step"
+    t.index ["user_id"], name: "index_onboarding_progresses_on_user_id"
+  end
+
   create_table "subscriptions", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "stripe_subscription_id"
@@ -261,6 +281,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_223350) do
   add_foreign_key "contact_tags", "contacts"
   add_foreign_key "contact_tags", "tags"
   add_foreign_key "contacts", "accounts"
+  add_foreign_key "onboarding_progresses", "users"
   add_foreign_key "subscriptions", "accounts"
   add_foreign_key "tags", "accounts"
   add_foreign_key "templates", "accounts"
