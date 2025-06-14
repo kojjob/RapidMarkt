@@ -1,19 +1,19 @@
 class CampaignMailer < ApplicationMailer
-  default from: 'noreply@rapidmarkt.com'
+  default from: "noreply@rapidmarkt.com"
 
   def send_campaign(campaign:, contact:, subject:, content:)
     @campaign = campaign
     @contact = contact
     @content = content
     @account = campaign.account
-    
+
     # Set tracking parameters
     @tracking_params = {
       campaign_id: campaign.id,
       contact_id: contact.id,
       token: generate_tracking_token(campaign, contact)
     }
-    
+
     mail(
       to: contact.email,
       subject: subject,

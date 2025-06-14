@@ -1,11 +1,11 @@
 class ContactsController < ApplicationController
-  before_action :set_contact, only: [:show, :edit, :update, :destroy]
+  before_action :set_contact, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @contacts = @current_account.contacts
                                .includes(:tags)
                                .order(:last_name, :first_name)
-    
+
     # Filter by search query
     if params[:search].present?
       @contacts = @contacts.where(
@@ -45,7 +45,7 @@ class ContactsController < ApplicationController
     @contact = @current_account.contacts.build(contact_params)
 
     if @contact.save
-      redirect_to @contact, notice: 'Contact was successfully created.'
+      redirect_to @contact, notice: "Contact was successfully created."
     else
       @tags = @current_account.tags.order(:name)
       render :new, status: :unprocessable_entity
@@ -58,7 +58,7 @@ class ContactsController < ApplicationController
 
   def update
     if @contact.update(contact_params)
-      redirect_to @contact, notice: 'Contact was successfully updated.'
+      redirect_to @contact, notice: "Contact was successfully updated."
     else
       @tags = @current_account.tags.order(:name)
       render :edit, status: :unprocessable_entity
@@ -67,7 +67,7 @@ class ContactsController < ApplicationController
 
   def destroy
     @contact.destroy
-    redirect_to contacts_url, notice: 'Contact was successfully deleted.'
+    redirect_to contacts_url, notice: "Contact was successfully deleted."
   end
 
   def import
@@ -81,7 +81,7 @@ class ContactsController < ApplicationController
           render :import
         end
       else
-        flash.now[:alert] = 'Please select a file to import.'
+        flash.now[:alert] = "Please select a file to import."
         render :import
       end
     end
@@ -89,12 +89,12 @@ class ContactsController < ApplicationController
 
   def export
     contacts = @current_account.contacts.includes(:tags)
-    
+
     respond_to do |format|
       format.csv do
         send_data ContactExportService.new(contacts).to_csv,
                   filename: "contacts_#{Date.current}.csv",
-                  type: 'text/csv'
+                  type: "text/csv"
       end
     end
   end
@@ -104,7 +104,7 @@ class ContactsController < ApplicationController
   def set_contact
     @contact = @current_account.contacts.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    redirect_to contacts_path, alert: 'Contact not found or you do not have permission to access it.'
+    redirect_to contacts_path, alert: "Contact not found or you do not have permission to access it."
   end
 
   def contact_params

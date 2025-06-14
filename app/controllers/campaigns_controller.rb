@@ -1,5 +1,5 @@
 class CampaignsController < ApplicationController
-  before_action :set_campaign, only: [:show, :edit, :update, :destroy, :send_campaign, :send_test, :preview]
+  before_action :set_campaign, only: [ :show, :edit, :update, :destroy, :send_campaign, :send_test, :preview ]
 
   def index
     @campaigns = @current_account.campaigns.includes(:template)
@@ -26,7 +26,7 @@ class CampaignsController < ApplicationController
     @campaign.user = current_user
 
     if @campaign.save
-      redirect_to @campaign, notice: 'Campaign was successfully created.'
+      redirect_to @campaign, notice: "Campaign was successfully created."
     else
       @templates = @current_account.templates.active
       render :new, status: :unprocessable_entity
@@ -39,7 +39,7 @@ class CampaignsController < ApplicationController
 
   def update
     if @campaign.update(campaign_params)
-      redirect_to @campaign, notice: 'Campaign was successfully updated.'
+      redirect_to @campaign, notice: "Campaign was successfully updated."
     else
       @templates = @current_account.templates.active
       render :edit, status: :unprocessable_entity
@@ -48,11 +48,11 @@ class CampaignsController < ApplicationController
 
   def destroy
     @campaign.destroy
-    redirect_to campaigns_url, notice: 'Campaign was successfully deleted.'
+    redirect_to campaigns_url, notice: "Campaign was successfully deleted."
   end
 
   def preview
-    @contact = @current_account.contacts.first || Contact.new(first_name: 'John', last_name: 'Doe', email: 'john@example.com')
+    @contact = @current_account.contacts.first || Contact.new(first_name: "John", last_name: "Doe", email: "john@example.com")
     render layout: false
   end
 
@@ -60,10 +60,10 @@ class CampaignsController < ApplicationController
     if @campaign.can_be_sent?
       # Queue the campaign for sending via background job
       CampaignSenderJob.perform_later(@campaign.id)
-      
-      redirect_to @campaign, notice: 'Campaign is being sent! You will be notified when complete.'
+
+      redirect_to @campaign, notice: "Campaign is being sent! You will be notified when complete."
     else
-      redirect_to @campaign, alert: 'Campaign cannot be sent in its current state.'
+      redirect_to @campaign, alert: "Campaign cannot be sent in its current state."
     end
   end
 
@@ -71,11 +71,11 @@ class CampaignsController < ApplicationController
     if @campaign.draft?
       # Send test email to current user
       test_contact = Contact.new(
-        first_name: current_user.first_name || 'Test',
-        last_name: current_user.last_name || 'User',
+        first_name: current_user.first_name || "Test",
+        last_name: current_user.last_name || "User",
         email: current_user.email
       )
-      
+
       begin
         CampaignMailer.send_campaign(
           campaign: @campaign,
@@ -83,28 +83,28 @@ class CampaignsController < ApplicationController
           subject: @campaign.subject,
           content: @campaign.template&.body || "Test content"
         ).deliver_now
-        
-        redirect_to @campaign, notice: 'Test email sent successfully!'
+
+        redirect_to @campaign, notice: "Test email sent successfully!"
       rescue => e
         redirect_to @campaign, alert: "Failed to send test email: #{e.message}"
       end
     else
-      redirect_to @campaign, alert: 'Test emails can only be sent for draft campaigns.'
+      redirect_to @campaign, alert: "Test emails can only be sent for draft campaigns."
     end
   end
 
   def bulk_send
     campaign_ids = params[:campaign_ids] || []
-    
+
     if campaign_ids.empty?
-      redirect_to campaigns_path, alert: 'No campaigns selected.'
+      redirect_to campaigns_path, alert: "No campaigns selected."
       return
     end
 
-    campaigns = @current_account.campaigns.where(id: campaign_ids, status: 'draft')
-    
+    campaigns = @current_account.campaigns.where(id: campaign_ids, status: "draft")
+
     if campaigns.empty?
-      redirect_to campaigns_path, alert: 'No valid campaigns found to send.'
+      redirect_to campaigns_path, alert: "No valid campaigns found to send."
       return
     end
 
@@ -131,15 +131,15 @@ class CampaignsController < ApplicationController
 
   def bulk_schedule
     campaign_ids = params[:campaign_ids] || []
-    
+
     if campaign_ids.empty?
-      redirect_to campaigns_path, alert: 'No campaigns selected.'
+      redirect_to campaigns_path, alert: "No campaigns selected."
       return
     end
 
     # For now, redirect to a scheduling interface
     # In a full implementation, you'd show a modal or form to select the schedule time
-    redirect_to campaigns_path, notice: 'Bulk scheduling feature coming soon! Please schedule campaigns individually for now.'
+    redirect_to campaigns_path, notice: "Bulk scheduling feature coming soon! Please schedule campaigns individually for now."
   end
 
   private
@@ -147,14 +147,14 @@ class CampaignsController < ApplicationController
   def set_campaign
     @campaign = @current_account.campaigns.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    redirect_to campaigns_path, alert: 'Campaign not found or you do not have permission to access it.'
+    redirect_to campaigns_path, alert: "Campaign not found or you do not have permission to access it."
   end
 
   def campaign_params
     params.require(:campaign).permit(
-      :name, :subject, :template_id, :scheduled_at, :status, :from_name, :from_email, :reply_to, 
-      :recipient_type, :send_type, :media_type, :media_urls, :design_theme, :background_color, 
-      :text_color, :font_family, :header_image_url, :logo_url, :call_to_action_text, 
+      :name, :subject, :template_id, :scheduled_at, :status, :from_name, :from_email, :reply_to,
+      :recipient_type, :send_type, :media_type, :media_urls, :design_theme, :background_color,
+      :text_color, :font_family, :header_image_url, :logo_url, :call_to_action_text,
       :call_to_action_url, :social_sharing_enabled, :social_platforms,
       tag_ids: [], media_urls_array: [], social_platforms_array: []
     )

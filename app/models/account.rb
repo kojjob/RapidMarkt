@@ -6,7 +6,7 @@ class Account < ApplicationRecord
   has_many :contacts, dependent: :destroy
   has_many :templates, dependent: :destroy
   has_many :tags, dependent: :destroy
-  
+
   # Validations
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }
   validates :subdomain, presence: true, uniqueness: { case_sensitive: false },
@@ -14,46 +14,46 @@ class Account < ApplicationRecord
                        length: { minimum: 3, maximum: 30 }
   validates :plan, inclusion: { in: %w[free starter professional enterprise] }
   validates :status, inclusion: { in: %w[active suspended cancelled] }
-  
+
   # Callbacks
   before_validation :normalize_subdomain
-  
+
   # Scopes
-  scope :active, -> { where(status: 'active') }
+  scope :active, -> { where(status: "active") }
   scope :by_plan, ->(plan) { where(plan: plan) }
-  
+
   # Methods
   def owner
-    users.find_by(role: 'owner')
+    users.find_by(role: "owner")
   end
-  
+
   def active?
-    status == 'active'
+    status == "active"
   end
-  
+
   def suspended?
-    status == 'suspended'
+    status == "suspended"
   end
-  
+
   def cancelled?
-    status == 'cancelled'
+    status == "cancelled"
   end
-  
+
   def plan_limits
     case plan
-    when 'free'
+    when "free"
       { contacts: 100, campaigns_per_month: 5, templates: 3 }
-    when 'starter'
+    when "starter"
       { contacts: 1000, campaigns_per_month: 50, templates: 10 }
-    when 'professional'
+    when "professional"
       { contacts: 10000, campaigns_per_month: 200, templates: 50 }
-    when 'enterprise'
+    when "enterprise"
       { contacts: Float::INFINITY, campaigns_per_month: Float::INFINITY, templates: Float::INFINITY }
     end
   end
-  
+
   private
-  
+
   def normalize_subdomain
     self.subdomain = subdomain&.downcase&.strip
   end

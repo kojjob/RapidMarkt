@@ -1,17 +1,17 @@
 class AnalyticsController < ApplicationController
   def index
-    @date_range = params[:date_range] || 'last_30_days'
+    @date_range = params[:date_range] || "last_30_days"
     @analytics_service = AnalyticsService.new(@current_account)
-    
+
     # Overview statistics
     @overview_stats = @analytics_service.overview_stats(@date_range)
-    
+
     # Recent campaign performance
     @campaign_performance = @analytics_service.campaign_performance(@date_range).first(10) || []
-    
+
     # Contact growth
     @contact_growth = @analytics_service.contact_growth(@date_range)
-    
+
     # Engagement trends
     @engagement_trends = @analytics_service.engagement_trends(@date_range)
   end
@@ -21,7 +21,7 @@ class AnalyticsController < ApplicationController
                                 .includes(:campaign_contacts)
                                 .where(created_at: parse_date_range)
                                 .order(created_at: :desc)
-    
+
     @campaigns_with_stats = @campaigns.map do |campaign|
       {
         campaign: campaign,
@@ -38,24 +38,24 @@ class AnalyticsController < ApplicationController
   end
 
   def export
-    @date_range = params[:date_range] || 'last_30_days'
-    format = params[:format] || 'csv'
+    @date_range = params[:date_range] || "last_30_days"
+    format = params[:format] || "csv"
     @analytics_service = AnalyticsService.new(@current_account)
-    
+
     begin
       export_data = @analytics_service.export_data(format, @date_range)
-      
+
       case format.downcase
-      when 'csv'
-        send_data export_data, 
+      when "csv"
+        send_data export_data,
                   filename: "analytics_#{@date_range}_#{Date.current}.csv",
-                  type: 'text/csv'
-      when 'pdf'
+                  type: "text/csv"
+      when "pdf"
         send_data export_data,
                   filename: "analytics_#{@date_range}_#{Date.current}.pdf",
-                  type: 'application/pdf'
+                  type: "application/pdf"
       else
-        redirect_to analytics_path, alert: 'Invalid export format'
+        redirect_to analytics_path, alert: "Invalid export format"
       end
     rescue => e
       redirect_to analytics_path, alert: "Export failed: #{e.message}"
@@ -66,15 +66,15 @@ class AnalyticsController < ApplicationController
 
   def parse_date_range
     case params[:period]
-    when 'week'
+    when "week"
       1.week.ago..Time.current
-    when 'month'
+    when "month"
       1.month.ago..Time.current
-    when '3months'
+    when "3months"
       3.months.ago..Time.current
-    when 'year'
+    when "year"
       1.year.ago..Time.current
-    when 'custom'
+    when "custom"
       if params[:start_date].present? && params[:end_date].present?
         Date.parse(params[:start_date])..Date.parse(params[:end_date])
       else
@@ -120,8 +120,8 @@ class AnalyticsController < ApplicationController
     trends = {}
     (@date_range.begin.to_date..@date_range.end.to_date).each do |date|
       day_contacts = campaign_contacts.where(sent_at: date.beginning_of_day..date.end_of_day)
-      
-      trends[date.strftime('%Y-%m-%d')] = {
+
+      trends[date.strftime("%Y-%m-%d")] = {
         sent: day_contacts.count,
         opened: day_contacts.where.not(opened_at: nil).count,
         clicked: day_contacts.where.not(clicked_at: nil).count
@@ -136,20 +136,20 @@ class AnalyticsController < ApplicationController
                                           .joins(:campaign_contacts)
                                           .where(created_at: @date_range)
                                           .group(:id, :name)
-                                          .having('COUNT(campaign_contacts.id) > 0')
+                                          .having("COUNT(campaign_contacts.id) > 0")
                                           .select(
-                                            'campaigns.*',
-                                            'COUNT(campaign_contacts.id) as sent_count',
-                                            'COUNT(CASE WHEN campaign_contacts.opened_at IS NOT NULL THEN 1 END) as opened_count',
-                                            '(COUNT(CASE WHEN campaign_contacts.opened_at IS NOT NULL THEN 1 END)::float / COUNT(campaign_contacts.id)) as open_rate_calc'
+                                            "campaigns.*",
+                                            "COUNT(campaign_contacts.id) as sent_count",
+                                            "COUNT(CASE WHEN campaign_contacts.opened_at IS NOT NULL THEN 1 END) as opened_count",
+                                            "(COUNT(CASE WHEN campaign_contacts.opened_at IS NOT NULL THEN 1 END)::float / COUNT(campaign_contacts.id)) as open_rate_calc"
                                           )
-                                          .order('open_rate_calc DESC')
+                                          .order("open_rate_calc DESC")
                                           .limit(5)
 
     campaigns_with_stats.map do |campaign|
       sent = campaign.sent_count
       opened = campaign.opened_count
-      
+
       {
         name: campaign.name,
         sent: sent,
@@ -162,17 +162,17 @@ class AnalyticsController < ApplicationController
   def calculate_contact_growth
     # Get contacts within the date range
     contacts = @current_account.contacts.where(created_at: @date_range)
-    
+
     # Group contacts by day manually
     contacts_by_day = contacts.group("DATE(created_at)").count
-    
+
     # Get basic stats for the period
     new_contacts = contacts.count
     total_contacts = @current_account.contacts.count
-    subscribed = @current_account.contacts.where(status: 'subscribed').count
-    unsubscribed = @current_account.contacts.where(status: 'unsubscribed').count
-    total_unsubscribed = @current_account.contacts.where(status: 'unsubscribed').count
-    
+    subscribed = @current_account.contacts.where(status: "subscribed").count
+    unsubscribed = @current_account.contacts.where(status: "unsubscribed").count
+    total_unsubscribed = @current_account.contacts.where(status: "unsubscribed").count
+
     {
       new_contacts: new_contacts,
       total_contacts: total_contacts,
@@ -189,19 +189,19 @@ class AnalyticsController < ApplicationController
                                          .where(campaign_contacts: { created_at: @date_range })
                                          .group(:id, :first_name, :last_name, :email)
                                          .select(
-                                           'contacts.*',
-                                           'COUNT(campaign_contacts.id) as sent_count',
-                                           'COUNT(CASE WHEN campaign_contacts.opened_at IS NOT NULL THEN 1 END) as opened_count',
-                                           'COUNT(CASE WHEN campaign_contacts.clicked_at IS NOT NULL THEN 1 END) as clicked_count'
+                                           "contacts.*",
+                                           "COUNT(campaign_contacts.id) as sent_count",
+                                           "COUNT(CASE WHEN campaign_contacts.opened_at IS NOT NULL THEN 1 END) as opened_count",
+                                           "COUNT(CASE WHEN campaign_contacts.clicked_at IS NOT NULL THEN 1 END) as clicked_count"
                                          )
-                                         .order('opened_count DESC')
+                                         .order("opened_count DESC")
                                          .limit(10)
 
     contacts_with_stats.map do |contact|
       sent = contact.sent_count
       opened = contact.opened_count
       clicked = contact.clicked_count
-      
+
       {
         name: "#{contact.first_name} #{contact.last_name}",
         email: contact.email,

@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users
-  
+
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
@@ -22,7 +22,7 @@ Rails.application.routes.draw do
       post :send_campaign
       post :send_test
     end
-    
+
     collection do
       post :bulk_send
       post :bulk_schedule
@@ -56,7 +56,7 @@ Rails.application.routes.draw do
   get "analytics/export", to: "analytics#export"
 
   # Account management
-  resource :account, only: [:show, :edit, :update] do
+  resource :account, only: [ :show, :edit, :update ] do
     get :billing
     get :team
     post :invite_user

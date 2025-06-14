@@ -58,7 +58,7 @@
       </div>
       
       <div class="content">
-        <%= raw @content %>
+        <%= sanitize @content, tags: %w[p br strong em ul ol li h1 h2 h3 h4 h5 h6 a img], attributes: %w[href src alt title style] %>
       </div>
       
       <div class="footer">
