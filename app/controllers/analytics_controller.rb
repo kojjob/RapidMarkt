@@ -14,6 +14,30 @@ class AnalyticsController < ApplicationController
 
     # Engagement trends
     @engagement_trends = @analytics_service.engagement_trends(@date_range)
+    
+    # Top performing campaigns
+    @top_campaigns = @analytics_service.top_performing_campaigns(5, @date_range)
+    
+    # Contact segments
+    @contact_segments = @analytics_service.contact_segments
+    
+    # Real-time stats
+    @real_time_stats = @analytics_service.real_time_stats
+    
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: {
+          overview: @overview_stats,
+          campaigns: @campaign_performance,
+          contact_growth: @contact_growth,
+          engagement_trends: @engagement_trends,
+          top_campaigns: @top_campaigns,
+          contact_segments: @contact_segments,
+          real_time: @real_time_stats
+        }
+      end
+    end
   end
 
   def campaigns
@@ -60,6 +84,46 @@ class AnalyticsController < ApplicationController
     rescue => e
       redirect_to analytics_path, alert: "Export failed: #{e.message}"
     end
+  end
+  
+  def real_time
+    @analytics_service = AnalyticsService.new(@current_account)
+    
+    render json: @analytics_service.real_time_stats
+  end
+  
+  def chart_data
+    @date_range = params[:date_range] || "last_30_days"
+    chart_type = params[:chart_type] || "engagement"
+    @analytics_service = AnalyticsService.new(@current_account)
+    
+    data = case chart_type
+    when "engagement"
+      @analytics_service.engagement_trends(@date_range)
+    when "contact_growth"
+      @analytics_service.contact_growth(@date_range)[:daily_growth]
+    when "campaign_performance"
+      @analytics_service.top_performing_campaigns(10, @date_range)
+    else
+      []
+    end
+    
+    render json: {
+      chart_type: chart_type,
+      date_range: @date_range,
+      data: data
+    }
+  end
+  
+  def dashboard_summary
+    @analytics_service = AnalyticsService.new(@current_account)
+    
+    render json: {
+      overview: @analytics_service.overview_stats("last_30_days"),
+      real_time: @analytics_service.real_time_stats,
+      contact_segments: @analytics_service.contact_segments,
+      top_campaigns: @analytics_service.top_performing_campaigns(3, "last_7_days")
+    }
   end
 
   private

@@ -65,6 +65,9 @@ Rails.application.routes.draw do
   get "analytics/campaigns", to: "analytics#campaigns"
   get "analytics/contacts", to: "analytics#contacts"
   get "analytics/export", to: "analytics#export"
+  get "analytics/real_time", to: "analytics#real_time"
+  get "analytics/chart_data", to: "analytics#chart_data"
+  get "analytics/dashboard_summary", to: "analytics#dashboard_summary"
 
   # Account management
   resource :account, only: [ :show, :edit, :update ] do
