@@ -1,52 +1,1089 @@
-<div class="min-h-full">
-  <!-- Breadcrumb -->
-  <nav class="flex" aria-label="Breadcrumb">
-    <ol role="list" class="flex items-center space-x-4">
-      <li>
-        <div>
-          <%= link_to dashboard_index_path, class: "text-gray-400 hover:text-gray-500" do %>
-            <svg class="flex-shrink-0 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+<!-- Full-Screen Template Builder -->
+
+  <!-- Production-Ready Template Builder -->
+  <div class="template-builder-container"
+       data-controller="production-template-builder"
+       data-production-template-builder-template-id-value="<%= @template.id || 'new' %>"
+       data-production-template-builder-user-id-value="<%= current_user&.id %>"
+       data-production-template-builder-auto-save-value="true">
+
+    <!-- Modern Header -->
+    <header class="builder-header">
+      <div class="header-content">
+        <!-- Brand Section with Navigation -->
+        <div class="brand-section">
+          <%= link_to root_path, class: "brand-link" do %>
+            <div class="brand-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+            <div class="brand-text">
+              <h1>RapidMarkt</h1>
+              <span>Template Builder</span>
+            </div>
+          <% end %>
+
+          <!-- Navigation Breadcrumb -->
+          <div class="nav-breadcrumb">
+            <%= link_to dashboard_path, class: "breadcrumb-link" do %>
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+              </svg>
+            <% end %>
+            <svg class="breadcrumb-separator" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
             </svg>
-            <span class="sr-only">Home</span>
+            <%= link_to "Templates", templates_path, class: "breadcrumb-link" %>
+            <svg class="breadcrumb-separator" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+            <span class="breadcrumb-current">New Template</span>
+          </div>
+        </div>
+
+        <!-- Template Info -->
+        <div class="template-info">
+          <%= form_with model: @template, local: false, class: "template-form", data: { "production-template-builder-target": "form" } do |form| %>
+            <div class="form-group-inline">
+              <%= form.text_field :name,
+                  placeholder: "Template Name",
+                  class: "template-name-input",
+                  data: { "production-template-builder-target": "nameInput" } %>
+
+              <%= form.select :template_type,
+                  options_for_select([
+                    ['Email Campaign', 'email'],
+                    ['TikTok Video', 'tiktok'],
+                    ['Instagram Story', 'instagram_story'],
+                    ['Instagram Post', 'instagram_post'],
+                    ['YouTube Short', 'youtube_short'],
+                    ['LinkedIn Post', 'linkedin'],
+                    ['Landing Page', 'landing_page']
+                  ], @template.template_type),
+                  { prompt: 'Select Type' },
+                  { class: "template-type-select", data: { "production-template-builder-target": "typeSelect" } } %>
+            </div>
           <% end %>
         </div>
-      </li>
-      <li>
-        <div class="flex items-center">
-          <svg class="flex-shrink-0 h-5 w-5 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-          </svg>
-          <%= link_to "Templates", templates_path, class: "ml-4 text-sm font-medium text-gray-500 hover:text-gray-700" %>
-        </div>
-      </li>
-      <li>
-        <div class="flex items-center">
-          <svg class="flex-shrink-0 h-5 w-5 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-          </svg>
-          <span class="ml-4 text-sm font-medium text-gray-500">New Template</span>
-        </div>
-      </li>
-    </ol>
-  </nav>
 
-  <!-- Page header -->
-  <div class="mt-8">
-    <div class="md:flex md:items-center md:justify-between">
-      <div class="flex-1 min-w-0">
-        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-          Create New Template
-        </h2>
-        <p class="mt-1 text-sm text-gray-500">
-          Create a reusable email template for your campaigns. You can use variables to personalize content for each recipient.
-        </p>
+        <!-- Action Buttons -->
+        <div class="header-actions">
+          <div class="action-group">
+            <button type="button"
+                    class="btn btn-secondary"
+                    data-action="click->production-template-builder#preview"
+                    data-production-template-builder-target="previewBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              Preview
+            </button>
+
+            <button type="button"
+                    class="btn btn-secondary"
+                    data-action="click->production-template-builder#saveDraft"
+                    data-production-template-builder-target="saveBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                <polyline points="17,21 17,13 7,13 7,21"/>
+                <polyline points="7,3 7,8 15,8"/>
+              </svg>
+              Save Draft
+            </button>
+
+            <button type="button"
+                    class="btn btn-primary"
+                    data-action="click->production-template-builder#publish"
+                    data-production-template-builder-target="publishBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                <path d="M2 2l7.586 7.586"/>
+                <circle cx="11" cy="11" r="2"/>
+              </svg>
+              Publish
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div class="status-item">
+          <span class="status-label">Status:</span>
+          <span class="status-value" data-production-template-builder-target="statusText">
+            <%= @template.persisted? ? @template.status&.humanize || 'Draft' : 'New Template' %>
+          </span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Last Saved:</span>
+          <span class="status-value" data-production-template-builder-target="lastSaved">
+            <%= @template.updated_at&.strftime('%H:%M') || 'Never' %>
+          </span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Auto-save:</span>
+          <div class="toggle-switch">
+            <input type="checkbox"
+                   id="auto-save-toggle"
+                   checked
+                   data-action="change->production-template-builder#toggleAutoSave">
+            <label for="auto-save-toggle"></label>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Builder Layout -->
+    <div class="builder-layout">
+      <!-- Sidebar: Tools & Components -->
+      <aside class="builder-sidebar" data-production-template-builder-target="sidebar">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+          <div class="sidebar-tabs">
+            <button class="tab-btn active"
+                    data-tab="components"
+                    data-action="click->production-template-builder#switchTab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+              </svg>
+              Components
+            </button>
+            <button class="tab-btn"
+                    data-tab="ai"
+                    data-action="click->production-template-builder#switchTab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+              </svg>
+              AI Generate
+            </button>
+            <button class="tab-btn"
+                    data-tab="settings"
+                    data-action="click->production-template-builder#switchTab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+              </svg>
+              Settings
+            </button>
+          </div>
+        </div>
+
+        <!-- Components Tab -->
+        <div class="tab-content active" data-tab-content="components">
+          <div class="search-section">
+            <div class="search-input-group">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="M21 21l-4.35-4.35"/>
+              </svg>
+              <input type="text"
+                     placeholder="Search components..."
+                     class="search-input"
+                     data-production-template-builder-target="searchInput"
+                     data-action="input->production-template-builder#searchComponents">
+            </div>
+
+            <select class="category-filter"
+                    data-production-template-builder-target="categoryFilter"
+                    data-action="change->production-template-builder#filterByCategory">
+              <option value="">All Categories</option>
+              <option value="headers">Headers</option>
+              <option value="content">Content Blocks</option>
+              <option value="buttons">Buttons & CTAs</option>
+              <option value="images">Images & Media</option>
+              <option value="social">Social Media</option>
+              <option value="tiktok">TikTok</option>
+              <option value="instagram">Instagram</option>
+              <option value="youtube">YouTube</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="ecommerce">E-commerce</option>
+              <option value="forms">Forms</option>
+            </select>
+          </div>
+
+          <!-- Component Grid -->
+          <div class="components-grid" data-production-template-builder-target="componentsGrid">
+            <!-- Components will be loaded dynamically -->
+          </div>
+        </div>
+
+        <!-- AI Generate Tab -->
+        <div class="tab-content" data-tab-content="ai">
+          <div class="ai-form">
+            <div class="form-section">
+              <label class="form-label">Describe your template</label>
+              <textarea class="form-textarea"
+                        rows="4"
+                        placeholder="E.g., Create a modern TikTok video template for a fitness brand with trending hashtags and call-to-action..."
+                        data-production-template-builder-target="aiPrompt"></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Platform</label>
+                <select class="form-select" data-production-template-builder-target="aiPlatform">
+                  <option value="email">📧 Email</option>
+                  <option value="tiktok">🎵 TikTok</option>
+                  <option value="instagram">📸 Instagram</option>
+                  <option value="youtube">📺 YouTube</option>
+                  <option value="linkedin">💼 LinkedIn</option>
+                  <option value="facebook">📘 Facebook</option>
+                  <option value="twitter">🐦 Twitter/X</option>
+                  <option value="website">🌐 Website</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Content Type</label>
+                <select class="form-select" data-production-template-builder-target="aiContentType">
+                  <option value="promotional">🎯 Promotional</option>
+                  <option value="educational">📚 Educational</option>
+                  <option value="entertaining">🎭 Entertaining</option>
+                  <option value="trending">🔥 Trending</option>
+                  <option value="viral">⚡ Viral</option>
+                  <option value="story">📖 Story</option>
+                  <option value="tutorial">🎓 Tutorial</option>
+                  <option value="behind-scenes">🎬 Behind Scenes</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Industry</label>
+                <select class="form-select" data-production-template-builder-target="aiIndustry">
+                  <option value="general">General</option>
+                  <option value="tech">Technology</option>
+                  <option value="ecommerce">E-commerce</option>
+                  <option value="healthcare">Healthcare</option>
+                  <option value="finance">Finance</option>
+                  <option value="education">Education</option>
+                  <option value="fitness">Fitness & Health</option>
+                  <option value="food">Food & Beverage</option>
+                  <option value="fashion">Fashion & Beauty</option>
+                  <option value="travel">Travel & Lifestyle</option>
+                  <option value="gaming">Gaming & Entertainment</option>
+                  <option value="music">Music & Arts</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Tone</label>
+                <select class="form-select" data-production-template-builder-target="aiTone">
+                  <option value="professional">Professional</option>
+                  <option value="friendly">Friendly</option>
+                  <option value="casual">Casual</option>
+                  <option value="formal">Formal</option>
+                  <option value="playful">Playful</option>
+                  <option value="energetic">Energetic</option>
+                  <option value="trendy">Trendy</option>
+                  <option value="authentic">Authentic</option>
+                  <option value="inspiring">Inspiring</option>
+                  <option value="humorous">Humorous</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="button"
+                    class="btn btn-primary btn-full"
+                    data-action="click->production-template-builder#generateWithAI"
+                    data-production-template-builder-target="generateBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+              </svg>
+              Generate Template
+            </button>
+
+            <!-- AI Loading State -->
+            <div class="ai-loading hidden" data-production-template-builder-target="aiLoading">
+              <div class="loading-spinner"></div>
+              <p>Generating your template...</p>
+            </div>
+
+            <!-- AI Results -->
+            <div class="ai-results hidden" data-production-template-builder-target="aiResults">
+              <!-- Results will be populated here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="tab-content" data-tab-content="settings">
+          <div class="settings-form">
+            <div class="settings-section">
+              <h3>Template Settings</h3>
+
+              <div class="form-group">
+                <label class="form-label">Canvas Size</label>
+                <select class="form-select" data-production-template-builder-target="canvasSize">
+                  <option value="email">Email (600px)</option>
+                  <option value="tiktok">TikTok (9:16)</option>
+                  <option value="instagram-story">Instagram Story (9:16)</option>
+                  <option value="instagram-post">Instagram Post (1:1)</option>
+                  <option value="youtube-short">YouTube Short (9:16)</option>
+                  <option value="linkedin">LinkedIn Post (1200x628)</option>
+                  <option value="custom">Custom Size</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Background</label>
+                <div class="color-picker-group">
+                  <input type="color"
+                         class="color-picker"
+                         value="#ffffff"
+                         data-production-template-builder-target="backgroundColor">
+                  <input type="text"
+                         class="color-input"
+                         value="#ffffff"
+                         data-production-template-builder-target="backgroundColorText">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Grid</label>
+                <div class="toggle-group">
+                  <input type="checkbox"
+                         id="grid-toggle"
+                         data-production-template-builder-target="gridToggle"
+                         data-action="change->production-template-builder#toggleGrid">
+                  <label for="grid-toggle">Show Grid</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>Export Settings</h3>
+
+              <div class="form-group">
+                <label class="form-label">Format</label>
+                <select class="form-select" data-production-template-builder-target="exportFormat">
+                  <option value="html">HTML</option>
+                  <option value="png">PNG Image</option>
+                  <option value="jpg">JPG Image</option>
+                  <option value="pdf">PDF</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Quality</label>
+                <select class="form-select" data-production-template-builder-target="exportQuality">
+                  <option value="high">High Quality</option>
+                  <option value="medium">Medium Quality</option>
+                  <option value="low">Low Quality</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Canvas Area -->
+      <main class="canvas-area" data-production-template-builder-target="canvasArea">
+        <!-- Canvas Toolbar -->
+        <div class="canvas-toolbar">
+          <div class="toolbar-section">
+            <div class="zoom-controls">
+              <button type="button"
+                      class="toolbar-btn"
+                      data-action="click->production-template-builder#zoomOut"
+                      title="Zoom Out">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="M21 21l-4.35-4.35"/>
+                  <path d="M8 11h6"/>
+                </svg>
+              </button>
+
+              <span class="zoom-level" data-production-template-builder-target="zoomLevel">100%</span>
+
+              <button type="button"
+                      class="toolbar-btn"
+                      data-action="click->production-template-builder#zoomIn"
+                      title="Zoom In">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="M21 21l-4.35-4.35"/>
+                  <path d="M11 8v6"/>
+                  <path d="M8 11h6"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="toolbar-section">
+            <button type="button"
+                    class="toolbar-btn"
+                    data-action="click->production-template-builder#undo"
+                    data-production-template-builder-target="undoBtn"
+                    title="Undo (Ctrl+Z)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 7v6h6"/>
+                <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"/>
+              </svg>
+            </button>
+
+            <button type="button"
+                    class="toolbar-btn"
+                    data-action="click->production-template-builder#redo"
+                    data-production-template-builder-target="redoBtn"
+                    title="Redo (Ctrl+Shift+Z)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 7v6h-6"/>
+                <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3l3 2.7"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="toolbar-section">
+            <button type="button"
+                    class="toolbar-btn"
+                    data-action="click->production-template-builder#toggleGrid"
+                    data-production-template-builder-target="gridBtn"
+                    title="Toggle Grid">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+              </svg>
+            </button>
+
+            <button type="button"
+                    class="toolbar-btn"
+                    data-action="click->production-template-builder#toggleRulers"
+                    data-production-template-builder-target="rulersBtn"
+                    title="Toggle Rulers">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3h18v18H3z"/>
+                <path d="M3 9h18"/>
+                <path d="M9 3v18"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="toolbar-section">
+            <div class="device-preview">
+              <button type="button"
+                      class="device-btn active"
+                      data-device="desktop"
+                      data-action="click->production-template-builder#switchDevice"
+                      title="Desktop View">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+              </button>
+
+              <button type="button"
+                      class="device-btn"
+                      data-device="tablet"
+                      data-action="click->production-template-builder#switchDevice"
+                      title="Tablet View">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="4" y="2" width="16" height="20" rx="2" ry="2"/>
+                  <line x1="12" y1="18" x2="12.01" y2="18"/>
+                </svg>
+              </button>
+
+              <button type="button"
+                      class="device-btn"
+                      data-device="mobile"
+                      data-action="click->production-template-builder#switchDevice"
+                      title="Mobile View">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                  <line x1="12" y1="18" x2="12.01" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="canvas-container" data-production-template-builder-target="canvasContainer">
+          <div class="canvas-wrapper">
+            <!-- Canvas -->
+            <div class="template-canvas"
+                 data-production-template-builder-target="canvas"
+                 data-canvas-type="<%= @template.template_type || 'email' %>">
+
+              <!-- Drop Zone (shown when canvas is empty) -->
+              <div class="canvas-drop-zone"
+                   data-production-template-builder-target="dropZone"
+                   style="<%= @template.body.present? ? 'display: none;' : '' %>">
+                <div class="drop-zone-content">
+                  <div class="drop-zone-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                      <polyline points="14,2 14,8 20,8"/>
+                      <line x1="16" y1="13" x2="8" y2="13"/>
+                      <line x1="16" y1="17" x2="8" y2="17"/>
+                      <polyline points="10,9 9,9 8,9"/>
+                    </svg>
+                  </div>
+                  <h3>Start Building Your Template</h3>
+                  <p>Drag components from the sidebar or use AI to generate content</p>
+                  <div class="drop-zone-actions">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-action="click->production-template-builder#showComponents">
+                      Browse Components
+                    </button>
+                    <button type="button"
+                            class="btn btn-primary"
+                            data-action="click->production-template-builder#showAI">
+                      Generate with AI
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Template Content -->
+              <div class="template-content"
+                   data-production-template-builder-target="templateContent">
+                <%= @template.body&.html_safe %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Properties Panel (shown when component is selected) -->
+        <div class="properties-panel hidden" data-production-template-builder-target="propertiesPanel">
+          <div class="properties-header">
+            <h3>Component Properties</h3>
+            <button type="button"
+                    class="close-btn"
+                    data-action="click->production-template-builder#closeProperties">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="properties-content" data-production-template-builder-target="propertiesContent">
+            <!-- Properties will be populated dynamically -->
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modals and Overlays -->
+
+    <!-- Preview Modal -->
+    <div class="modal-overlay hidden" data-production-template-builder-target="previewModal">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3>Template Preview</h3>
+          <button type="button"
+                  class="close-btn"
+                  data-action="click->production-template-builder#closePreview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-content">
+          <div class="preview-container" data-production-template-builder-target="previewContainer">
+            <!-- Preview content will be populated here -->
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button"
+                  class="btn btn-secondary"
+                  data-action="click->production-template-builder#closePreview">
+            Close
+          </button>
+          <button type="button"
+                  class="btn btn-primary"
+                  data-action="click->production-template-builder#exportTemplate">
+            Export Template
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" data-production-template-builder-target="loadingOverlay">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <p data-production-template-builder-target="loadingText">Processing...</p>
       </div>
     </div>
   </div>
 
-  <!-- Form -->
-  <div class="mt-8">
-    <%= render 'form', template: @template %>
+        <!-- Main Builder Area -->
+        <div class="flex-1 flex">
+          <!-- Canvas Area -->
+          <div class="flex-1 p-6">
+            <div class="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-200/50 h-full overflow-hidden">
+              <!-- Canvas Header -->
+              <div class="bg-gray-50/80 backdrop-blur-sm border-b border-gray-200/50 px-6 py-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-4">
+                    <h3 class="font-semibold text-gray-900">Email Canvas</h3>
+                    <div class="flex items-center space-x-2 text-sm text-gray-600">
+                      <span>📱 Mobile</span>
+                      <span>•</span>
+                      <span>💻 Desktop</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <button type="button" class="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                      </svg>
+                    </button>
+                    <button type="button" class="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Canvas Content -->
+              <div class="p-6 h-full overflow-y-auto">
+                <div class="max-w-2xl mx-auto">
+                  <!-- Drop Zone -->
+                  <div class="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-purple-400 transition-colors duration-300">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                      </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Start Building Your Template</h3>
+                    <p class="text-gray-600 mb-4">Drag components from the library or use AI to generate content</p>
+                    <div class="flex justify-center space-x-3">
+                      <button type="button" class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-100 rounded-lg hover:bg-purple-200 transition-colors duration-200">
+                        📦 Browse Components
+                      </button>
+                      <button type="button" class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200">
+                        🤖 Generate with AI
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Component Library -->
+          <div class="w-80 bg-white/80 backdrop-blur-xl border-l border-gray-200/50 overflow-y-auto"
+               data-controller="component-library template-ai enhanced-builder"
+               data-component-library-components-value="[]"
+               data-component-library-categories-value="[]"
+               data-enhanced-builder-zoom-level-value="100"
+               data-enhanced-builder-grid-enabled-value="false"
+               data-enhanced-builder-auto-save-value="true">
+
+            <!-- Component Library Tabs -->
+            <div class="border-b border-gray-200 bg-white/95 backdrop-blur-xl">
+              <nav class="flex space-x-8 px-6 py-4" aria-label="Tabs">
+                <button class="library-tab-btn text-purple-600 border-purple-600 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm"
+                        data-tab="library"
+                        onclick="showTab('library')">
+                  📦 Library
+                </button>
+                <button class="library-tab-btn text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm"
+                        data-tab="ai"
+                        onclick="showTab('ai')">
+                  🤖 AI Generate
+                </button>
+                <button class="library-tab-btn text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm"
+                        data-tab="favorites"
+                        onclick="showTab('favorites')">
+                  ❤️ Favorites
+                </button>
+              </nav>
+            </div>
+
+            <!-- Component Library Tab -->
+            <div id="library-tab" class="tab-content p-6">
+              <div class="mb-6">
+                <h3 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">Component Library</h3>
+                <p class="text-gray-600 text-sm font-medium">Professional components ready to use</p>
+              </div>
+
+              <!-- Search and Filter -->
+              <div class="space-y-4 mb-6">
+                <div class="relative">
+                  <input type="text"
+                         placeholder="Search components..."
+                         class="w-full pl-10 pr-4 py-3 text-sm bg-white/80 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white border border-gray-200 transition-all duration-300 placeholder-gray-500"
+                         data-component-library-target="searchInput">
+                  <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                  </div>
+                </div>
+
+                <select class="w-full px-3 py-3 text-sm bg-white/80 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-purple-500 border border-gray-200 transition-all duration-300"
+                        data-component-library-target="categoryFilter"
+                        data-action="change->component-library#filterComponents">
+                  <option value="all">All Categories</option>
+                  <option value="headers">📰 Headers</option>
+                  <option value="content">📝 Content</option>
+                  <option value="buttons">🔘 Buttons</option>
+                  <option value="images">🖼️ Images</option>
+                  <option value="social">📱 Social Media</option>
+                  <option value="tiktok">🎵 TikTok</option>
+                  <option value="youtube">📺 YouTube</option>
+                  <option value="instagram">📸 Instagram</option>
+                  <option value="ecommerce">🛒 E-commerce</option>
+                </select>
+              </div>
+
+              <!-- Component Grid -->
+              <div class="component-grid space-y-4" data-component-library-target="componentGrid">
+                <!-- Sample Components -->
+                <div class="component-card bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div class="component-thumbnail relative">
+                    <div class="aspect-w-16 aspect-h-9 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                      <div class="text-2xl">📰</div>
+                    </div>
+                  </div>
+                  <div class="component-info p-4">
+                    <h3 class="font-bold text-gray-900 mb-1">Header Section</h3>
+                    <p class="text-sm text-gray-600 mb-3">Clean header with logo and navigation</p>
+                    <div class="component-actions flex space-x-2">
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        👁️ Preview
+                      </button>
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200">
+                        ✨ Use
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="component-card bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div class="component-thumbnail relative">
+                    <div class="aspect-w-16 aspect-h-9 bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center">
+                      <div class="text-2xl">🔘</div>
+                    </div>
+                  </div>
+                  <div class="component-info p-4">
+                    <h3 class="font-bold text-gray-900 mb-1">Call-to-Action</h3>
+                    <p class="text-sm text-gray-600 mb-3">Prominent action button with gradient</p>
+                    <div class="component-actions flex space-x-2">
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        👁️ Preview
+                      </button>
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200">
+                        ✨ Use
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- TikTok Video Component -->
+                <div class="component-card bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div class="component-thumbnail relative">
+                    <div class="aspect-w-9 aspect-h-16 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
+                      <div class="text-2xl">🎵</div>
+                    </div>
+                    <div class="absolute top-2 right-2">
+                      <span class="px-2 py-1 bg-black text-white text-xs font-bold rounded-full">TikTok</span>
+                    </div>
+                  </div>
+                  <div class="component-info p-4">
+                    <h3 class="font-bold text-gray-900 mb-1">TikTok Video</h3>
+                    <p class="text-sm text-gray-600 mb-3">Vertical video template with trending effects</p>
+                    <div class="component-actions flex space-x-2">
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        👁️ Preview
+                      </button>
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-gray-800 to-black rounded-lg hover:from-gray-900 hover:to-gray-800 transition-all duration-200">
+                        ✨ Use
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Instagram Story Component -->
+                <div class="component-card bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div class="component-thumbnail relative">
+                    <div class="aspect-w-9 aspect-h-16 bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center">
+                      <div class="text-2xl">📸</div>
+                    </div>
+                    <div class="absolute top-2 right-2">
+                      <span class="px-2 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold rounded-full">IG</span>
+                    </div>
+                  </div>
+                  <div class="component-info p-4">
+                    <h3 class="font-bold text-gray-900 mb-1">Instagram Story</h3>
+                    <p class="text-sm text-gray-600 mb-3">Story template with interactive elements</p>
+                    <div class="component-actions flex space-x-2">
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        👁️ Preview
+                      </button>
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200">
+                        ✨ Use
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- YouTube Shorts Component -->
+                <div class="component-card bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div class="component-thumbnail relative">
+                    <div class="aspect-w-9 aspect-h-16 bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center">
+                      <div class="text-2xl">📺</div>
+                    </div>
+                    <div class="absolute top-2 right-2">
+                      <span class="px-2 py-1 bg-red-600 text-white text-xs font-bold rounded-full">YT</span>
+                    </div>
+                  </div>
+                  <div class="component-info p-4">
+                    <h3 class="font-bold text-gray-900 mb-1">YouTube Shorts</h3>
+                    <p class="text-sm text-gray-600 mb-3">Short-form video content template</p>
+                    <div class="component-actions flex space-x-2">
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        👁️ Preview
+                      </button>
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-red-700 rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-200">
+                        ✨ Use
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- LinkedIn Post Component -->
+                <div class="component-card bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div class="component-thumbnail relative">
+                    <div class="aspect-w-16 aspect-h-9 bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
+                      <div class="text-2xl">💼</div>
+                    </div>
+                    <div class="absolute top-2 right-2">
+                      <span class="px-2 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">LI</span>
+                    </div>
+                  </div>
+                  <div class="component-info p-4">
+                    <h3 class="font-bold text-gray-900 mb-1">LinkedIn Post</h3>
+                    <p class="text-sm text-gray-600 mb-3">Professional content for business network</p>
+                    <div class="component-actions flex space-x-2">
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        👁️ Preview
+                      </button>
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200">
+                        ✨ Use
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Generate Tab -->
+            <div id="ai-tab" class="tab-content hidden p-6">
+              <div class="mb-6">
+                <h3 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">AI Template Generator</h3>
+                <p class="text-gray-600 text-sm font-medium">Describe what you want and let AI create it</p>
+              </div>
+
+              <!-- AI Generation Form -->
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Describe your template</label>
+                  <textarea placeholder="E.g., Create a modern newsletter template for a tech startup with a hero section, product features, and call-to-action..."
+                            rows="4"
+                            class="w-full px-3 py-3 text-sm bg-white/80 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-purple-500 border border-gray-200 transition-all duration-300 placeholder-gray-500 resize-none"
+                            data-template-ai-target="promptInput"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Platform</label>
+                    <select class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg focus:ring-2 focus:ring-purple-500 border border-gray-200"
+                            data-template-ai-target="platformSelect">
+                      <option value="email">📧 Email</option>
+                      <option value="tiktok">🎵 TikTok</option>
+                      <option value="instagram">📸 Instagram</option>
+                      <option value="youtube">📺 YouTube</option>
+                      <option value="linkedin">💼 LinkedIn</option>
+                      <option value="facebook">📘 Facebook</option>
+                      <option value="twitter">🐦 Twitter/X</option>
+                      <option value="website">🌐 Website</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Content Type</label>
+                    <select class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg focus:ring-2 focus:ring-purple-500 border border-gray-200"
+                            data-template-ai-target="contentTypeSelect">
+                      <option value="promotional">🎯 Promotional</option>
+                      <option value="educational">📚 Educational</option>
+                      <option value="entertaining">🎭 Entertaining</option>
+                      <option value="trending">🔥 Trending</option>
+                      <option value="viral">⚡ Viral</option>
+                      <option value="story">📖 Story</option>
+                      <option value="tutorial">🎓 Tutorial</option>
+                      <option value="behind-scenes">🎬 Behind Scenes</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Industry</label>
+                    <select class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg focus:ring-2 focus:ring-purple-500 border border-gray-200"
+                            data-template-ai-target="industrySelect">
+                      <option value="general">General</option>
+                      <option value="tech">Technology</option>
+                      <option value="ecommerce">E-commerce</option>
+                      <option value="healthcare">Healthcare</option>
+                      <option value="finance">Finance</option>
+                      <option value="education">Education</option>
+                      <option value="fitness">Fitness & Health</option>
+                      <option value="food">Food & Beverage</option>
+                      <option value="fashion">Fashion & Beauty</option>
+                      <option value="travel">Travel & Lifestyle</option>
+                      <option value="gaming">Gaming & Entertainment</option>
+                      <option value="music">Music & Arts</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tone</label>
+                    <select class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg focus:ring-2 focus:ring-purple-500 border border-gray-200"
+                            data-template-ai-target="toneSelect">
+                      <option value="professional">Professional</option>
+                      <option value="friendly">Friendly</option>
+                      <option value="casual">Casual</option>
+                      <option value="formal">Formal</option>
+                      <option value="playful">Playful</option>
+                      <option value="energetic">Energetic</option>
+                      <option value="trendy">Trendy</option>
+                      <option value="authentic">Authentic</option>
+                      <option value="inspiring">Inspiring</option>
+                      <option value="humorous">Humorous</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- TikTok Specific Options -->
+                <div class="tiktok-options hidden" data-platform="tiktok">
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Video Style</label>
+                      <select class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg focus:ring-2 focus:ring-purple-500 border border-gray-200">
+                        <option value="dance">💃 Dance</option>
+                        <option value="comedy">😂 Comedy</option>
+                        <option value="tutorial">🎓 Tutorial</option>
+                        <option value="challenge">🏆 Challenge</option>
+                        <option value="duet">👥 Duet</option>
+                        <option value="transition">✨ Transition</option>
+                        <option value="pov">🎭 POV</option>
+                        <option value="storytime">📚 Story Time</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Trending Elements</label>
+                      <select class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg focus:ring-2 focus:ring-purple-500 border border-gray-200">
+                        <option value="hashtags">🏷️ Trending Hashtags</option>
+                        <option value="sounds">🎵 Popular Sounds</option>
+                        <option value="effects">✨ Viral Effects</option>
+                        <option value="filters">📸 Trending Filters</option>
+                        <option value="memes">😄 Current Memes</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="button"
+                        class="w-full px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105"
+                        data-template-ai-target="generateButton"
+                        data-action="click->template-ai#generate">
+                  ✨ Generate Template
+                </button>
+              </div>
+
+              <!-- Loading Indicator -->
+              <div class="hidden mt-6 text-center" data-template-ai-target="loadingIndicator">
+                <div class="inline-flex items-center px-4 py-2 text-sm font-medium text-purple-600 bg-purple-100 rounded-lg">
+                  <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Generating your template...
+                </div>
+              </div>
+
+              <!-- AI Result Container -->
+              <div class="hidden mt-6" data-template-ai-target="resultContainer">
+                <div data-template-ai-target="previewArea">
+                  <!-- AI generated template preview will appear here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Favorites Tab -->
+            <div id="favorites-tab" class="tab-content hidden p-6">
+              <div class="mb-6">
+                <h3 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">Favorite Components</h3>
+                <p class="text-gray-600 text-sm font-medium">Your saved components for quick access</p>
+              </div>
+
+              <div data-component-library-target="favoritesList">
+                <div class="text-center text-gray-500 py-12">
+                  <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                  </div>
+                  <p class="font-medium">No favorites yet</p>
+                  <p class="text-sm">Heart components to save them here</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Switching Script -->
+    <script>
+      function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+          tab.classList.add('hidden');
+        });
+
+        // Remove active state from all buttons
+        document.querySelectorAll('.library-tab-btn').forEach(btn => {
+          btn.classList.remove('text-purple-600', 'border-purple-600');
+          btn.classList.add('text-gray-500', 'border-transparent');
+        });
+
+        // Show selected tab
+        document.getElementById(tabName + '-tab').classList.remove('hidden');
+
+        // Add active state to selected button
+        const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+        activeBtn.classList.remove('text-gray-500', 'border-transparent');
+        activeBtn.classList.add('text-purple-600', 'border-purple-600');
+      }
+    </script>
   </div>
 </div>

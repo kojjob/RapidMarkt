@@ -58,26 +58,26 @@
             
             <!-- User Menu -->
             <div class="hidden sm:ml-6 sm:flex sm:items-center">
-              <div class="ml-3 relative" data-controller="dropdown">
+              <div class="navbar-dropdown relative" data-controller="dropdown">
                 <div>
-                  <button type="button" 
-                          class="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" 
+                  <button type="button"
+                          class="user-avatar"
                           data-action="click->dropdown#toggle"
-                          aria-expanded="false" 
-                          aria-haspopup="true">
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          title="User menu">
                     <span class="sr-only">Open user menu</span>
-                    <div class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center">
-                      <span class="text-sm font-medium text-white">
-                        <%= current_user.first_name&.first || current_user.email.first.upcase %>
-                      </span>
-                    </div>
+                    <span>
+                      <%= current_user.first_name&.first || current_user.email.first.upcase %>
+                    </span>
                   </button>
                 </div>
                 
-                <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden" 
+                <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden z-50"
                      data-dropdown-target="menu"
-                     role="menu" 
-                     aria-orientation="vertical">
+                     role="menu"
+                     aria-orientation="vertical"
+                     style="z-index: 9999;">
                   <div class="py-1" role="none">
                     <%= link_to "Account Settings", account_path, 
                         class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100", 

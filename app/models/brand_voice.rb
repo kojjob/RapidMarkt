@@ -6,7 +6,7 @@ class BrandVoice < ApplicationRecord
   validates :description, length: { maximum: 500 }
 
   # Tone options for different communication styles
-  enum tone: {
+  enum :tone, {
     friendly: "friendly",
     professional: "professional",
     casual: "casual",
