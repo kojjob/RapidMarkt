@@ -1,0 +1,222 @@
+<%# Toast Container Component
+    This creates a container for multiple toasts with proper positioning and stacking
+    Usage: <%= render 'shared/toast_container', position: 'top-right' %>
+%>
+
+<%
+  position ||= 'top-right'
+  
+  # Position classes for the container
+  position_classes = {
+    'top-right' => 'fixed top-4 right-4 z-toast',
+    'top-left' => 'fixed top-4 left-4 z-toast',
+    'top-center' => 'fixed top-4 left-1/2 transform -translate-x-1/2 z-toast',
+    'bottom-right' => 'fixed bottom-4 right-4 z-toast',
+    'bottom-left' => 'fixed bottom-4 left-4 z-toast',
+    'bottom-center' => 'fixed bottom-4 left-1/2 transform -translate-x-1/2 z-toast'
+  }
+%>
+
+<div id="toast-container-<%= position.gsub('_', '-') %>" 
+     class="<%= position_classes[position] %> toast-container pointer-events-none">
+  <div class="toast-stack max-w-sm w-full space-y-3">
+    <!-- Toasts will be dynamically inserted here -->
+  </div>
+</div>
+
+<script>
+  // Toast Container Management
+  window.ToastManager = window.ToastManager || {
+    containers: {},
+    
+    // Initialize container for a position
+    initContainer(position = 'top-right') {
+      const containerId = `toast-container-${position.replace('_', '-')}`;
+      let container = document.getElementById(containerId);
+      
+      if (!container) {
+        container = this.createContainer(position);
+        document.body.appendChild(container);
+      }
+      
+      this.containers[position] = container.querySelector('.toast-stack');
+      return this.containers[position];
+    },
+    
+    // Create a new container element
+    createContainer(position) {
+      const positionClasses = {
+        'top-right': 'fixed top-4 right-4 z-50',
+        'top-left': 'fixed top-4 left-4 z-50',
+        'top-center': 'fixed top-4 left-1/2 transform -translate-x-1/2 z-50',
+        'bottom-right': 'fixed bottom-4 right-4 z-50',
+        'bottom-left': 'fixed bottom-4 left-4 z-50',
+        'bottom-center': 'fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50'
+      };
+      
+      const container = document.createElement('div');
+      container.id = `toast-container-${position.replace('_', '-')}`;
+      container.className = `${positionClasses[position]} toast-container pointer-events-none`;
+      
+      const stack = document.createElement('div');
+      stack.className = 'toast-stack max-w-sm w-full space-y-3';
+      container.appendChild(stack);
+      
+      return container;
+    },
+    
+    // Add a toast to a specific position
+    addToast(toastElement, position = 'top-right') {
+      const container = this.initContainer(position);
+      
+      // Add toast-item class for styling
+      toastElement.classList.add('toast-item');
+      
+      // Insert at the beginning for top positions, at the end for bottom positions
+      if (position.includes('top')) {
+        container.insertBefore(toastElement, container.firstChild);
+      } else {
+        container.appendChild(toastElement);
+      }
+      
+      // Limit the number of toasts (optional)
+      this.limitToasts(container, 5);
+    },
+    
+    // Remove old toasts if there are too many
+    limitToasts(container, maxToasts = 5) {
+      const toasts = container.children;
+      while (toasts.length > maxToasts) {
+        const oldestToast = toasts[toasts.length - 1];
+        if (oldestToast.dataset.controller === 'flash') {
+          // Trigger the dismiss method if it's a flash controller
+          const controller = this.application?.getControllerForElementAndIdentifier(oldestToast, 'flash');
+          if (controller) {
+            controller.dismiss();
+          } else {
+            oldestToast.remove();
+          }
+        } else {
+          oldestToast.remove();
+        }
+      }
+    },
+    
+    // Show a toast programmatically
+    show(type, message, options = {}) {
+      const toastHtml = this.createToastHTML(type, message, options);
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = toastHtml;
+      const toastElement = tempDiv.firstElementChild;
+      
+      this.addToast(toastElement, options.position || 'top-right');
+      
+      // Initialize Stimulus controller if available
+      if (window.application) {
+        window.application.start();
+      }
+      
+      return toastElement;
+    },
+    
+    // Create toast HTML
+    createToastHTML(type, message, options = {}) {
+      const {
+        title = '',
+        autoDismiss = true,
+        duration = 5000,
+        position = 'top-right',
+        showProgress = true
+      } = options;
+      
+      const typeStyles = {
+        success: {
+          container: 'bg-white border-l-4 border-green-500 shadow-lg',
+          iconBg: 'bg-green-100',
+          iconColor: 'text-green-600',
+          titleColor: 'text-green-800',
+          messageColor: 'text-green-700',
+          progressColor: 'bg-green-500',
+          icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+        },
+        error: {
+          container: 'bg-white border-l-4 border-red-500 shadow-lg',
+          iconBg: 'bg-red-100',
+          iconColor: 'text-red-600',
+          titleColor: 'text-red-800',
+          messageColor: 'text-red-700',
+          progressColor: 'bg-red-500',
+          icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z'
+        },
+        warning: {
+          container: 'bg-white border-l-4 border-yellow-500 shadow-lg',
+          iconBg: 'bg-yellow-100',
+          iconColor: 'text-yellow-600',
+          titleColor: 'text-yellow-800',
+          messageColor: 'text-yellow-700',
+          progressColor: 'bg-yellow-500',
+          icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z'
+        },
+        info: {
+          container: 'bg-white border-l-4 border-blue-500 shadow-lg',
+          iconBg: 'bg-blue-100',
+          iconColor: 'text-blue-600',
+          titleColor: 'text-blue-800',
+          messageColor: 'text-blue-700',
+          progressColor: 'bg-blue-500',
+          icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+        }
+      };
+      
+      const styles = typeStyles[type] || typeStyles.info;
+      
+      return `
+        <div class="max-w-sm w-full"
+             data-controller="flash"
+             data-flash-auto-dismiss-value="${autoDismiss}"
+             data-flash-duration-value="${duration}"
+             data-flash-type-value="${type}"
+             data-flash-position-value="${position}">
+          <div class="${styles.container} rounded-xl p-4 backdrop-blur-sm">
+            <div class="flex items-start">
+              <div class="flex-shrink-0">
+                <div class="${styles.iconBg} rounded-lg p-2">
+                  <svg class="${styles.iconColor} w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${styles.icon}"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="ml-3 flex-1">
+                ${title ? `<h3 class="${styles.titleColor} text-sm font-semibold">${title}</h3>` : ''}
+                <div class="${styles.messageColor} text-sm ${title ? 'mt-1' : ''}">
+                  ${message}
+                </div>
+              </div>
+              <div class="ml-4 flex-shrink-0">
+                <button type="button" 
+                        class="inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 rounded-lg p-1 transition-colors"
+                        data-action="click->flash#close">
+                  <span class="sr-only">Close</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            ${autoDismiss && showProgress ? `
+              <div class="mt-3 w-full bg-gray-200 rounded-full h-1 overflow-hidden">
+                <div class="${styles.progressColor} h-1 rounded-full w-full origin-left"
+                     data-flash-target="progressBar"></div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+  };
+  
+  // Initialize default container
+  document.addEventListener('DOMContentLoaded', function() {
+    window.ToastManager.initContainer('top-right');
+  });
+</script>

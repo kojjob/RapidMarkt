@@ -100,7 +100,7 @@
         </div>
         
         <!-- Enhanced Mobile menu with animations -->
-        <div class="sm:hidden hidden fixed inset-0 z-50" data-mobile-menu-target="menu" id="mobile-menu">
+        <div class="sm:hidden hidden fixed inset-0 z-mobile-menu" data-mobile-menu-target="menu" id="mobile-menu">
           <!-- Backdrop -->
           <div class="fixed inset-0 bg-black bg-opacity-25 transition-opacity duration-300"></div>
 
@@ -301,7 +301,10 @@
       
       <!-- Enhanced Flash Messages -->
       <%= render_flash_toasts %>
-      
+
+      <!-- Toast Container -->
+      <%= render 'shared/toast_container', position: 'top-right' %>
+
       <!-- Main Content -->
       <main class="flex flex-col flex-1">
         <%= yield %>

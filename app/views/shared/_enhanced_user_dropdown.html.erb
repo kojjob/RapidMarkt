@@ -1,10 +1,11 @@
 <!-- Enhanced User Dropdown with RapidMarkt Design System -->
 <div class="relative" data-controller="dropdown">
   <!-- User Avatar Button -->
-  <button type="button" 
-          class="group relative bg-white rounded-2xl flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 hover:shadow-lg transition-all duration-300 border-2 border-gray-100 hover:border-purple-200 p-2" 
+  <button type="button"
+          class="group relative bg-white rounded-2xl flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 hover:shadow-lg transition-all duration-300 border-2 border-gray-100 hover:border-purple-200 p-2"
           data-action="click->dropdown#toggle"
-          aria-expanded="false" 
+          data-dropdown-target="button"
+          aria-expanded="false"
           aria-haspopup="true">
     
     <!-- User Avatar with Status Indicator -->
@@ -39,9 +40,9 @@
   </button>
   
   <!-- Dropdown Menu -->
-  <div class="origin-top-right absolute right-0 mt-3 w-80 rounded-2xl shadow-2xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden border border-gray-100" 
+  <div class="origin-top-right absolute right-0 mt-3 w-80 rounded-2xl shadow-2xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden border border-gray-100 z-dropdown dropdown-menu"
        data-dropdown-target="menu"
-       role="menu" 
+       role="menu"
        aria-orientation="vertical">
     
     <!-- User Profile Header -->

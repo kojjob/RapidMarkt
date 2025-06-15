@@ -201,6 +201,13 @@
       </div>
     </div>
 
+    <!-- Toast Demo Section (Development Only) -->
+    <% if Rails.env.development? %>
+      <div class="mb-8">
+        <%= render 'shared/toast_demo' %>
+      </div>
+    <% end %>
+
   <!-- Recent Campaigns -->
   <div class="mt-8">
     <div class="sm:flex sm:items-center">

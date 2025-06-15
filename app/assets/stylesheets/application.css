@@ -193,3 +193,58 @@
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Z-Index Hierarchy for proper layering */
+.z-dropdown {
+  z-index: 1000;
+}
+
+.z-modal {
+  z-index: 1050;
+}
+
+.z-toast {
+  z-index: 1030;
+}
+
+.z-mobile-menu {
+  z-index: 1040;
+}
+
+/* Dropdown specific styles */
+.dropdown-menu {
+  z-index: 1000;
+  transform: translateY(-10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dropdown-menu.show {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Enhanced dropdown animations */
+.dropdown-enter {
+  transform: scale(0.95) translateY(-10px);
+  opacity: 0;
+}
+
+.dropdown-enter-active {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dropdown-exit {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.dropdown-exit-active {
+  transform: scale(0.95) translateY(-10px);
+  opacity: 0;
+  transition: all 0.15s cubic-bezier(0.4, 0, 1, 1);
+}
