@@ -1,4 +1,9 @@
 class Campaign < ApplicationRecord
+  include AccountScoped
+  include Auditable
+  include Trackable
+  include Searchable
+
   # Associations
   belongs_to :account
   belongs_to :user
@@ -149,5 +154,39 @@ class Campaign < ApplicationRecord
   def calculate_rates
     # This would be implemented based on actual tracking data
     # For now, we'll keep the existing values
+  end
+
+  # Searchable fields for the concern
+  def self.searchable_fields
+    %w[name subject]
+  end
+
+  # Trackable engagement calculation
+  def calculate_engagement_score
+    score = 0
+    
+    # Base score for campaign status
+    score += case status
+             when 'sent' then 40
+             when 'sending' then 20
+             when 'scheduled' then 10
+             else 0
+             end
+    
+    # Performance-based scoring
+    if sent? && open_rate.present?
+      score += [open_rate * 0.4, 30].min
+    end
+    
+    if sent? && click_rate.present?
+      score += [click_rate * 2, 20].min
+    end
+    
+    # Recency bonus
+    if sent_at.present? && sent_at >= 30.days.ago
+      score += 10
+    end
+    
+    [score, 100].min
   end
 end

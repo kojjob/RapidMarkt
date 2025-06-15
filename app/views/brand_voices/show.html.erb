@@ -1,0 +1,275 @@
+<% content_for :title, @brand_voice.name %>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center">
+        <%= link_to brand_voices_path, class: "text-gray-400 hover:text-gray-600 mr-4" do %>
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        <% end %>
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">🎭 <%= @brand_voice.name %></h1>
+          <p class="mt-2 text-sm text-gray-700">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+              <%= @brand_voice.tone.humanize %> tone
+            </span>
+            <span class="ml-2 text-gray-500">Created <%= time_ago_in_words(@brand_voice.created_at) %> ago</span>
+          </p>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-3">
+        <%= link_to edit_brand_voice_path(@brand_voice), 
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+          <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          </svg>
+          Edit
+        <% end %>
+        
+        <%= link_to @brand_voice, method: :delete, 
+            data: { confirm: "Are you sure you want to delete this brand voice?" },
+            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" do %>
+          <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+          </svg>
+          Delete
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Description -->
+      <% if @brand_voice.description.present? %>
+        <div class="bg-white shadow rounded-lg p-6">
+          <h2 class="text-lg font-medium text-gray-900 mb-4">📝 Description</h2>
+          <p class="text-gray-700 leading-relaxed"><%= simple_format(@brand_voice.description) %></p>
+        </div>
+      <% end %>
+
+      <!-- Personality Traits -->
+      <% if @brand_voice.personality_traits_list.any? %>
+        <div class="bg-white shadow rounded-lg p-6">
+          <h2 class="text-lg font-medium text-gray-900 mb-4">🎯 Personality Traits</h2>
+          <div class="flex flex-wrap gap-2">
+            <% @brand_voice.personality_traits_list.each do |trait| %>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                <%= trait.humanize %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Vocabulary Preferences -->
+      <% if @brand_voice.vocabulary_preferences_data.values.any?(&:present?) %>
+        <div class="bg-white shadow rounded-lg p-6">
+          <h2 class="text-lg font-medium text-gray-900 mb-4">📚 Vocabulary Preferences</h2>
+          <div class="space-y-4">
+            <% if @brand_voice.vocabulary_preferences_data['preferred_words'].present? %>
+              <div>
+                <h3 class="text-sm font-medium text-gray-700 mb-2">✅ Preferred Words/Phrases</h3>
+                <div class="flex flex-wrap gap-1">
+                  <% @brand_voice.vocabulary_preferences_data['preferred_words'].split(',').map(&:strip).each do |word| %>
+                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                      <%= word %>
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+            
+            <% if @brand_voice.vocabulary_preferences_data['avoid_words'].present? %>
+              <div>
+                <h3 class="text-sm font-medium text-gray-700 mb-2">❌ Words to Avoid</h3>
+                <div class="flex flex-wrap gap-1">
+                  <% @brand_voice.vocabulary_preferences_data['avoid_words'].split(',').map(&:strip).each do |word| %>
+                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">
+                      <%= word %>
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+            
+            <% if @brand_voice.vocabulary_preferences_data['industry_terms'].present? %>
+              <div>
+                <h3 class="text-sm font-medium text-gray-700 mb-2">🏢 Industry Terminology</h3>
+                <div class="flex flex-wrap gap-1">
+                  <% @brand_voice.vocabulary_preferences_data['industry_terms'].split(',').map(&:strip).each do |term| %>
+                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                      <%= term %>
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Writing Style Rules -->
+      <% if @brand_voice.writing_style_rules_data.values.any?(&:present?) %>
+        <div class="bg-white shadow rounded-lg p-6">
+          <h2 class="text-lg font-medium text-gray-900 mb-4">✍️ Writing Style Rules</h2>
+          <div class="space-y-4">
+            <% if @brand_voice.writing_style_rules_data['sentence_length'].present? %>
+              <div class="flex items-center justify-between py-2 border-b border-gray-200">
+                <span class="text-sm font-medium text-gray-700">Sentence Length</span>
+                <span class="text-sm text-gray-900 capitalize">
+                  <%= @brand_voice.writing_style_rules_data['sentence_length'].humanize %>
+                </span>
+              </div>
+            <% end %>
+            
+            <% if @brand_voice.writing_style_rules_data['formality'].present? %>
+              <div class="flex items-center justify-between py-2 border-b border-gray-200">
+                <span class="text-sm font-medium text-gray-700">Formality Level</span>
+                <span class="text-sm text-gray-900 capitalize">
+                  <%= @brand_voice.writing_style_rules_data['formality'].humanize %>
+                </span>
+              </div>
+            <% end %>
+            
+            <% if @brand_voice.writing_style_rules_data['guidelines'].present? %>
+              <div class="pt-2">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">Additional Guidelines</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                  <%= simple_format(@brand_voice.writing_style_rules_data['guidelines']) %>
+                </p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- Quick Stats -->
+      <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">📊 Quick Stats</h2>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600">Tone</span>
+            <span class="text-sm font-medium text-gray-900"><%= @brand_voice.tone.humanize %></span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600">Personality Traits</span>
+            <span class="text-sm font-medium text-gray-900"><%= @brand_voice.personality_traits_list.count %></span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600">Templates Using</span>
+            <span class="text-sm font-medium text-gray-900"><%= @brand_voice.templates.count %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Test Brand Voice -->
+      <div class="bg-white shadow rounded-lg p-6" data-controller="brand-voice-test">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">🧪 Test Brand Voice</h2>
+        <p class="text-sm text-gray-600 mb-4">
+          Enter some content to see how this brand voice would transform it.
+        </p>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Sample Content</label>
+            <textarea data-brand-voice-test-target="input" 
+                      rows="4" 
+                      class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      placeholder="Enter some content to test..."></textarea>
+          </div>
+          
+          <button data-action="click->brand-voice-test#testVoice" 
+                  class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            Test Brand Voice
+          </button>
+          
+          <div data-brand-voice-test-target="output" class="hidden">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Transformed Content</label>
+            <div class="p-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-900"></div>
+            
+            <div data-brand-voice-test-target="analysis" class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+              <h4 class="text-sm font-medium text-blue-900 mb-2">Analysis</h4>
+              <div class="text-sm text-blue-800"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Templates -->
+      <% if @brand_voice.templates.any? %>
+        <div class="bg-white shadow rounded-lg p-6">
+          <h2 class="text-lg font-medium text-gray-900 mb-4">📄 Using This Voice</h2>
+          <div class="space-y-3">
+            <% @brand_voice.templates.limit(5).each do |template| %>
+              <div class="flex items-center justify-between">
+                <div>
+                  <%= link_to template.name, template, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" %>
+                  <p class="text-xs text-gray-500"><%= template.template_type.humanize %></p>
+                </div>
+              </div>
+            <% end %>
+            
+            <% if @brand_voice.templates.count > 5 %>
+              <div class="text-center pt-2">
+                <span class="text-xs text-gray-500">and <%= @brand_voice.templates.count - 5 %> more templates</span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+// Stimulus controller for brand voice testing
+class BrandVoiceTestController extends Stimulus.Controller {
+  static targets = ["input", "output", "analysis"]
+  
+  testVoice() {
+    const content = this.inputTarget.value.trim();
+    if (!content) {
+      alert('Please enter some content to test.');
+      return;
+    }
+    
+    // Make AJAX call to test the brand voice
+    fetch(`<%= test_voice_brand_voice_path(@brand_voice) %>`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+      },
+      body: JSON.stringify({ content: content })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        this.outputTarget.querySelector('div').textContent = data.transformed_content;
+        this.analysisTarget.querySelector('div').innerHTML = data.analysis;
+        this.outputTarget.classList.remove('hidden');
+      } else {
+        alert('Error testing brand voice: ' + data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error testing brand voice.');
+    });
+  }
+}
+
+Stimulus.register("brand-voice-test", BrandVoiceTestController);
+</script>

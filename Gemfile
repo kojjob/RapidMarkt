@@ -87,6 +87,7 @@ group :development, :test do
   gem "shoulda-matchers" # Simple one-liner tests
   gem "vcr" # Record HTTP interactions for tests
   gem "webmock" # Mock HTTP requests
+  gem "rails-controller-testing" # Controller testing helpers for assigns and assert_template
 end
 
 group :development do

@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  resources :brand_voices do
+    member do
+      post :test_voice
+    end
+  end
   devise_for :users
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -44,6 +49,10 @@ Rails.application.routes.draw do
       get :preview
       post :duplicate
     end
+
+    collection do
+      get :test_dropdowns
+    end
   end
 
   # Tags
@@ -64,6 +73,52 @@ Rails.application.routes.draw do
     delete :cancel_invitation
     get :settings
     patch :update_settings
+  end
+
+  # Automations
+  resources :automations do
+    member do
+      post :activate
+      post :pause
+      post :duplicate
+      get :analytics
+    end
+
+    collection do
+      post :bulk_action
+    end
+  end
+
+  # API routes
+  namespace :api do
+    namespace :v1 do
+      resources :automations, only: [:index, :show, :create, :update, :destroy] do
+        member do
+          post :activate
+          post :pause
+          post :duplicate
+          get :analytics
+          get :enrollments
+        end
+
+        collection do
+          post :bulk_action
+        end
+      end
+
+      resources :automation_enrollments, only: [:index, :show, :create, :destroy] do
+        member do
+          post :pause
+          post :resume
+        end
+      end
+
+      resources :automation_executions, only: [:index, :show] do
+        member do
+          post :retry
+        end
+      end
+    end
   end
 
   # Email tracking (for open/click tracking)

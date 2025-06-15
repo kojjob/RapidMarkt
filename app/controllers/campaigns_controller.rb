@@ -152,7 +152,7 @@ class CampaignsController < ApplicationController
 
   def campaign_params
     params.require(:campaign).permit(
-      :name, :subject, :template_id, :scheduled_at, :status, :from_name, :from_email, :reply_to,
+      :name, :subject, :preview_text, :template_id, :scheduled_at, :status, :from_name, :from_email, :reply_to,
       :recipient_type, :send_type, :media_type, :media_urls, :design_theme, :background_color,
       :text_color, :font_family, :header_image_url, :logo_url, :call_to_action_text,
       :call_to_action_url, :social_sharing_enabled, :social_platforms,

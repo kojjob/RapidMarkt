@@ -1,6 +1,12 @@
 class Template < ApplicationRecord
+  include AccountScoped
+  include Auditable
+  include Trackable
+  include Searchable
+
   # Associations
   belongs_to :account
+  belongs_to :brand_voice, optional: true
   has_many :campaigns, dependent: :nullify
 
   # Enums
@@ -137,5 +143,54 @@ class Template < ApplicationRecord
     # This would generate a proper unsubscribe URL
     # For now, return a placeholder
     "[UNSUBSCRIBE_URL_FOR_#{contact.id}]"
+  end
+
+  def apply_brand_voice(content = nil)
+    return content || self.content unless brand_voice
+    
+    target_content = content || self.content
+    BrandVoiceService.new(brand_voice).apply_voice(target_content)
+  end
+
+  def content_with_brand_voice
+    apply_brand_voice
+  end
+
+  def brand_voice_compatibility_score
+    return nil unless brand_voice
+    
+    BrandVoiceService.new(brand_voice).analyze_content_compatibility(content)
+  end
+
+  # Searchable fields for the concern
+  def self.searchable_fields
+    %w[name subject body]
+  end
+
+  # Trackable engagement calculation
+  def calculate_engagement_score
+    score = 0
+    
+    # Base score for template status
+    score += case status
+             when 'active' then 30
+             when 'draft' then 10
+             else 0
+             end
+    
+    # Usage-based scoring
+    campaign_count = campaigns.count
+    score += [campaign_count * 5, 40].min
+    
+    # Performance-based scoring from campaigns
+    if campaigns.sent.any?
+      avg_open_rate = campaigns.sent.average(:open_rate) || 0
+      avg_click_rate = campaigns.sent.average(:click_rate) || 0
+      
+      score += [avg_open_rate * 0.2, 20].min
+      score += [avg_click_rate * 1.5, 10].min
+    end
+    
+    [score, 100].min
   end
 end
