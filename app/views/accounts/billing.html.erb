@@ -1,0 +1,293 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 py-8">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Billing & Subscription
+          </h1>
+          <p class="mt-2 text-gray-600">Manage your subscription, payment methods, and billing history</p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <%= link_to account_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Back to Account
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Current Plan -->
+      <div class="lg:col-span-2">
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+          <div class="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-4">
+            <h2 class="text-xl font-semibold text-white flex items-center">
+              <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+              </svg>
+              Current Plan
+            </h2>
+          </div>
+          
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h3 class="text-2xl font-bold text-gray-900 capitalize"><%= @account.plan %> Plan</h3>
+                <p class="text-gray-600 mt-1">
+                  <% if @account.subscription&.active? %>
+                    Active since <%= @account.subscription.created_at.strftime("%B %d, %Y") %>
+                  <% else %>
+                    No active subscription
+                  <% end %>
+                </p>
+              </div>
+              <div class="text-right">
+                <div class="text-3xl font-bold text-purple-600">
+                  <% case @account.plan %>
+                  <% when 'free' %>
+                    $0
+                  <% when 'starter' %>
+                    $29
+                  <% when 'professional' %>
+                    $99
+                  <% when 'enterprise' %>
+                    $299
+                  <% end %>
+                </div>
+                <div class="text-sm text-gray-500">per month</div>
+              </div>
+            </div>
+
+            <!-- Plan Features -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div class="space-y-3">
+                <h4 class="font-semibold text-gray-900 flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  Features Included
+                </h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                  <li class="flex items-center">
+                    <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <%= number_with_delimiter(@account.plan_limits[:campaigns]) %> Campaigns
+                  </li>
+                  <li class="flex items-center">
+                    <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <%= number_with_delimiter(@account.plan_limits[:contacts]) %> Contacts
+                  </li>
+                  <li class="flex items-center">
+                    <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <%= number_with_delimiter(@account.plan_limits[:templates]) %> Templates
+                  </li>
+                  <li class="flex items-center">
+                    <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <%= @account.plan_limits[:storage_gb] %>GB Storage
+                  </li>
+                </ul>
+              </div>
+              
+              <div class="space-y-3">
+                <h4 class="font-semibold text-gray-900 flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                  Usage This Month
+                </h4>
+                <ul class="space-y-2 text-sm text-gray-600">
+                  <li class="flex items-center justify-between">
+                    <span>Campaigns</span>
+                    <span class="font-medium"><%= @usage_stats[:campaigns_count] %>/<%= number_with_delimiter(@account.plan_limits[:campaigns]) %></span>
+                  </li>
+                  <li class="flex items-center justify-between">
+                    <span>Contacts</span>
+                    <span class="font-medium"><%= @usage_stats[:contacts_count] %>/<%= number_with_delimiter(@account.plan_limits[:contacts]) %></span>
+                  </li>
+                  <li class="flex items-center justify-between">
+                    <span>Templates</span>
+                    <span class="font-medium"><%= @usage_stats[:templates_count] %>/<%= number_with_delimiter(@account.plan_limits[:templates]) %></span>
+                  </li>
+                  <li class="flex items-center justify-between">
+                    <span>Storage</span>
+                    <span class="font-medium"><%= @storage_usage %>/<%= @account.plan_limits[:storage_gb] %>GB</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center space-x-4">
+              <% unless @account.plan == 'enterprise' %>
+                <button class="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-medium rounded-lg hover:from-purple-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                  Upgrade Plan
+                </button>
+              <% end %>
+              <% unless @account.plan == 'free' %>
+                <button class="px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                  Downgrade Plan
+                </button>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="mt-8 bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+          <div class="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
+            <h2 class="text-xl font-semibold text-white flex items-center">
+              <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+              </svg>
+              Payment Methods
+            </h2>
+          </div>
+          
+          <div class="p-6">
+            <% if @account.subscription&.payment_method_id %>
+              <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                <div class="flex items-center">
+                  <div class="w-12 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                      <path d="M4 8h16v2H4z" fill="white"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="font-medium text-gray-900">•••• •••• •••• 4242</div>
+                    <div class="text-sm text-gray-500">Expires 12/25</div>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Default</span>
+                  <button class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            <% else %>
+              <div class="text-center py-8">
+                <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No payment methods</h3>
+                <p class="text-gray-500 mb-4">Add a payment method to manage your subscription</p>
+              </div>
+            <% end %>
+            
+            <div class="mt-4">
+              <button class="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors duration-200 flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Add Payment Method
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Billing History -->
+      <div class="lg:col-span-1">
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+          <div class="bg-gradient-to-r from-indigo-500 to-blue-600 px-6 py-4">
+            <h2 class="text-xl font-semibold text-white flex items-center">
+              <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              Billing History
+            </h2>
+          </div>
+          
+          <div class="p-6">
+            <% if @account.subscription&.invoices&.any? %>
+              <div class="space-y-4">
+                <% @account.subscription.invoices.limit(5).each do |invoice| %>
+                  <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                    <div>
+                      <div class="font-medium text-gray-900">$<%= invoice.amount %></div>
+                      <div class="text-sm text-gray-500"><%= invoice.created_at.strftime("%b %d, %Y") %></div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                        <%= invoice.status.capitalize %>
+                      </span>
+                      <button class="text-blue-600 hover:text-blue-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+              
+              <div class="mt-6">
+                <button class="w-full px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors duration-200">
+                  View All Invoices
+                </button>
+              </div>
+            <% else %>
+              <div class="text-center py-8">
+                <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No invoices yet</h3>
+                <p class="text-gray-500">Your billing history will appear here</p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Next Billing -->
+        <% if @account.subscription&.active? %>
+          <div class="mt-6 bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+            <div class="bg-gradient-to-r from-orange-500 to-red-600 px-6 py-4">
+              <h2 class="text-xl font-semibold text-white flex items-center">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Next Billing
+              </h2>
+            </div>
+            
+            <div class="p-6">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-gray-900 mb-2">
+                  <%= @account.subscription.next_billing_date.strftime("%B %d, %Y") if @account.subscription.next_billing_date %>
+                </div>
+                <div class="text-gray-600 mb-4">
+                  <% case @account.plan %>
+                  <% when 'starter' %>
+                    $29.00
+                  <% when 'professional' %>
+                    $99.00
+                  <% when 'enterprise' %>
+                    $299.00
+                  <% end %>
+                  will be charged
+                </div>
+                <button class="text-sm text-red-600 hover:text-red-700 transition-colors duration-200">
+                  Cancel Subscription
+                </button>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
