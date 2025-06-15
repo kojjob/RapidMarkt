@@ -5,7 +5,7 @@ class AccountsController < ApplicationController
   def show
     @subscription = @current_account.subscription
     @usage_stats = calculate_usage_stats
-    @team_members = @current_account.users.includes(:user_roles).order(:created_at)
+    @team_members = @current_account.users.order(:created_at)
   end
 
   def edit
@@ -26,22 +26,13 @@ class AccountsController < ApplicationController
   end
 
   def team
-    @team_members = @current_account.users.includes(:user_roles).order(:created_at)
-    @pending_invitations = @current_account.user_invitations.pending.order(:created_at)
+    @team_members = @current_account.users.order(:created_at)
+    @pending_invitations = [] # TODO: Implement user invitations
   end
 
   def invite_user
-    @invitation = @current_account.user_invitations.build(invitation_params)
-    @invitation.invited_by = current_user
-
-    if @invitation.save
-      UserInvitationMailer.invite(@invitation).deliver_later
-      redirect_to team_account_path, notice: "Invitation sent successfully."
-    else
-      @team_members = @current_account.users.includes(:user_roles).order(:created_at)
-      @pending_invitations = @current_account.user_invitations.pending.order(:created_at)
-      render :team, status: :unprocessable_entity
-    end
+    # TODO: Implement user invitations
+    redirect_to team_account_path, alert: "User invitations not yet implemented."
   end
 
   def remove_user
@@ -52,26 +43,25 @@ class AccountsController < ApplicationController
     elsif user.owner?
       redirect_to team_account_path, alert: "Cannot remove the account owner."
     else
-      user.user_roles.where(account: @current_account).destroy_all
+      user.destroy
       redirect_to team_account_path, notice: "User removed from account."
     end
   end
 
   def cancel_invitation
-    invitation = @current_account.user_invitations.pending.find(params[:invitation_id])
-    invitation.update(status: "cancelled")
-    redirect_to team_account_path, notice: "Invitation cancelled."
+    # TODO: Implement user invitations
+    redirect_to team_account_path, alert: "User invitations not yet implemented."
   end
 
   def settings
-    @notification_preferences = current_user.notification_preferences || {}
+    @notification_preferences = current_user.respond_to?(:notification_preferences) ? (current_user.notification_preferences || {}) : {}
   end
 
   def update_settings
     if current_user.update(settings_params)
-      redirect_to account_settings_path, notice: "Settings updated successfully."
+      redirect_to settings_account_path, notice: "Settings updated successfully."
     else
-      @notification_preferences = current_user.notification_preferences || {}
+      @notification_preferences = current_user.respond_to?(:notification_preferences) ? (current_user.notification_preferences || {}) : {}
       render :settings, status: :unprocessable_entity
     end
   end

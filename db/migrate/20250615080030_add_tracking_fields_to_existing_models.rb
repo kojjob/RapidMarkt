@@ -38,6 +38,15 @@ class AddTrackingFieldsToExistingModels < ActiveRecord::Migration[8.0]
     add_column :accounts, :engagement_score, :decimal, precision: 5, scale: 2
     add_column :accounts, :tracking_data, :jsonb, default: {}
 
+    # Add missing account profile fields
+    add_column :accounts, :company_name, :string
+    add_column :accounts, :phone, :string
+    add_column :accounts, :address, :string
+    add_column :accounts, :city, :string
+    add_column :accounts, :state, :string
+    add_column :accounts, :zip_code, :string
+    add_column :accounts, :country, :string
+
     # Add indexes for performance
     add_index :campaigns, :last_activity_at, if_not_exists: true
     add_index :campaigns, :engagement_score, if_not_exists: true

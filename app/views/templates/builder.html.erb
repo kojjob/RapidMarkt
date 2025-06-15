@@ -160,6 +160,10 @@
       border-right: 1px solid var(--gray-200);
       overflow-y: auto;
       padding: 0;
+      position: relative;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     .sidebar-header {
@@ -183,6 +187,8 @@
 
     .sidebar-content {
       padding: 0;
+      flex: 1;
+      overflow-y: auto;
     }
 
     .tab-nav {
@@ -287,18 +293,20 @@
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding: 40px 20px;
+      padding: 24px;
+      height: 100%;
     }
 
     .canvas-container {
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-      min-height: 600px;
+      min-height: calc(100vh - 160px);
       width: 100%;
-      max-width: 600px;
+      max-width: none;
       position: relative;
       transition: all 0.3s;
+      flex: 1;
     }
 
     .canvas-container.drag-over {
@@ -307,23 +315,37 @@
     }
 
     .canvas-content {
-      padding: 24px;
-      min-height: 550px;
+      padding: 32px;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: auto;
+      box-sizing: border-box;
+      min-height: calc(100vh - 160px);
     }
 
     .drop-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 500px;
+      width: 100%;
       border: 2px dashed var(--gray-300);
       border-radius: 12px;
-      padding: 60px 20px;
-      text-align: center;
       background: var(--gray-50);
-      transition: all 0.3s;
-      margin: 40px 0;
+      text-align: center;
+      transition: all 0.3s ease;
+      margin: 0;
+      cursor: pointer;
+      padding: 60px 20px;
     }
 
-    .drop-zone.active {
+    .drop-zone.drag-over {
       border-color: var(--primary-500);
       background: var(--primary-50);
+      color: var(--primary-700);
+      transform: scale(1.02);
       border-style: solid;
     }
 
@@ -350,6 +372,11 @@
       background: white;
       border-left: 1px solid var(--gray-200);
       overflow-y: auto;
+      position: relative;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
     }
 
     .properties-header {
@@ -667,52 +694,85 @@
   </style>
 </head>
 <body>
-  <div class="builder-layout">
-    <!-- Header -->
-    <header class="builder-header">
+  <!-- Streamlined Campaign Builder Header -->
+  <header class="builder-header">
+    <div class="header-content">
+      <!-- Left: Brand & Campaign Info -->
       <div class="header-left">
-        <h1 class="header-title">Template Builder</h1>
-        <input 
-          type="text" 
-          class="template-name-input" 
-          placeholder="Template Name"
-          value="<%= params[:name] || 'Untitled Template' %>"
-          id="templateName"
-        >
+        <div class="brand-section">
+          <h1 class="brand-title">RapidMarkt Studio</h1>
+        </div>
+        <div class="campaign-section">
+          <input 
+            type="text" 
+            class="campaign-input" 
+            placeholder="Campaign Name"
+            value="<%= params[:name] || 'Untitled Campaign' %>"
+            id="campaignName"
+          >
+          <select id="platformSelect" class="platform-select">
+            <option value="email">📧 Email</option>
+            <option value="social">📱 Social</option>
+            <option value="web">🌐 Landing</option>
+            <option value="tiktok">🎵 TikTok</option>
+            <option value="youtube">📺 YouTube</option>
+            <option value="instagram">📸 Instagram</option>
+            <option value="linkedin">💼 LinkedIn</option>
+          </select>
+        </div>
       </div>
       
-      <div class="header-actions">
-        <div class="responsive-preview">
-          <button class="device-btn active" data-device="desktop">🖥️ Desktop</button>
-          <button class="device-btn" data-device="mobile">📱 Mobile</button>
+      <!-- Center: Device Preview -->
+      <div class="header-center">
+        <div class="device-preview">
+          <button class="device-btn active" data-device="desktop" title="Desktop View">🖥️</button>
+          <button class="device-btn" data-device="tablet" title="Tablet View">📱</button>
+          <button class="device-btn" data-device="mobile" title="Mobile View">📱</button>
         </div>
-        
-        <button class="btn btn-secondary" onclick="previewTemplate()">
-          👁️ Preview
-        </button>
-        
-        <button class="btn btn-secondary" onclick="saveAsDraft()">
-          📄 Save Draft
-        </button>
-        
-        <button class="btn btn-success" onclick="saveTemplate()">
-          💾 Save Template
-        </button>
       </div>
-    </header>
+      
+      <!-- Right: Actions -->
+      <div class="header-right">
+        <div class="quick-actions">
+          <button class="action-btn undo" onclick="undoAction()" title="Undo">↶</button>
+          <button class="action-btn redo" onclick="redoAction()" title="Redo">↷</button>
+        </div>
+        <div class="main-actions">
+          <button class="btn btn-ai" onclick="generateWithAI()">✨ AI Generate</button>
+          <button class="btn btn-preview" onclick="previewCampaign()">👁️ Preview</button>
+          <button class="btn btn-save" onclick="saveAsDraft()">💾 Save</button>
+          <button class="btn btn-publish" onclick="publishCampaign()">🚀 Publish</button>
+        </div>
+      </div>
+    </div>
+  </header>
 
-    <!-- Left Sidebar - Components & Tools -->
+  <div class="builder-main">
+    <!-- Left Sidebar - Platform Components & AI Tools -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <h2 class="sidebar-title">Components & Tools</h2>
-        <p class="sidebar-subtitle">Drag components to build your template</p>
+        <h2 class="sidebar-title">🎨 Design Studio</h2>
+        <p class="sidebar-subtitle">Professional components for every platform</p>
       </div>
       
       <div class="sidebar-content">
         <div class="tab-nav">
-          <button class="tab-btn active" onclick="switchTab('components')">Components</button>
-          <button class="tab-btn" onclick="switchTab('ai')">AI Generate</button>
-          <button class="tab-btn" onclick="switchTab('templates')">Templates</button>
+          <button class="tab-btn active" onclick="switchTab('components')">
+            <span class="tab-icon">🧩</span>
+            <span class="tab-label">Components</span>
+          </button>
+          <button class="tab-btn" onclick="switchTab('ai')">
+            <span class="tab-icon">🤖</span>
+            <span class="tab-label">AI Studio</span>
+          </button>
+          <button class="tab-btn" onclick="switchTab('templates')">
+            <span class="tab-icon">📚</span>
+            <span class="tab-label">Templates</span>
+          </button>
+          <button class="tab-btn" onclick="switchTab('brand')">
+            <span class="tab-icon">🎨</span>
+            <span class="tab-label">Brand Kit</span>
+          </button>
         </div>
         
         <!-- Components Tab -->
@@ -723,46 +783,111 @@
               <span class="search-icon">🔍</span>
             </div>
             
-            <div class="component-section">
-              <h3 class="section-title">Layout</h3>
+            <!-- Platform Filter -->
+            <div class="platform-filter">
+              <button class="filter-btn active" data-platform="all">All Platforms</button>
+              <button class="filter-btn" data-platform="email">📧 Email</button>
+              <button class="filter-btn" data-platform="social">📱 Social</button>
+              <button class="filter-btn" data-platform="web">🌐 Web</button>
+            </div>
+            
+            <!-- Email Components -->
+            <div class="component-section" data-platform="email">
+              <h3 class="section-title">📧 Email Campaign Components</h3>
               <div class="component-grid">
-                <div class="component-item" draggable="true" data-component="header">
+                <div class="component-item premium" draggable="true" data-component="email-header">
                   <span class="component-icon">📄</span>
-                  <p class="component-name">Header</p>
+                  <p class="component-name">Email Header</p>
+                  <span class="platform-badge">Email</span>
                 </div>
-                <div class="component-item" draggable="true" data-component="text-block">
-                  <span class="component-icon">📝</span>
-                  <p class="component-name">Text Block</p>
+                <div class="component-item" draggable="true" data-component="newsletter-block">
+                  <span class="component-icon">📰</span>
+                  <p class="component-name">Newsletter</p>
+                  <span class="platform-badge">Email</span>
                 </div>
-                <div class="component-item" draggable="true" data-component="image">
-                  <span class="component-icon">🖼️</span>
-                  <p class="component-name">Image</p>
+                <div class="component-item premium" draggable="true" data-component="email-cta">
+                  <span class="component-icon">📧</span>
+                  <p class="component-name">Email CTA</p>
+                  <span class="platform-badge">Email</span>
                 </div>
-                <div class="component-item" draggable="true" data-component="button">
-                  <span class="component-icon">🔘</span>
-                  <p class="component-name">Button</p>
+                <div class="component-item" draggable="true" data-component="unsubscribe-footer">
+                  <span class="component-icon">👋</span>
+                  <p class="component-name">Footer</p>
+                  <span class="platform-badge">Email</span>
                 </div>
               </div>
             </div>
             
-            <div class="component-section">
-              <h3 class="section-title">Content</h3>
+            <!-- Social Media Components -->
+            <div class="component-section" data-platform="social">
+              <h3 class="section-title">📱 Social Media Components</h3>
+              <div class="component-grid">
+                <div class="component-item premium" draggable="true" data-component="tiktok-video">
+                  <span class="component-icon">🎵</span>
+                  <p class="component-name">TikTok Video</p>
+                  <span class="platform-badge tiktok">TikTok</span>
+                </div>
+                <div class="component-item premium" draggable="true" data-component="instagram-story">
+                  <span class="component-icon">📸</span>
+                  <p class="component-name">IG Story</p>
+                  <span class="platform-badge instagram">Instagram</span>
+                </div>
+                <div class="component-item" draggable="true" data-component="youtube-thumbnail">
+                  <span class="component-icon">📺</span>
+                  <p class="component-name">YT Thumbnail</p>
+                  <span class="platform-badge youtube">YouTube</span>
+                </div>
+                <div class="component-item premium" draggable="true" data-component="linkedin-post">
+                  <span class="component-icon">💼</span>
+                  <p class="component-name">LinkedIn Post</p>
+                  <span class="platform-badge linkedin">LinkedIn</span>
+                </div>
+                <div class="component-item" draggable="true" data-component="facebook-ad">
+                  <span class="component-icon">👥</span>
+                  <p class="component-name">FB Ad</p>
+                  <span class="platform-badge facebook">Facebook</span>
+                </div>
+                <div class="component-item premium" draggable="true" data-component="twitter-thread">
+                  <span class="component-icon">🐦</span>
+                  <p class="component-name">X Thread</p>
+                  <span class="platform-badge twitter">X/Twitter</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Universal Components -->
+            <div class="component-section" data-platform="all">
+              <h3 class="section-title">🎨 Universal Components</h3>
               <div class="component-grid">
                 <div class="component-item" draggable="true" data-component="hero-section">
                   <span class="component-icon">🌟</span>
                   <p class="component-name">Hero Section</p>
+                  <span class="platform-badge universal">Universal</span>
                 </div>
-                <div class="component-item" draggable="true" data-component="product-showcase">
+                <div class="component-item premium" draggable="true" data-component="product-showcase">
                   <span class="component-icon">🛍️</span>
-                  <p class="component-name">Product</p>
+                  <p class="component-name">Product Showcase</p>
+                  <span class="platform-badge universal">Universal</span>
                 </div>
                 <div class="component-item" draggable="true" data-component="testimonial">
                   <span class="component-icon">💬</span>
                   <p class="component-name">Testimonial</p>
+                  <span class="platform-badge universal">Universal</span>
                 </div>
-                <div class="component-item" draggable="true" data-component="social-proof">
-                  <span class="component-icon">👥</span>
-                  <p class="component-name">Social Proof</p>
+                <div class="component-item premium" draggable="true" data-component="pricing-table">
+                  <span class="component-icon">💰</span>
+                  <p class="component-name">Pricing Table</p>
+                  <span class="platform-badge universal">Universal</span>
+                </div>
+                <div class="component-item" draggable="true" data-component="contact-form">
+                  <span class="component-icon">📝</span>
+                  <p class="component-name">Contact Form</p>
+                  <span class="platform-badge universal">Universal</span>
+                </div>
+                <div class="component-item premium" draggable="true" data-component="countdown-timer">
+                  <span class="component-icon">⏰</span>
+                  <p class="component-name">Countdown</p>
+                  <span class="platform-badge universal">Universal</span>
                 </div>
               </div>
             </div>
@@ -791,115 +916,415 @@
           </div>
         </div>
         
-        <!-- AI Generation Tab -->
+        <!-- AI Studio Tab -->
         <div id="ai-tab" class="tab-pane">
           <div class="tab-content">
+            <div class="ai-studio-header">
+              <h3 class="studio-title">🤖 AI Campaign Generator</h3>
+              <p class="studio-subtitle">Create professional campaigns in seconds</p>
+            </div>
+            
+            <!-- Quick Start Templates -->
+            <div class="quick-start-section">
+              <h4 class="quick-start-title">⚡ Quick Start</h4>
+              <div class="quick-start-grid">
+                <button class="quick-start-btn" onclick="generateQuickCampaign('product-launch')">
+                  <span class="quick-icon">🚀</span>
+                  <span class="quick-label">Product Launch</span>
+                </button>
+                <button class="quick-start-btn" onclick="generateQuickCampaign('sale-event')">
+                  <span class="quick-icon">🏷️</span>
+                  <span class="quick-label">Sale Event</span>
+                </button>
+                <button class="quick-start-btn" onclick="generateQuickCampaign('newsletter')">
+                  <span class="quick-icon">📰</span>
+                  <span class="quick-label">Newsletter</span>
+                </button>
+                <button class="quick-start-btn" onclick="generateQuickCampaign('social-media')">
+                  <span class="quick-icon">📱</span>
+                  <span class="quick-label">Social Posts</span>
+                </button>
+              </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <!-- Custom AI Generation -->
             <form id="aiGenerationForm">
               <div class="form-group">
-                <label class="form-label">Describe your template</label>
+                <label class="form-label">✨ Describe your campaign vision</label>
                 <textarea 
-                  class="form-textarea" 
-                  rows="4" 
-                  placeholder="E.g., Create a promotional email for Black Friday sales with hero section, product grid, and urgency countdown..."
+                  class="form-textarea enhanced" 
+                  rows="3" 
+                  placeholder="E.g., 'Create a Black Friday email campaign with countdown timer and product showcase for a tech startup selling productivity apps. Make it modern and urgent.'"
                   id="aiPrompt"
                 ></textarea>
+                <div class="form-hint">💡 Pro tip: Be specific about your goals, target audience, and desired style</div>
               </div>
               
-              <div class="form-group">
-                <label class="form-label">Template Type</label>
-                <select class="form-select" id="templateType">
-                  <option value="email">📧 Email Campaign</option>
-                  <option value="newsletter">📰 Newsletter</option>
-                  <option value="promotional">🎯 Promotional</option>
-                  <option value="transactional">📄 Transactional</option>
-                </select>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">🎯 Campaign Type</label>
+                  <select class="form-select enhanced" id="campaignType">
+                    <option value="email-marketing">📧 Email Marketing</option>
+                    <option value="social-media">📱 Social Media</option>
+                    <option value="landing-page">🌐 Landing Page</option>
+                    <option value="ad-campaign">📺 Ad Campaign</option>
+                    <option value="newsletter">📰 Newsletter</option>
+                    <option value="tiktok-content">🎵 TikTok Content</option>
+                    <option value="youtube-content">📺 YouTube Content</option>
+                    <option value="instagram-story">📸 Instagram Story</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">🏢 Industry</label>
+                  <select class="form-select enhanced" id="industry">
+                    <option value="tech">💻 Technology</option>
+                    <option value="ecommerce">🛒 E-commerce</option>
+                    <option value="saas">☁️ SaaS</option>
+                    <option value="finance">💰 Finance</option>
+                    <option value="healthcare">🏥 Healthcare</option>
+                    <option value="education">🎓 Education</option>
+                    <option value="fashion">👗 Fashion</option>
+                    <option value="food">🍕 Food & Beverage</option>
+                    <option value="travel">✈️ Travel</option>
+                    <option value="fitness">💪 Fitness</option>
+                    <option value="real-estate">🏠 Real Estate</option>
+                    <option value="nonprofit">❤️ Non-profit</option>
+                  </select>
+                </div>
               </div>
               
-              <div class="form-group">
-                <label class="form-label">Industry</label>
-                <select class="form-select" id="industry">
-                  <option value="general">General</option>
-                  <option value="tech">Technology</option>
-                  <option value="ecommerce">E-commerce</option>
-                  <option value="healthcare">Healthcare</option>
-                  <option value="finance">Finance</option>
-                  <option value="education">Education</option>
-                  <option value="nonprofit">Non-profit</option>
-                  <option value="fashion">Fashion</option>
-                  <option value="food">Food & Beverage</option>
-                  <option value="travel">Travel</option>
-                </select>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">🎭 Brand Tone</label>
+                  <select class="form-select enhanced" id="tone">
+                    <option value="professional">👔 Professional</option>
+                    <option value="friendly">😊 Friendly</option>
+                    <option value="trendy">🔥 Trendy</option>
+                    <option value="luxury">💎 Luxury</option>
+                    <option value="playful">🎉 Playful</option>
+                    <option value="urgent">⚡ Urgent</option>
+                    <option value="minimalist">✨ Minimalist</option>
+                    <option value="bold">💥 Bold</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">🎨 Style</label>
+                  <select class="form-select enhanced" id="style">
+                    <option value="modern">🔮 Modern</option>
+                    <option value="classic">🏛️ Classic</option>
+                    <option value="creative">🎨 Creative</option>
+                    <option value="corporate">🏢 Corporate</option>
+                    <option value="startup">🚀 Startup</option>
+                    <option value="artistic">🎭 Artistic</option>
+                  </select>
+                </div>
               </div>
               
-              <div class="form-group">
-                <label class="form-label">Tone</label>
-                <select class="form-select" id="tone">
-                  <option value="professional">Professional</option>
-                  <option value="friendly">Friendly</option>
-                  <option value="casual">Casual</option>
-                  <option value="formal">Formal</option>
-                  <option value="playful">Playful</option>
-                  <option value="urgent">Urgent</option>
-                  <option value="luxury">Luxury</option>
-                  <option value="minimalist">Minimalist</option>
-                </select>
+              <div class="ai-options">
+                <div class="option-group">
+                  <input type="checkbox" id="includeImages" checked>
+                  <label for="includeImages">🖼️ Include relevant images</label>
+                </div>
+                <div class="option-group">
+                  <input type="checkbox" id="optimizeConversion" checked>
+                  <label for="optimizeConversion">📈 Optimize for conversions</label>
+                </div>
+                <div class="option-group">
+                  <input type="checkbox" id="mobileFriendly" checked>
+                  <label for="mobileFriendly">📱 Mobile-first design</label>
+                </div>
               </div>
               
-              <button type="button" class="btn btn-primary" onclick="generateWithAI()" style="width: 100%;">
-                ✨ Generate Template
+              <button type="button" class="btn btn-ai-generate" onclick="generateWithAI()">
+                <span class="btn-icon">✨</span>
+                <span class="btn-text">Generate Campaign</span>
+                <span class="btn-subtext">Powered by AI</span>
               </button>
             </form>
+            
+            <!-- AI Generation Status -->
+            <div id="aiGenerationStatus" class="generation-status" style="display: none;">
+              <div class="status-content">
+                <div class="loading-animation">
+                  <div class="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+                <p class="status-text">AI is crafting your campaign...</p>
+                <p class="status-subtext">This usually takes 10-15 seconds</p>
+              </div>
+            </div>
           </div>
         </div>
         
-        <!-- Templates Tab -->
+        <!-- Professional Templates Tab -->
         <div id="templates-tab" class="tab-pane">
           <div class="tab-content">
+            <div class="templates-header">
+              <h3 class="studio-title">📚 Professional Templates</h3>
+              <p class="studio-subtitle">Industry-tested templates that convert</p>
+            </div>
+            
             <div class="search-box">
               <input type="text" class="search-input" placeholder="Search templates..." id="templateSearch">
               <span class="search-icon">🔍</span>
             </div>
             
-            <div class="component-section">
-              <h3 class="section-title">Popular Templates</h3>
-              <div style="display: flex; flex-direction: column; gap: 12px;">
-                <div class="component-item" style="text-align: left; padding: 12px;" onclick="loadTemplate('welcome-series')">
-                  <div style="display: flex; align-items: center; gap: 12px;">
-                    <span class="component-icon" style="margin: 0; font-size: 20px;">👋</span>
-                    <div>
-                      <p class="component-name" style="margin: 0 0 4px 0; text-align: left;">Welcome Series</p>
-                      <p style="font-size: 11px; color: var(--gray-500); margin: 0;">Onboarding email sequence</p>
+            <!-- Template Categories -->
+            <div class="template-categories">
+              <button class="category-btn active" data-category="all">All Templates</button>
+              <button class="category-btn" data-category="email">📧 Email</button>
+              <button class="category-btn" data-category="social">📱 Social</button>
+              <button class="category-btn" data-category="landing">🌐 Landing</button>
+            </div>
+            
+            <!-- Featured Templates -->
+            <div class="template-section">
+              <h4 class="template-section-title">⭐ Featured Templates</h4>
+              <div class="template-grid">
+                <div class="template-card premium" onclick="loadTemplate('saas-launch')">
+                  <div class="template-preview">
+                    <div class="preview-placeholder saas">SaaS Launch</div>
+                    <div class="template-badge premium">PRO</div>
+                  </div>
+                  <div class="template-info">
+                    <h5 class="template-name">SaaS Product Launch</h5>
+                    <p class="template-desc">Complete campaign suite for software launches</p>
+                    <div class="template-stats">
+                      <span class="stat">📈 95% CTR</span>
+                      <span class="stat">💰 High Convert</span>
                     </div>
                   </div>
                 </div>
                 
-                <div class="component-item" style="text-align: left; padding: 12px;" onclick="loadTemplate('product-announcement')">
-                  <div style="display: flex; align-items: center; gap: 12px;">
-                    <span class="component-icon" style="margin: 0; font-size: 20px;">🚀</span>
-                    <div>
-                      <p class="component-name" style="margin: 0 0 4px 0; text-align: left;">Product Launch</p>
-                      <p style="font-size: 11px; color: var(--gray-500); margin: 0;">Announcement template</p>
+                <div class="template-card" onclick="loadTemplate('black-friday')">
+                  <div class="template-preview">
+                    <div class="preview-placeholder sale">Black Friday</div>
+                  </div>
+                  <div class="template-info">
+                    <h5 class="template-name">Black Friday Sale</h5>
+                    <p class="template-desc">High-impact sale campaign with urgency</p>
+                    <div class="template-stats">
+                      <span class="stat">🔥 Trending</span>
+                      <span class="stat">⚡ Urgent</span>
                     </div>
                   </div>
                 </div>
                 
-                <div class="component-item" style="text-align: left; padding: 12px;" onclick="loadTemplate('sale-promotion')">
-                  <div style="display: flex; align-items: center; gap: 12px;">
-                    <span class="component-icon" style="margin: 0; font-size: 20px;">🎯</span>
-                    <div>
-                      <p class="component-name" style="margin: 0 0 4px 0; text-align: left;">Sale Promotion</p>
-                      <p style="font-size: 11px; color: var(--gray-500); margin: 0;">Discount & offers</p>
+                <div class="template-card premium" onclick="loadTemplate('tiktok-viral')">
+                  <div class="template-preview">
+                    <div class="preview-placeholder tiktok">TikTok Viral</div>
+                    <div class="template-badge premium">PRO</div>
+                  </div>
+                  <div class="template-info">
+                    <h5 class="template-name">TikTok Viral Kit</h5>
+                    <p class="template-desc">Viral TikTok content templates</p>
+                    <div class="template-stats">
+                      <span class="stat">🚀 Viral</span>
+                      <span class="stat">🎵 TikTok</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+            
+            <!-- Email Templates -->
+            <div class="template-section" data-category="email">
+              <h4 class="template-section-title">📧 Email Campaign Templates</h4>
+              <div class="template-list">
+                <div class="template-list-item" onclick="loadTemplate('welcome-series')">
+                  <div class="template-icon">👋</div>
+                  <div class="template-details">
+                    <h5 class="template-title">Welcome Email Series</h5>
+                    <p class="template-subtitle">5-part onboarding sequence</p>
+                  </div>
+                  <div class="template-metrics">
+                    <span class="metric">🎯 68% Open Rate</span>
+                  </div>
+                </div>
+                
+                <div class="template-list-item premium" onclick="loadTemplate('abandoned-cart')">
+                  <div class="template-icon">🛒</div>
+                  <div class="template-details">
+                    <h5 class="template-title">Abandoned Cart Recovery</h5>
+                    <p class="template-subtitle">3-step cart recovery sequence</p>
+                  </div>
+                  <div class="template-metrics">
+                    <span class="metric">💰 42% Recovery Rate</span>
+                    <span class="badge premium">PRO</span>
+                  </div>
+                </div>
+                
+                <div class="template-list-item" onclick="loadTemplate('newsletter-modern')">
+                  <div class="template-icon">📰</div>
+                  <div class="template-details">
+                    <h5 class="template-title">Modern Newsletter</h5>
+                    <p class="template-subtitle">Clean, professional design</p>
+                  </div>
+                  <div class="template-metrics">
+                    <span class="metric">📈 85% Engagement</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Social Media Templates -->
+            <div class="template-section" data-category="social">
+              <h4 class="template-section-title">📱 Social Media Templates</h4>
+              <div class="social-grid">
+                <div class="social-template" onclick="loadTemplate('instagram-story-suite')">
+                  <div class="social-preview instagram">IG Stories</div>
+                  <span class="social-label">📸 Instagram Stories</span>
+                </div>
+                <div class="social-template premium" onclick="loadTemplate('tiktok-trending')">
+                  <div class="social-preview tiktok">TikTok</div>
+                  <span class="social-label">🎵 TikTok Content</span>
+                </div>
+                <div class="social-template" onclick="loadTemplate('linkedin-posts')">
+                  <div class="social-preview linkedin">LinkedIn</div>
+                  <span class="social-label">💼 LinkedIn Posts</span>
+                </div>
+                <div class="social-template" onclick="loadTemplate('youtube-thumbnails')">
+                  <div class="social-preview youtube">YouTube</div>
+                  <span class="social-label">📺 YT Thumbnails</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Brand Kit Tab -->
+        <div id="brand-tab" class="tab-pane">
+          <div class="tab-content">
+            <div class="brand-header">
+              <h3 class="studio-title">🎨 Brand Kit</h3>
+              <p class="studio-subtitle">Maintain consistent brand identity across all campaigns</p>
+            </div>
+            
+            <!-- Brand Colors -->
+            <div class="brand-section">
+              <h4 class="brand-section-title">🎨 Brand Colors</h4>
+              <div class="color-palette">
+                <div class="color-item">
+                  <div class="color-swatch" style="background: #3b82f6;"></div>
+                  <span class="color-label">Primary</span>
+                  <span class="color-code">#3b82f6</span>
+                </div>
+                <div class="color-item">
+                  <div class="color-swatch" style="background: #1f2937;"></div>
+                  <span class="color-label">Secondary</span>
+                  <span class="color-code">#1f2937</span>
+                </div>
+                <div class="color-item">
+                  <div class="color-swatch" style="background: #10b981;"></div>
+                  <span class="color-label">Accent</span>
+                  <span class="color-code">#10b981</span>
+                </div>
+                <button class="add-color-btn">+ Add Color</button>
+              </div>
+            </div>
+            
+            <!-- Brand Fonts -->
+            <div class="brand-section">
+              <h4 class="brand-section-title">📝 Typography</h4>
+              <div class="font-stack">
+                <div class="font-item">
+                  <span class="font-preview" style="font-family: 'Inter', sans-serif; font-weight: 600;">Inter Bold</span>
+                  <span class="font-usage">Headings</span>
+                </div>
+                <div class="font-item">
+                  <span class="font-preview" style="font-family: 'Inter', sans-serif;">Inter Regular</span>
+                  <span class="font-usage">Body text</span>
+                </div>
+                <button class="add-font-btn">+ Add Font</button>
+              </div>
+            </div>
+            
+            <!-- Brand Assets -->
+            <div class="brand-section">
+              <h4 class="brand-section-title">📁 Brand Assets</h4>
+              <div class="asset-grid">
+                <div class="asset-item">
+                  <div class="asset-preview logo">
+                    <span class="asset-icon">🎯</span>
+                  </div>
+                  <span class="asset-label">Logo</span>
+                </div>
+                <div class="asset-item">
+                  <div class="asset-preview images">
+                    <span class="asset-icon">🖼️</span>
+                  </div>
+                  <span class="asset-label">Images</span>
+                </div>
+                <div class="asset-item add-asset">
+                  <div class="asset-preview">
+                    <span class="asset-icon">+</span>
+                  </div>
+                  <span class="asset-label">Upload</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Brand Voice -->
+            <div class="brand-section">
+              <h4 class="brand-section-title">🗣️ Brand Voice</h4>
+              <div class="voice-settings">
+                <div class="voice-option">
+                  <label class="voice-label">Tone</label>
+                  <select class="voice-select">
+                    <option value="professional">Professional</option>
+                    <option value="friendly">Friendly</option>
+                    <option value="casual">Casual</option>
+                    <option value="authoritative">Authoritative</option>
+                  </select>
+                </div>
+                <div class="voice-option">
+                  <label class="voice-label">Personality</label>
+                  <div class="personality-tags">
+                    <span class="tag active">Helpful</span>
+                    <span class="tag">Expert</span>
+                    <span class="tag">Approachable</span>
+                    <span class="tag">Innovative</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Brand Guidelines -->
+            <div class="brand-section">
+              <h4 class="brand-section-title">📋 Quick Guidelines</h4>
+              <div class="guidelines-list">
+                <div class="guideline-item">
+                  <span class="guideline-icon">✅</span>
+                  <span class="guideline-text">Always use primary brand colors for CTAs</span>
+                </div>
+                <div class="guideline-item">
+                  <span class="guideline-icon">✅</span>
+                  <span class="guideline-text">Maintain 1.5x line height for readability</span>
+                </div>
+                <div class="guideline-item">
+                  <span class="guideline-icon">⚠️</span>
+                  <span class="guideline-text">Keep subject lines under 50 characters</span>
+                </div>
+              </div>
+            </div>
+            
+            <button class="btn btn-brand-apply" onclick="applyBrandKit()">
+              <span class="btn-icon">🎨</span>
+              <span class="btn-text">Apply Brand Kit to Campaign</span>
+            </button>
           </div>
         </div>
       </div>
       
       <div class="version-info">
-        RapidMarkt Template Builder v2.0
+        🚀 RapidMarkt Studio v3.0 - Multi-Platform Campaign Builder
       </div>
     </aside>
 
@@ -951,6 +1376,7 @@
         </div>
       </div>
     </aside>
+  </div>
   </div>
 
   <!-- Loading Overlay -->
@@ -1025,41 +1451,99 @@
       }
       
       setupDragAndDrop() {
-        // Setup draggable components
-        document.querySelectorAll('.component-item').forEach(item => {
-          item.addEventListener('dragstart', (e) => {
-            this.draggedComponent = e.target.dataset.component;
-            e.dataTransfer.effectAllowed = 'copy';
-          });
-        });
+        console.log('Setting up drag and drop...');
         
-        // Setup drop zone
+        // Clear any existing drag state
+        this.draggedComponent = null;
+        
+        // Remove any existing event listeners to prevent duplicates
+        const existingHandlers = document.querySelectorAll('[data-drag-initialized]');
+        existingHandlers.forEach(el => el.removeAttribute('data-drag-initialized'));
+        
+        // Setup draggable components with event delegation
+        document.addEventListener('dragstart', this.handleDragStart.bind(this));
+        document.addEventListener('dragend', this.handleDragEnd.bind(this));
+        
+        // Setup drop zones - canvas container and drop zone
+        const canvasContainer = document.getElementById('canvasContainer');
         const canvasContent = document.getElementById('canvasContent');
         const dropZone = document.getElementById('dropZone');
         
-        [canvasContent, dropZone].forEach(element => {
-          element.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'copy';
-            element.classList.add('drag-over');
-          });
+        console.log('Canvas container:', canvasContainer);
+        console.log('Canvas content:', canvasContent);
+        console.log('Drop zone:', dropZone);
+        
+        if (!canvasContainer || !canvasContent || !dropZone) {
+          console.error('Required elements not found for drag and drop!');
+          return;
+        }
+        
+        // Add drop functionality to multiple targets
+        [canvasContainer, canvasContent, dropZone].forEach(element => {
+          if (element.hasAttribute('data-drop-initialized')) return;
           
-          element.addEventListener('dragleave', (e) => {
-            if (!element.contains(e.relatedTarget)) {
-              element.classList.remove('drag-over');
-            }
-          });
-          
-          element.addEventListener('drop', (e) => {
-            e.preventDefault();
-            element.classList.remove('drag-over');
-            
-            if (this.draggedComponent) {
-              this.addComponent(this.draggedComponent);
-              this.draggedComponent = null;
-            }
-          });
+          element.addEventListener('dragover', this.handleDragOver.bind(this));
+          element.addEventListener('dragleave', this.handleDragLeave.bind(this));
+          element.addEventListener('drop', this.handleDrop.bind(this));
+          element.setAttribute('data-drop-initialized', 'true');
         });
+        
+        console.log('Drag and drop setup complete');
+      }
+      
+      handleDragStart(e) {
+        const componentItem = e.target.closest('.component-item[draggable="true"]');
+        if (componentItem && componentItem.dataset.component) {
+          console.log('Drag started:', componentItem.dataset.component);
+          this.draggedComponent = componentItem.dataset.component;
+          e.dataTransfer.effectAllowed = 'copy';
+          e.dataTransfer.setData('text/plain', this.draggedComponent);
+          componentItem.style.opacity = '0.5';
+          componentItem.style.transform = 'scale(0.95)';
+        }
+      }
+      
+      handleDragEnd(e) {
+        const componentItem = e.target.closest('.component-item[draggable="true"]');
+        if (componentItem) {
+          componentItem.style.opacity = '1';
+          componentItem.style.transform = 'scale(1)';
+        }
+      }
+      
+      handleDragOver(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.dataTransfer.dropEffect = 'copy';
+        
+        if (!this.draggedComponent) return;
+        
+        const element = e.currentTarget;
+        element.classList.add('drag-over');
+        console.log('Drag over:', element.id);
+      }
+      
+      handleDragLeave(e) {
+        const element = e.currentTarget;
+        if (!element.contains(e.relatedTarget)) {
+          element.classList.remove('drag-over');
+          console.log('Drag leave:', element.id);
+        }
+      }
+      
+      handleDrop(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const element = e.currentTarget;
+        element.classList.remove('drag-over');
+        console.log('Drop event triggered on:', element.id, 'component:', this.draggedComponent);
+        
+        if (this.draggedComponent) {
+          this.addComponent(this.draggedComponent);
+          this.draggedComponent = null;
+          this.showNotification('Component added successfully!', 'success');
+        }
       }
       
       setupAutoSave() {
@@ -1693,6 +2177,108 @@
         });
       }
       
+      switchTab(tabName) {
+        console.log('Switching to tab:', tabName);
+        
+        // Hide all tab panes
+        const allPanes = document.querySelectorAll('.tab-pane');
+        allPanes.forEach(pane => {
+          pane.classList.remove('active');
+          pane.style.display = 'none';
+        });
+        
+        // Remove active class from all tab buttons
+        const allBtns = document.querySelectorAll('.tab-btn');
+        allBtns.forEach(btn => {
+          btn.classList.remove('active');
+        });
+        
+        // Show the selected tab pane
+        const targetPane = document.getElementById(`${tabName}-tab`);
+        if (targetPane) {
+          targetPane.classList.add('active');
+          targetPane.style.display = 'block';
+          console.log('Activated tab pane:', targetPane.id);
+        } else {
+          console.error('Tab pane not found:', `${tabName}-tab`);
+        }
+        
+        // Add active class to the clicked tab button
+        const targetBtn = document.querySelector(`[onclick*="switchTab('${tabName}')"]`);
+        if (targetBtn) {
+          targetBtn.classList.add('active');
+          console.log('Activated tab button for:', tabName);
+        } else {
+          console.error('Tab button not found for:', tabName);
+        }
+        
+        // Re-setup drag and drop for new content with a delay
+        setTimeout(() => {
+          this.setupDragAndDrop();
+          console.log('Drag and drop re-initialized for tab:', tabName);
+        }, 150);
+        
+        // Trigger specific actions based on tab
+        this.handleTabSwitch(tabName);
+      }
+      
+      handleTabSwitch(tabName) {
+        switch(tabName) {
+          case 'components':
+            // Ensure component search is properly initialized
+            this.initializeComponentSearch();
+            break;
+          case 'ai':
+            // Initialize AI form if needed
+            this.initializeAIForm();
+            break;
+          case 'templates':
+            // Load templates if needed
+            this.loadTemplates();
+            break;
+          case 'brand':
+            // Initialize brand tools
+            this.initializeBrandTools();
+            break;
+        }
+      }
+      
+      initializeComponentSearch() {
+        const searchInput = document.getElementById('componentSearch');
+        if (searchInput && !searchInput.hasAttribute('data-search-initialized')) {
+          searchInput.addEventListener('input', (e) => {
+            this.filterComponents(e.target.value);
+          });
+          searchInput.setAttribute('data-search-initialized', 'true');
+        }
+      }
+      
+      initializeAIForm() {
+        // AI form initialization logic can go here
+        console.log('AI form initialized');
+      }
+      
+      loadTemplates() {
+        // Template loading logic can go here
+        console.log('Templates loaded');
+      }
+      
+      initializeBrandTools() {
+        // Brand tools initialization logic can go here
+        console.log('Brand tools initialized');
+      }
+      
+      filterComponents(searchTerm) {
+        const components = document.querySelectorAll('.component-item');
+        const lowercaseSearch = searchTerm.toLowerCase();
+        
+        components.forEach(component => {
+          const name = component.querySelector('.component-name')?.textContent?.toLowerCase() || '';
+          const isVisible = name.includes(lowercaseSearch);
+          component.style.display = isVisible ? 'flex' : 'none';
+        });
+      }
+      
       generateTemplateHTML() {
         let html = `
           <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
@@ -1770,17 +2356,12 @@
     }
     
     // Initialize template builder
-    const templateBuilder = new TemplateBuilder();
+    const templateBuilder = new CampaignBuilder();
+    window.campaignBuilder = templateBuilder; // Make it globally accessible
     
     // Global functions
     function switchTab(tabName) {
-      // Update tab buttons
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      
-      // Update tab content
-      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-      document.getElementById(tabName + '-tab').classList.add('active');
+      templateBuilder.switchTab(tabName);
     }
     
     function undoAction() {
@@ -1828,6 +2409,18 @@
         </html>
       `);
       previewWindow.document.close();
+    }
+    
+    function previewCampaign() {
+      previewTemplate();
+    }
+    
+    function publishCampaign() {
+      saveTemplate(false);
+    }
+    
+    function generateWithAI() {
+      switchTab('ai');
     }
     
     function saveAsDraft() {

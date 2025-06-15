@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_15_080643) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_15_135114) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -29,6 +29,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_080643) do
     t.integer "activity_count", default: 0
     t.decimal "engagement_score", precision: 5, scale: 2
     t.jsonb "tracking_data", default: {}
+    t.string "company_name"
+    t.string "phone"
+    t.string "address"
+    t.string "city"
+    t.string "state"
+    t.string "zip_code"
+    t.string "country"
     t.index ["engagement_score"], name: "index_accounts_on_engagement_score"
     t.index ["last_activity_at"], name: "index_accounts_on_last_activity_at"
     t.index ["status"], name: "index_accounts_on_status"
