@@ -140,7 +140,11 @@
       <div style="text-align: center;">
         <%= link_to "📋 Templates Index", templates_path, class: "nav-link" %>
         <%= link_to "➕ New Template", new_template_path, class: "nav-link" %>
-        <%= link_to "🔧 Dropdown Test", test_dropdowns_templates_path, class: "nav-link" %>
+        <% begin %>
+          <%= link_to "🔧 Dropdown Test", test_dropdowns_templates_path, class: "nav-link" %>
+        <% rescue %>
+          <span class="nav-link" style="opacity: 0.5;">🔧 Dropdown Test (Route Missing)</span>
+        <% end %>
         <%= link_to "🏠 Dashboard", root_path, class: "nav-link" %>
       </div>
     </div>
