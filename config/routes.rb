@@ -75,6 +75,52 @@ Rails.application.routes.draw do
     patch :update_settings
   end
 
+  # Automations
+  resources :automations do
+    member do
+      post :activate
+      post :pause
+      post :duplicate
+      get :analytics
+    end
+
+    collection do
+      post :bulk_action
+    end
+  end
+
+  # API routes
+  namespace :api do
+    namespace :v1 do
+      resources :automations, only: [:index, :show, :create, :update, :destroy] do
+        member do
+          post :activate
+          post :pause
+          post :duplicate
+          get :analytics
+          get :enrollments
+        end
+
+        collection do
+          post :bulk_action
+        end
+      end
+
+      resources :automation_enrollments, only: [:index, :show, :create, :destroy] do
+        member do
+          post :pause
+          post :resume
+        end
+      end
+
+      resources :automation_executions, only: [:index, :show] do
+        member do
+          post :retry
+        end
+      end
+    end
+  end
+
   # Email tracking (for open/click tracking)
   get "track/open/:token", to: "email_tracking#open", as: :track_email_open
   get "track/click/:token", to: "email_tracking#click", as: :track_email_click
