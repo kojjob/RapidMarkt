@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>UI Diagnostic - RapidMarkt</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 2rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: white;
+    }
+    
+    .diagnostic-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .status-good {
+      color: #10b981;
+      font-weight: bold;
+    }
+    
+    .status-issue {
+      color: #ef4444;
+      font-weight: bold;
+    }
+    
+    .code-block {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.875rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+    
+    .nav-link {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 0.75rem;
+      text-decoration: none;
+      color: white;
+      margin: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 2rem; text-align: center;">
+      🔧 RapidMarkt UI Diagnostic
+    </h1>
+    
+    <!-- Current Branch Info -->
+    <div class="diagnostic-card">
+      <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">📍 Current Branch Status</h2>
+      <div class="code-block">
+        Current Branch: <%= `git branch --show-current`.strip rescue 'Unknown' %>
+        <br>Last Commit: <%= `git log -1 --oneline`.strip rescue 'Unknown' %>
+        <br>Git Status: <%= `git status --porcelain`.strip.empty? ? 'Clean' : 'Has changes' rescue 'Unknown' %>
+      </div>
+    </div>
+    
+    <!-- Template Files Check -->
+    <div class="diagnostic-card">
+      <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">📄 Template Files Status</h2>
+      
+      <h3 style="margin: 1rem 0;">Templates Directory:</h3>
+      <div class="code-block">
+        <% Dir.glob(Rails.root.join('app/views/templates/*.html.erb')).each do |file| %>
+          <%= File.basename(file) %> - <%= File.mtime(file).strftime('%Y-%m-%d %H:%M:%S') %>
+          <br>
+        <% end %>
+      </div>
+      
+      <h3 style="margin: 1rem 0;">New Template File Check:</h3>
+      <div class="code-block">
+        <% new_template_path = Rails.root.join('app/views/templates/new.html.erb') %>
+        <% if File.exist?(new_template_path) %>
+          <span class="status-good">✅ new.html.erb exists</span>
+          <br>Size: <%= File.size(new_template_path) %> bytes
+          <br>Modified: <%= File.mtime(new_template_path).strftime('%Y-%m-%d %H:%M:%S') %>
+          <br>First 200 chars: <%= File.read(new_template_path)[0..200] %>...
+        <% else %>
+          <span class="status-issue">❌ new.html.erb missing</span>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Routes Check -->
+    <div class="diagnostic-card">
+      <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">🛣️ Routes Status</h2>
+      <div class="code-block">
+        <% begin %>
+          <% Rails.application.routes.routes.select { |r| r.path.spec.to_s.include?('templates') }.each do |route| %>
+            <%= route.verb %> <%= route.path.spec %> → <%= route.defaults[:controller] %>#<%= route.defaults[:action] %>
+            <br>
+          <% end %>
+        <% rescue => e %>
+          Error loading routes: <%= e.message %>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Asset Status -->
+    <div class="diagnostic-card">
+      <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">🎨 Asset Status</h2>
+      <div class="code-block">
+        Application CSS: <%= asset_path('application.css') rescue 'Not found' %>
+        <br>Application JS: <%= asset_path('application.js') rescue 'Not found' %>
+        <br>Stimulus Controllers: 
+        <% Dir.glob(Rails.root.join('app/javascript/controllers/*.js')).each do |file| %>
+          <br>&nbsp;&nbsp;- <%= File.basename(file, '.js') %>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Quick Navigation -->
+    <div class="diagnostic-card">
+      <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">🧭 Quick Navigation</h2>
+      <div style="text-align: center;">
+        <%= link_to "📋 Templates Index", templates_path, class: "nav-link" %>
+        <%= link_to "➕ New Template", new_template_path, class: "nav-link" %>
+        <%= link_to "🔧 Dropdown Test", test_dropdowns_templates_path, class: "nav-link" %>
+        <%= link_to "🏠 Dashboard", root_path, class: "nav-link" %>
+      </div>
+    </div>
+    
+    <!-- Browser Info -->
+    <div class="diagnostic-card">
+      <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">🌐 Browser & Environment</h2>
+      <div class="code-block">
+        Rails Environment: <%= Rails.env %>
+        <br>Rails Version: <%= Rails.version %>
+        <br>Ruby Version: <%= RUBY_VERSION %>
+        <br>User Agent: <span id="user-agent"></span>
+        <br>Screen Size: <span id="screen-size"></span>
+        <br>Viewport: <span id="viewport"></span>
+      </div>
+    </div>
+    
+    <!-- Instructions -->
+    <div class="diagnostic-card">
+      <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">📝 Next Steps</h2>
+      <ol style="line-height: 1.8;">
+        <li>Check if you're on the correct branch (should be 'dev' or 'enhance-dashboard-ui')</li>
+        <li>Click "New Template" above to see the enhanced UI</li>
+        <li>If you see old design, try hard refresh (Cmd+Shift+R on Mac, Ctrl+Shift+R on PC)</li>
+        <li>Clear browser cache and cookies for localhost</li>
+        <li>Check if you're looking at the right URL (/templates/new)</li>
+      </ol>
+    </div>
+  </div>
+  
+  <script>
+    document.getElementById('user-agent').textContent = navigator.userAgent;
+    document.getElementById('screen-size').textContent = screen.width + 'x' + screen.height;
+    document.getElementById('viewport').textContent = window.innerWidth + 'x' + window.innerHeight;
+  </script>
+</body>
+</html>

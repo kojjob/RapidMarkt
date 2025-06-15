@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  resources :brand_voices do
+    member do
+      post :test_voice
+    end
+  end
   devise_for :users
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -21,16 +26,11 @@ Rails.application.routes.draw do
       get :preview
       post :send_campaign
       post :send_test
-      post :pause
-      post :resume
-      post :stop
-      post :duplicate
     end
 
     collection do
       post :bulk_send
       post :bulk_schedule
-      get :dashboard
     end
   end
 
@@ -48,12 +48,11 @@ Rails.application.routes.draw do
     member do
       get :preview
       post :duplicate
-      post :use_template
-      post :rate
     end
-    
+
     collection do
-      get :marketplace
+      get :test_dropdowns
+      get :ui_diagnostic
     end
   end
 
@@ -65,26 +64,6 @@ Rails.application.routes.draw do
   get "analytics/campaigns", to: "analytics#campaigns"
   get "analytics/contacts", to: "analytics#contacts"
   get "analytics/export", to: "analytics#export"
-  get "analytics/real_time", to: "analytics#real_time"
-  get "analytics/chart_data", to: "analytics#chart_data"
-  get "analytics/dashboard_summary", to: "analytics#dashboard_summary"
-
-  # Onboarding (indie-focused)
-  get "onboarding", to: "onboarding#show"
-  get "onboarding/welcome", to: "onboarding#welcome"
-  get "onboarding/business_info", to: "onboarding#business_info"
-  get "onboarding/first_contacts", to: "onboarding#first_contacts"
-  get "onboarding/choose_template", to: "onboarding#choose_template"
-  get "onboarding/first_campaign", to: "onboarding#first_campaign"
-  get "onboarding/explore_features", to: "onboarding#explore_features"
-  post "onboarding/welcome", to: "onboarding#complete_welcome"
-  post "onboarding/business_info", to: "onboarding#complete_business_info"
-  post "onboarding/first_contacts", to: "onboarding#complete_first_contacts"
-  post "onboarding/choose_template", to: "onboarding#complete_choose_template"
-  post "onboarding/first_campaign", to: "onboarding#complete_first_campaign"
-  post "onboarding/complete", to: "onboarding#complete"
-  post "onboarding/skip_step", to: "onboarding#skip_step"
-  post "onboarding/restart", to: "onboarding#restart"
 
   # Account management
   resource :account, only: [ :show, :edit, :update ] do
@@ -95,6 +74,52 @@ Rails.application.routes.draw do
     delete :cancel_invitation
     get :settings
     patch :update_settings
+  end
+
+  # Automations
+  resources :automations do
+    member do
+      post :activate
+      post :pause
+      post :duplicate
+      get :analytics
+    end
+
+    collection do
+      post :bulk_action
+    end
+  end
+
+  # API routes
+  namespace :api do
+    namespace :v1 do
+      resources :automations, only: [ :index, :show, :create, :update, :destroy ] do
+        member do
+          post :activate
+          post :pause
+          post :duplicate
+          get :analytics
+          get :enrollments
+        end
+
+        collection do
+          post :bulk_action
+        end
+      end
+
+      resources :automation_enrollments, only: [ :index, :show, :create, :destroy ] do
+        member do
+          post :pause
+          post :resume
+        end
+      end
+
+      resources :automation_executions, only: [ :index, :show ] do
+        member do
+          post :retry
+        end
+      end
+    end
   end
 
   # Email tracking (for open/click tracking)

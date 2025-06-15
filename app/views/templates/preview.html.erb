@@ -1,288 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Template Preview - RapidMarkt</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Template Preview</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
     }
-    
-    .preview-content {
-      animation: fadeInUp 0.6s ease-out;
-    }
-    
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    .hover-lift {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .hover-lift:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-    }
-    
-    .content-frame {
-      min-height: 400px;
-      border-radius: 16px;
-      overflow: hidden;
-    }
-    
-    /* Email content styling to maintain formatting */
-    .email-content {
-      line-height: 1.7;
-      word-wrap: break-word;
-      font-size: 16px;
-    }
-    
-    .email-content img {
-      max-width: 100%;
-      height: auto;
+    .preview-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
       border-radius: 8px;
-    }
-    
-    .email-content table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    .pulse-animation {
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.6;
-      }
-    }
-    
-    .stagger-animation {
-      animation-delay: var(--delay, 0s);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
   </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50">
-  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-5xl">
-    <!-- Enhanced Header Section -->
-    <div class="preview-content mb-8" style="--delay: 0.1s">
-      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover-lift">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div class="flex items-center space-x-4 mb-4 sm:mb-0">
-            <div class="w-14 h-14 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-              </svg>
-            </div>
-            <div>
-              <h1 class="text-3xl font-bold text-gray-900">Template Preview</h1>
-              <p class="text-lg text-gray-600 mt-1">Live preview of your email template</p>
-            </div>
-          </div>
-          <div class="flex items-center space-x-3">
-            <div class="flex items-center space-x-2 px-3 py-2 bg-purple-50 rounded-lg">
-              <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-              <span class="text-sm font-medium text-purple-700">Live Preview</span>
-            </div>
-          </div>
-        </div>
+<body>
+  <div class="preview-container">
+    <% if @rendered_content.is_a?(Hash) %>
+      <div class="subject-preview">
+        <h2 style="color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">Subject:</h2>
+        <p style="font-weight: bold; margin-bottom: 20px;"><%= sanitize @rendered_content[:subject] %></p>
       </div>
-    </div>
-
-    <!-- Content Section -->
-    <% if @rendered_content.present? %>
-      <% if @rendered_content.is_a?(Hash) %>
-        <!-- Enhanced Subject Preview Card -->
-        <div class="preview-content mb-8 stagger-animation" style="--delay: 0.2s">
-          <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover-lift">
-            <div class="bg-gradient-to-r from-purple-500 to-indigo-600 px-8 py-6">
-              <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                  </svg>
-                </div>
-                <div>
-                  <h2 class="text-xl font-bold text-white">Email Subject Line</h2>
-                  <p class="text-purple-100 text-sm mt-1">This is what recipients will see in their inbox</p>
-                </div>
-              </div>
-            </div>
-            <div class="p-8">
-              <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6 border-l-4 border-purple-500">
-                <div class="flex items-start space-x-3">
-                  <div class="w-2 h-2 bg-purple-500 rounded-full mt-3 flex-shrink-0"></div>
-                  <p class="text-gray-800 font-semibold text-xl leading-relaxed">
-                    <%= @rendered_content[:subject] %>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Enhanced Body Preview Card -->
-        <div class="preview-content stagger-animation" style="--delay: 0.3s">
-          <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover-lift">
-            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-8 py-6">
-              <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                  </svg>
-                </div>
-                <div>
-                  <h2 class="text-xl font-bold text-white">Email Content</h2>
-                  <p class="text-indigo-100 text-sm mt-1">Preview of the email body content</p>
-                </div>
-              </div>
-            </div>
-            <div class="p-8">
-              <div class="content-frame bg-gradient-to-br from-gray-50 to-indigo-50 border-2 border-indigo-100 p-8 rounded-2xl">
-                <% if @rendered_content[:body].present? %>
-                  <div class="email-content prose prose-lg max-w-none">
-                    <%= @rendered_content[:body].html_safe %>
-                  </div>
-                <% else %>
-                  <div class="flex items-center justify-center py-16 text-gray-400">
-                    <div class="text-center">
-                      <div class="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <svg class="w-8 h-8 text-indigo-400 pulse-animation" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                      </div>
-                      <p class="text-lg font-medium text-gray-500 mb-2">No content available</p>
-                      <p class="text-sm text-gray-400">Email body content will appear here when available</p>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% else %>
-        <!-- Enhanced Single Content Preview -->
-        <div class="preview-content stagger-animation" style="--delay: 0.2s">
-          <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover-lift">
-            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-8 py-6">
-              <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                  </svg>
-                </div>
-                <div>
-                  <h2 class="text-xl font-bold text-white">Template Content</h2>
-                  <p class="text-indigo-100 text-sm mt-1">Full template preview</p>
-                </div>
-              </div>
-            </div>
-            <div class="p-8">
-              <div class="content-frame bg-gradient-to-br from-gray-50 to-indigo-50 border-2 border-indigo-100 p-8 rounded-2xl">
-                <div class="email-content prose prose-lg max-w-none">
-                    <%= @rendered_content.html_safe %>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% end %>
+      <div class="body-preview">
+        <h2 style="color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">Body:</h2>
+        <%= sanitize @rendered_content[:body], tags: %w[p br strong em ul ol li h1 h2 h3 h4 h5 h6 a img], attributes: %w[href src alt title style] %>
+      </div>
     <% else %>
-      <!-- Enhanced Error State -->
-      <div class="preview-content stagger-animation" style="--delay: 0.2s">
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover-lift">
-          <div class="bg-gradient-to-r from-red-500 to-pink-600 px-8 py-6">
-            <div class="flex items-center space-x-4">
-              <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.966-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
-              </div>
-              <div>
-                <h3 class="text-xl font-bold text-white">Preview Error</h3>
-                <p class="text-red-100 text-sm mt-1">Unable to render template preview</p>
-              </div>
-            </div>
-          </div>
-          <div class="p-8">
-            <div class="text-center mb-8">
-              <div class="w-20 h-20 bg-gradient-to-br from-red-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.966-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
-              </div>
-              <p class="text-lg text-gray-600 mb-2 max-w-md mx-auto">
-                Please check the template content and try again.
-              </p>
-            </div>
-            <div class="bg-gradient-to-br from-red-50 to-pink-50 border-2 border-red-100 rounded-2xl p-6 max-w-lg mx-auto">
-              <div class="flex items-start space-x-4">
-                <div class="w-6 h-6 bg-red-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                  <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                </div>
-                <div>
-                  <p class="text-base font-semibold text-red-800 mb-3">Common Issues:</p>
-                  <ul class="text-sm text-red-700 space-y-2">
-                    <li class="flex items-center space-x-2">
-                      <div class="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
-                      <span>Invalid template syntax</span>
-                    </li>
-                    <li class="flex items-center space-x-2">
-                      <div class="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
-                      <span>Missing template content</span>
-                    </li>
-                    <li class="flex items-center space-x-2">
-                      <div class="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
-                      <span>Rendering engine error</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     <% end %>
-
-    <!-- Enhanced Footer Info -->
-    <div class="preview-content mt-8 stagger-animation" style="--delay: 0.4s">
-      <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 hover-lift">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-          <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-lg flex items-center justify-center">
-              <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-            <span class="text-sm font-medium text-gray-700">This preview shows how your email will appear to recipients</span>
-          </div>
-          <div class="flex items-center space-x-2 text-xs text-gray-500">
-            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span>Real-time preview</span>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </body>
 </html>

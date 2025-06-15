@@ -1,0 +1,189 @@
+<!-- Simplified Campaign Wizard for Testing -->
+<div class="bg-white shadow-2xl rounded-2xl border-0 overflow-hidden" 
+     data-controller="campaign-wizard" 
+     data-campaign-wizard-total-steps-value="2"
+     data-campaign-wizard-current-step-value="1">
+
+  <!-- Progress Bar -->
+  <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-8 py-6 border-b border-gray-100">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-semibold text-gray-900">Campaign Setup (Simplified)</h2>
+      <div class="text-sm text-gray-500">
+        <span data-campaign-wizard-target="currentStep">Step 1</span> of 2
+      </div>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-8">
+        <div class="flex flex-col items-center cursor-pointer" data-campaign-wizard-target="progressStep" data-action="click->campaign-wizard#goToStep" data-step="1">
+          <div class="step-circle w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold transition-all duration-300 ring-4 ring-indigo-100">1</div>
+          <div class="step-label text-sm font-medium text-indigo-600 mt-2">Details</div>
+        </div>
+        <div class="flex-1 h-1 bg-gray-200 rounded-full mx-4">
+          <div class="h-1 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full transition-all duration-500" style="width: 0%" data-campaign-wizard-target="progressBar"></div>
+        </div>
+        <div class="flex flex-col items-center cursor-pointer" data-campaign-wizard-target="progressStep" data-action="click->campaign-wizard#goToStep" data-step="2">
+          <div class="step-circle w-8 h-8 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 text-sm font-semibold transition-all duration-300">2</div>
+          <div class="step-label text-sm font-medium text-gray-400 mt-2">Review</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <%= form_with model: campaign, local: true, 
+      class: "campaign-wizard-form",
+      data: { campaign_wizard_target: "form" } do |form| %>
+
+    <!-- Step 1: Campaign Details -->
+    <div data-campaign-wizard-target="step" class="p-8 block" data-step="1">
+      <div class="max-w-2xl mx-auto">
+        <div class="text-center mb-8">
+          <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center">
+            <svg class="w-8 h-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-2">Campaign Details</h3>
+          <p class="text-gray-600">Let's start with the basic information about your campaign</p>
+        </div>
+
+        <div class="space-y-6">
+          <!-- Campaign Name -->
+          <div>
+            <%= form.label :name, "Campaign Name", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+            <%= form.text_field :name,
+                placeholder: "e.g., Summer Sale Newsletter",
+                required: true,
+                class: "block w-full px-4 py-3 border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200" %>
+            <p class="mt-1 text-xs text-gray-500">Choose a descriptive name for internal reference</p>
+          </div>
+
+          <!-- Subject Line -->
+          <div>
+            <%= form.label :subject, "Subject Line", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+            <%= form.text_field :subject,
+                placeholder: "🌞 Summer Sale - Up to 50% Off!",
+                required: true,
+                class: "block w-full px-4 py-3 border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200" %>
+            <p class="mt-1 text-xs text-gray-500">Keep it under 78 characters for optimal display</p>
+          </div>
+
+          <!-- From Name -->
+          <div>
+            <%= form.label :from_name, "From Name", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+            <%= form.text_field :from_name,
+                placeholder: "Your Company Name",
+                required: true,
+                class: "block w-full px-4 py-3 border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200" %>
+            <p class="mt-1 text-xs text-gray-500">This will appear as the sender name</p>
+          </div>
+
+          <!-- From Email -->
+          <div>
+            <%= form.label :from_email, "From Email", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+            <%= form.email_field :from_email,
+                placeholder: "hello@yourcompany.com",
+                required: true,
+                class: "block w-full px-4 py-3 border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200" %>
+            <p class="mt-1 text-xs text-gray-500">Must be a verified email address</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Review -->
+    <div data-campaign-wizard-target="step" class="p-8 hidden" data-step="2">
+      <div class="max-w-2xl mx-auto">
+        <div class="text-center mb-8">
+          <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center">
+            <svg class="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-2">Review & Create</h3>
+          <p class="text-gray-600">Review your campaign details and create it</p>
+        </div>
+
+        <div class="bg-gray-50 rounded-xl p-6 mb-6">
+          <h4 class="text-lg font-semibold text-gray-900 mb-4">Campaign Summary</h4>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Name:</span>
+              <span class="font-medium" id="review-name">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Subject:</span>
+              <span class="font-medium" id="review-subject">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">From:</span>
+              <span class="font-medium" id="review-from">-</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <%= form.submit "Create Campaign", 
+              class: "inline-flex items-center px-8 py-4 border border-transparent rounded-xl shadow-sm text-lg font-semibold text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 transform hover:scale-105" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="bg-gray-50 px-8 py-6 border-t border-gray-100 flex items-center justify-between">
+      <button type="button" 
+              data-campaign-wizard-target="prevButton"
+              data-action="click->campaign-wizard#previous"
+              disabled
+              class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-xl shadow-sm text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Previous Step
+      </button>
+
+      <div class="text-sm text-gray-500">
+        <svg class="inline w-4 h-4 mr-1 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        Auto-saving draft...
+      </div>
+
+      <button type="button" 
+              data-campaign-wizard-target="nextButton"
+              data-action="click->campaign-wizard#next"
+              class="inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-105">
+        Next Step
+        <svg class="-mr-1 ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </button>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Update review section when form fields change
+    function updateReview() {
+      const name = document.querySelector('[name="campaign[name]"]')?.value || '-'
+      const subject = document.querySelector('[name="campaign[subject]"]')?.value || '-'
+      const fromName = document.querySelector('[name="campaign[from_name]"]')?.value || ''
+      const fromEmail = document.querySelector('[name="campaign[from_email]"]')?.value || ''
+      
+      const reviewName = document.getElementById('review-name')
+      const reviewSubject = document.getElementById('review-subject')
+      const reviewFrom = document.getElementById('review-from')
+      
+      if (reviewName) reviewName.textContent = name
+      if (reviewSubject) reviewSubject.textContent = subject
+      if (reviewFrom) reviewFrom.textContent = fromName && fromEmail ? `${fromName} <${fromEmail}>` : '-'
+    }
+    
+    // Listen for form changes
+    document.addEventListener('input', updateReview)
+    document.addEventListener('change', updateReview)
+  })
+</script>

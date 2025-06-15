@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :account do
-    sequence(:name) { |n| "Test Account #{n}" }
-    sequence(:subdomain) { |n| "test-account-#{n}" }
-    plan { "free" }
-    status { "active" }
+    name { "MyString" }
+    subdomain { "MyString" }
+    plan { "MyString" }
+    status { "MyString" }
   end
 end

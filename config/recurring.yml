@@ -1,10 +1,76 @@
-# production:
-#   periodic_cleanup:
-#     class: CleanSoftDeletedRecordsJob
-#     queue: background
-#     args: [ 1000, { batch_size: 500 } ]
-#     schedule: every hour
-#   periodic_command:
-#     command: "SoftDeletedRecord.due.delete_all"
-#     priority: 2
-#     schedule: at 5am every day
+# Recurring jobs configuration for Solid Queue
+# These jobs will run automatically on the specified schedule
+
+# Development environment - more frequent for testing
+development:
+  # Process scheduled automations every 5 minutes
+  automation_processor:
+    class: ProcessScheduledAutomationsJob
+    queue: automation_scheduler
+    schedule: every 5 minutes
+    
+  # Check for scheduled campaigns every 2 minutes  
+  campaign_processor:
+    class: ProcessScheduledCampaignsJob
+    queue: campaigns
+    schedule: every 2 minutes
+    
+  # Process automation executions every minute
+  automation_execution_processor:
+    class: ProcessAutomationExecutionJob
+    queue: automation
+    schedule: every 1 minute
+
+# Production environment - optimized intervals
+production:
+  # Process scheduled automations every 10 minutes
+  automation_processor:
+    class: ProcessScheduledAutomationsJob
+    queue: automation_scheduler
+    schedule: every 10 minutes
+    
+  # Check for scheduled campaigns every 5 minutes
+  campaign_processor:
+    class: ProcessScheduledCampaignsJob
+    queue: campaigns  
+    schedule: every 5 minutes
+    
+  # Process automation executions every 2 minutes
+  automation_execution_processor:
+    class: ProcessAutomationExecutionJob
+    queue: automation
+    schedule: every 2 minutes
+    
+  # Contact enrichment processing every hour
+  contact_enrichment_processor:
+    class: ProcessContactEnrichmentQueueJob
+    queue: enrichment
+    schedule: every hour
+    
+  # Email deliverability tracking every 30 minutes
+  deliverability_tracker:
+    class: EmailDeliverabilityTrackerJob
+    queue: maintenance
+    schedule: every 30 minutes
+    
+  # Automation maintenance once daily at 2 AM
+  automation_maintenance:
+    class: AutomationMaintenanceJob
+    queue: maintenance
+    schedule: at 2am every day
+    
+  # Database cleanup once daily at 3 AM
+  database_cleanup:
+    class: DatabaseCleanupJob
+    queue: maintenance
+    schedule: at 3am every day
+    
+  # Analytics data processing once daily at 4 AM
+  analytics_processor:
+    class: AnalyticsProcessorJob
+    queue: maintenance
+    schedule: at 4am every day
+
+# Test environment - no recurring jobs to avoid interference
+test:
+  # Empty configuration for test environment

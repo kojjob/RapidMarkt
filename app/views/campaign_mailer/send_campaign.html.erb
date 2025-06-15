@@ -58,8 +58,28 @@
       </div>
       
       <div class="content">
-        <%= raw @content_with_tracking %>
+        <%= sanitize @content, tags: %w[p br strong em ul ol li h1 h2 h3 h4 h5 h6 a img], attributes: %w[href src alt title style] %>
+      </div>
+      
+      <div class="footer">
+        <p>You received this email because you subscribed to updates from <%= @account.name %>.</p>
+        <p>
+          <a href="<%= Rails.application.routes.url_helpers.root_url %>unsubscribe?token=<%= @contact.id %>&campaign=<%= @campaign.id %>">
+            Unsubscribe
+          </a>
+          |
+          <a href="<%= Rails.application.routes.url_helpers.root_url %>">
+            Visit our website
+          </a>
+        </p>
+        <p style="margin-top: 20px; font-size: 11px; color: #999;">
+          © <%= Date.current.year %> <%= @account.name %>. All rights reserved.
+        </p>
       </div>
     </div>
+    
+    <!-- Tracking pixel for open tracking -->
+    <img src="<%= Rails.application.routes.url_helpers.root_url %>track/open?token=<%= @tracking_params[:token] %>&campaign=<%= @tracking_params[:campaign_id] %>&contact=<%= @tracking_params[:contact_id] %>" 
+         alt="" class="tracking-pixel" />
   </body>
 </html>

@@ -1,3 +1,4 @@
+# Rails 8 Solid Cache configuration (database-backed caching)
 default: &default
   store_options:
     # Cap age of oldest cache entry to fulfill retention policies
@@ -6,9 +7,11 @@ default: &default
     namespace: <%= Rails.env %>
 
 development:
+  database: cache
   <<: *default
 
 test:
+  database: cache
   <<: *default
 
 production:

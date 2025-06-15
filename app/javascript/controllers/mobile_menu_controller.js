@@ -2,15 +2,21 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="mobile-menu"
 export default class extends Controller {
-  static targets = ["menu", "button", "hamburger", "close"]
+  static targets = ["menu", "overlay", "panel"]
 
   connect() {
     this.close = this.close.bind(this)
+    this.handleKeydown = this.handleKeydown.bind(this)
   }
 
   toggle(event) {
     event.preventDefault()
     event.stopPropagation()
+
+    if (!this.hasMenuTarget) {
+      console.warn("Mobile menu target not found")
+      return
+    }
 
     if (this.menuTarget.classList.contains("hidden")) {
       this.open()
@@ -20,59 +26,56 @@ export default class extends Controller {
   }
 
   open() {
-    // Show menu
+    if (!this.hasMenuTarget) return
+
     this.menuTarget.classList.remove("hidden")
-
-    // Update button icons
-    if (this.hasHamburgerTarget) this.hamburgerTarget.classList.add("hidden")
-    if (this.hasCloseTarget) this.closeTarget.classList.remove("hidden")
-
-    // Update aria attributes
-    this.buttonTarget.setAttribute("aria-expanded", "true")
-
-    // Prevent body scroll
     document.body.classList.add("overflow-hidden")
+    document.addEventListener("keydown", this.handleKeydown)
 
-    // Add click outside listener
-    document.addEventListener("click", this.close)
-
-    // Add escape key listener
-    document.addEventListener("keydown", this.handleEscape.bind(this))
+    // Animate in if panel target exists
+    if (this.hasPanelTarget) {
+      setTimeout(() => {
+        this.panelTarget.classList.remove("-translate-x-full")
+      }, 10)
+    }
   }
 
   close(event) {
-    // Don't close if clicking inside the menu
-    if (event && this.menuTarget.contains(event.target)) {
+    if (!this.hasMenuTarget) return
+
+    if (event && this.element.contains(event.target)) {
       return
     }
 
-    // Hide menu
-    this.menuTarget.classList.add("hidden")
+    // Animate out if panel target exists
+    if (this.hasPanelTarget) {
+      this.panelTarget.classList.add("-translate-x-full")
+      setTimeout(() => {
+        this.menuTarget.classList.add("hidden")
+        document.body.classList.remove("overflow-hidden")
+      }, 300)
+    } else {
+      this.menuTarget.classList.add("hidden")
+      document.body.classList.remove("overflow-hidden")
+    }
 
-    // Update button icons
-    if (this.hasHamburgerTarget) this.hamburgerTarget.classList.remove("hidden")
-    if (this.hasCloseTarget) this.closeTarget.classList.add("hidden")
-
-    // Update aria attributes
-    this.buttonTarget.setAttribute("aria-expanded", "false")
-
-    // Restore body scroll
-    document.body.classList.remove("overflow-hidden")
-
-    // Remove listeners
-    document.removeEventListener("click", this.close)
-    document.removeEventListener("keydown", this.handleEscape.bind(this))
+    document.removeEventListener("keydown", this.handleKeydown)
   }
 
-  handleEscape(event) {
+  handleKeydown(event) {
     if (event.key === "Escape") {
       this.close()
     }
   }
 
+  overlayClick(event) {
+    if (this.hasOverlayTarget && event.target === this.overlayTarget) {
+      this.close()
+    }
+  }
+
   disconnect() {
-    document.removeEventListener("click", this.close)
-    document.removeEventListener("keydown", this.handleEscape.bind(this))
+    document.removeEventListener("keydown", this.handleKeydown)
     document.body.classList.remove("overflow-hidden")
   }
 }
