@@ -1,4 +1,9 @@
 class Contact < ApplicationRecord
+  include AccountScoped
+  include Auditable
+  include Trackable
+  include Searchable
+
   # Associations
   belongs_to :account
   has_many :campaign_contacts, dependent: :destroy
