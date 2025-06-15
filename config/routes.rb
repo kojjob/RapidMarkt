@@ -53,6 +53,8 @@ Rails.application.routes.draw do
     collection do
       get :test_dropdowns
       get :ui_diagnostic
+      get :enhanced_builder
+      post :auto_save
     end
   end
 

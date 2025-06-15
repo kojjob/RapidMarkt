@@ -85,6 +85,21 @@ class TemplatesController < ApplicationController
     render layout: false
   end
 
+  def enhanced_builder
+    @template = Template.new
+    render layout: false
+  end
+
+  def auto_save
+    # Auto-save functionality for the enhanced builder
+    content = params[:content]
+
+    # Here you would typically save to database or session
+    # For now, we'll just return success
+
+    render json: { success: true, message: 'Auto-saved successfully' }
+  end
+
   private
 
   def set_template

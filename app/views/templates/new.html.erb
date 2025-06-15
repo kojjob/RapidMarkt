@@ -126,7 +126,37 @@
                   </div>
                   <div>
                     <h3 class="font-semibold text-gray-900">Social Media</h3>
-                    <p class="text-sm text-gray-600">Instagram, Facebook, LinkedIn</p>
+                    <p class="text-sm text-gray-600">TikTok, Instagram, Facebook, LinkedIn</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TikTok Specific -->
+              <div class="template-type-card group cursor-pointer p-4 bg-gradient-to-br from-gray-900 to-black rounded-xl border-2 border-transparent hover:border-gray-600 transition-all duration-300">
+                <div class="flex items-center space-x-3">
+                  <div class="w-12 h-12 bg-gradient-to-br from-gray-800 to-black rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-.88-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-white">TikTok Content</h3>
+                    <p class="text-sm text-gray-300">Vertical videos, trending content</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- YouTube Shorts -->
+              <div class="template-type-card group cursor-pointer p-4 bg-gradient-to-br from-red-50 to-red-100 rounded-xl border-2 border-transparent hover:border-red-300 transition-all duration-300">
+                <div class="flex items-center space-x-3">
+                  <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900">YouTube Shorts</h3>
+                    <p class="text-sm text-gray-600">Short-form video content</p>
                   </div>
                 </div>
               </div>
@@ -213,9 +243,12 @@
 
           <!-- Component Library -->
           <div class="w-80 bg-white/80 backdrop-blur-xl border-l border-gray-200/50 overflow-y-auto"
-               data-controller="component-library template-ai"
+               data-controller="component-library template-ai enhanced-builder"
                data-component-library-components-value="[]"
-               data-component-library-categories-value="[]">
+               data-component-library-categories-value="[]"
+               data-enhanced-builder-zoom-level-value="100"
+               data-enhanced-builder-grid-enabled-value="false"
+               data-enhanced-builder-auto-save-value="true">
 
             <!-- Component Library Tabs -->
             <div class="border-b border-gray-200 bg-white/95 backdrop-blur-xl">
@@ -267,7 +300,10 @@
                   <option value="content">📝 Content</option>
                   <option value="buttons">🔘 Buttons</option>
                   <option value="images">🖼️ Images</option>
-                  <option value="social">📱 Social</option>
+                  <option value="social">📱 Social Media</option>
+                  <option value="tiktok">🎵 TikTok</option>
+                  <option value="youtube">📺 YouTube</option>
+                  <option value="instagram">📸 Instagram</option>
                   <option value="ecommerce">🛒 E-commerce</option>
                 </select>
               </div>
@@ -314,6 +350,102 @@
                     </div>
                   </div>
                 </div>
+
+                <!-- TikTok Video Component -->
+                <div class="component-card bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div class="component-thumbnail relative">
+                    <div class="aspect-w-9 aspect-h-16 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
+                      <div class="text-2xl">🎵</div>
+                    </div>
+                    <div class="absolute top-2 right-2">
+                      <span class="px-2 py-1 bg-black text-white text-xs font-bold rounded-full">TikTok</span>
+                    </div>
+                  </div>
+                  <div class="component-info p-4">
+                    <h3 class="font-bold text-gray-900 mb-1">TikTok Video</h3>
+                    <p class="text-sm text-gray-600 mb-3">Vertical video template with trending effects</p>
+                    <div class="component-actions flex space-x-2">
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        👁️ Preview
+                      </button>
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-gray-800 to-black rounded-lg hover:from-gray-900 hover:to-gray-800 transition-all duration-200">
+                        ✨ Use
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Instagram Story Component -->
+                <div class="component-card bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div class="component-thumbnail relative">
+                    <div class="aspect-w-9 aspect-h-16 bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center">
+                      <div class="text-2xl">📸</div>
+                    </div>
+                    <div class="absolute top-2 right-2">
+                      <span class="px-2 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold rounded-full">IG</span>
+                    </div>
+                  </div>
+                  <div class="component-info p-4">
+                    <h3 class="font-bold text-gray-900 mb-1">Instagram Story</h3>
+                    <p class="text-sm text-gray-600 mb-3">Story template with interactive elements</p>
+                    <div class="component-actions flex space-x-2">
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        👁️ Preview
+                      </button>
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200">
+                        ✨ Use
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- YouTube Shorts Component -->
+                <div class="component-card bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div class="component-thumbnail relative">
+                    <div class="aspect-w-9 aspect-h-16 bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center">
+                      <div class="text-2xl">📺</div>
+                    </div>
+                    <div class="absolute top-2 right-2">
+                      <span class="px-2 py-1 bg-red-600 text-white text-xs font-bold rounded-full">YT</span>
+                    </div>
+                  </div>
+                  <div class="component-info p-4">
+                    <h3 class="font-bold text-gray-900 mb-1">YouTube Shorts</h3>
+                    <p class="text-sm text-gray-600 mb-3">Short-form video content template</p>
+                    <div class="component-actions flex space-x-2">
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        👁️ Preview
+                      </button>
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-red-700 rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-200">
+                        ✨ Use
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- LinkedIn Post Component -->
+                <div class="component-card bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div class="component-thumbnail relative">
+                    <div class="aspect-w-16 aspect-h-9 bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
+                      <div class="text-2xl">💼</div>
+                    </div>
+                    <div class="absolute top-2 right-2">
+                      <span class="px-2 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">LI</span>
+                    </div>
+                  </div>
+                  <div class="component-info p-4">
+                    <h3 class="font-bold text-gray-900 mb-1">LinkedIn Post</h3>
+                    <p class="text-sm text-gray-600 mb-3">Professional content for business network</p>
+                    <div class="component-actions flex space-x-2">
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        👁️ Preview
+                      </button>
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200">
+                        ✨ Use
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -336,6 +468,38 @@
 
                 <div class="grid grid-cols-2 gap-3">
                   <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Platform</label>
+                    <select class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg focus:ring-2 focus:ring-purple-500 border border-gray-200"
+                            data-template-ai-target="platformSelect">
+                      <option value="email">📧 Email</option>
+                      <option value="tiktok">🎵 TikTok</option>
+                      <option value="instagram">📸 Instagram</option>
+                      <option value="youtube">📺 YouTube</option>
+                      <option value="linkedin">💼 LinkedIn</option>
+                      <option value="facebook">📘 Facebook</option>
+                      <option value="twitter">🐦 Twitter/X</option>
+                      <option value="website">🌐 Website</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Content Type</label>
+                    <select class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg focus:ring-2 focus:ring-purple-500 border border-gray-200"
+                            data-template-ai-target="contentTypeSelect">
+                      <option value="promotional">🎯 Promotional</option>
+                      <option value="educational">📚 Educational</option>
+                      <option value="entertaining">🎭 Entertaining</option>
+                      <option value="trending">🔥 Trending</option>
+                      <option value="viral">⚡ Viral</option>
+                      <option value="story">📖 Story</option>
+                      <option value="tutorial">🎓 Tutorial</option>
+                      <option value="behind-scenes">🎬 Behind Scenes</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Industry</label>
                     <select class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg focus:ring-2 focus:ring-purple-500 border border-gray-200"
                             data-template-ai-target="industrySelect">
@@ -345,6 +509,12 @@
                       <option value="healthcare">Healthcare</option>
                       <option value="finance">Finance</option>
                       <option value="education">Education</option>
+                      <option value="fitness">Fitness & Health</option>
+                      <option value="food">Food & Beverage</option>
+                      <option value="fashion">Fashion & Beauty</option>
+                      <option value="travel">Travel & Lifestyle</option>
+                      <option value="gaming">Gaming & Entertainment</option>
+                      <option value="music">Music & Arts</option>
                     </select>
                   </div>
 
@@ -357,7 +527,41 @@
                       <option value="casual">Casual</option>
                       <option value="formal">Formal</option>
                       <option value="playful">Playful</option>
+                      <option value="energetic">Energetic</option>
+                      <option value="trendy">Trendy</option>
+                      <option value="authentic">Authentic</option>
+                      <option value="inspiring">Inspiring</option>
+                      <option value="humorous">Humorous</option>
                     </select>
+                  </div>
+                </div>
+
+                <!-- TikTok Specific Options -->
+                <div class="tiktok-options hidden" data-platform="tiktok">
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Video Style</label>
+                      <select class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg focus:ring-2 focus:ring-purple-500 border border-gray-200">
+                        <option value="dance">💃 Dance</option>
+                        <option value="comedy">😂 Comedy</option>
+                        <option value="tutorial">🎓 Tutorial</option>
+                        <option value="challenge">🏆 Challenge</option>
+                        <option value="duet">👥 Duet</option>
+                        <option value="transition">✨ Transition</option>
+                        <option value="pov">🎭 POV</option>
+                        <option value="storytime">📚 Story Time</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Trending Elements</label>
+                      <select class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg focus:ring-2 focus:ring-purple-500 border border-gray-200">
+                        <option value="hashtags">🏷️ Trending Hashtags</option>
+                        <option value="sounds">🎵 Popular Sounds</option>
+                        <option value="effects">✨ Viral Effects</option>
+                        <option value="filters">📸 Trending Filters</option>
+                        <option value="memes">😄 Current Memes</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
 
