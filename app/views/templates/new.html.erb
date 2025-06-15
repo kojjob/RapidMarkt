@@ -1,49 +1,4 @@
-<div class="min-h-full">
-  <!-- Breadcrumb -->
-  <nav class="flex" aria-label="Breadcrumb">
-    <ol role="list" class="flex items-center space-x-4">
-      <li>
-        <div>
-          <%= link_to dashboard_path, class: "text-gray-400 hover:text-gray-500" do %>
-            <svg class="flex-shrink-0 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-            </svg>
-            <span class="sr-only">Home</span>
-          <% end %>
-        </div>
-      </li>
-      <li>
-        <div class="flex items-center">
-          <svg class="flex-shrink-0 h-5 w-5 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-          </svg>
-          <%= link_to "Templates", templates_path, class: "ml-4 text-sm font-medium text-gray-500 hover:text-gray-700" %>
-        </div>
-      </li>
-      <li>
-        <div class="flex items-center">
-          <svg class="flex-shrink-0 h-5 w-5 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-          </svg>
-          <span class="ml-4 text-sm font-medium text-gray-500">New Template</span>
-        </div>
-      </li>
-    </ol>
-  </nav>
-
-  <!-- Page header -->
-  <div class="mt-8">
-    <div class="md:flex md:items-center md:justify-between">
-      <div class="flex-1 min-w-0">
-        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-          Create New Template
-        </h2>
-        <p class="mt-1 text-sm text-gray-500">
-          Create a reusable email template for your campaigns. You can use variables to personalize content for each recipient.
-        </p>
-      </div>
-    </div>
-  </div>
+<!-- Full-Screen Template Builder -->
 
   <!-- Production-Ready Template Builder -->
   <div class="template-builder-container"
@@ -55,7 +10,7 @@
     <!-- Modern Header -->
     <header class="builder-header">
       <div class="header-content">
-        <!-- Brand Section -->
+        <!-- Brand Section with Navigation -->
         <div class="brand-section">
           <%= link_to root_path, class: "brand-link" do %>
             <div class="brand-icon">
@@ -70,6 +25,23 @@
               <span>Template Builder</span>
             </div>
           <% end %>
+
+          <!-- Navigation Breadcrumb -->
+          <div class="nav-breadcrumb">
+            <%= link_to dashboard_path, class: "breadcrumb-link" do %>
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+              </svg>
+            <% end %>
+            <svg class="breadcrumb-separator" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+            <%= link_to "Templates", templates_path, class: "breadcrumb-link" %>
+            <svg class="breadcrumb-separator" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+            <span class="breadcrumb-current">New Template</span>
+          </div>
         </div>
 
         <!-- Template Info -->

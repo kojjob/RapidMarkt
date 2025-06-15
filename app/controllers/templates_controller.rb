@@ -90,6 +90,16 @@ class TemplatesController < ApplicationController
     render layout: false
   end
 
+  def builder
+    @template = Template.new
+    if params[:id].present?
+      @template = @current_account.templates.find(params[:id])
+    elsif params[:template_id].present?
+      @template = @current_account.templates.find(params[:template_id])
+    end
+    render layout: false
+  end
+
   def auto_save
     template_id = params[:template_id]
     content = params[:content]
