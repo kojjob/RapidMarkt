@@ -30,7 +30,7 @@ class AutomationStep < ApplicationRecord
   }, prefix: :delay
 
   # JSON serialization
-  serialize :conditions, coder: JSON
+  # Note: conditions is a jsonb column, no serialization needed
 
   # Scopes
   scope :ordered, -> { order(:step_order) }

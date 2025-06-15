@@ -6,6 +6,7 @@ class Template < ApplicationRecord
 
   # Associations
   belongs_to :account
+  belongs_to :user
   belongs_to :brand_voice, optional: true
   has_many :campaigns, dependent: :nullify
 

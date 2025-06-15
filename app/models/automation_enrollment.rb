@@ -26,8 +26,7 @@ class AutomationEnrollment < ApplicationRecord
     failed: "failed"
   }, prefix: true
 
-  # JSON serialization
-  serialize :context, coder: JSON
+  # Note: context is a jsonb column, no serialization needed
 
   # Scopes
   scope :recent, -> { where("enrolled_at >= ?", 30.days.ago) }

@@ -24,8 +24,7 @@ class AutomationExecution < ApplicationRecord
   }, prefix: true
 
   # JSON serialization
-  serialize :execution_data, coder: JSON
-  serialize :error_details, coder: JSON
+  # Note: execution_data and error_details are jsonb columns, no serialization needed
 
   # Scopes
   scope :due_for_execution, -> { where(status: "scheduled").where("scheduled_at <= ?", Time.current) }

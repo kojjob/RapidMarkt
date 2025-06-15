@@ -8,6 +8,11 @@ if Rails.env.development?
   Campaign.destroy_all
   Contact.destroy_all
   Template.destroy_all
+  # Clear tables with foreign key references to users (in dependency order)
+  ActiveRecord::Base.connection.execute('DELETE FROM user_sessions') if ActiveRecord::Base.connection.table_exists?('user_sessions')
+  ActiveRecord::Base.connection.execute('DELETE FROM contact_lifecycle_logs') if ActiveRecord::Base.connection.table_exists?('contact_lifecycle_logs')
+  ActiveRecord::Base.connection.execute('DELETE FROM onboarding_progresses') if ActiveRecord::Base.connection.table_exists?('onboarding_progresses')
+  AuditLog.destroy_all
   User.destroy_all
   Account.destroy_all
 end
@@ -67,6 +72,7 @@ puts "Created #{User.count} users"
 # Create sample templates
 template1 = Template.create!(
   account: account1,
+  user: user1,
   name: "Welcome Email",
   subject: "Welcome to {{company_name}}!",
   body: "<h1>Welcome {{first_name}}!</h1><p>Thank you for joining {{company_name}}. We're excited to have you on board!</p>",
@@ -76,6 +82,7 @@ template1 = Template.create!(
 
 template2 = Template.create!(
   account: account1,
+  user: user1,
   name: "Newsletter Template",
   subject: "{{company_name}} Monthly Newsletter",
   body: "<h1>Monthly Update</h1><p>Hi {{first_name}},</p><p>Here's what's new at {{company_name}} this month...</p>",
@@ -85,6 +92,7 @@ template2 = Template.create!(
 
 template3 = Template.create!(
   account: account2,
+  user: user3,
   name: "Product Launch",
   subject: "Exciting News: New Product Launch!",
   body: "<h1>Big News, {{first_name}}!</h1><p>We're thrilled to announce our latest product. Check it out!</p>",
@@ -142,6 +150,7 @@ puts "Created #{Contact.count} contacts"
 # Create campaigns for account1
 campaign1 = Campaign.create!(
   account: account1,
+  user: user1,
   template: template1,
   name: "Welcome Series - Week 1",
   subject: "Welcome to Acme Marketing Co!",
@@ -154,6 +163,7 @@ campaign1 = Campaign.create!(
 
 campaign2 = Campaign.create!(
   account: account1,
+  user: user1,
   template: template2,
   name: "Monthly Newsletter - December",
   subject: "Acme Marketing Co Monthly Newsletter - December 2024",
@@ -166,6 +176,7 @@ campaign2 = Campaign.create!(
 
 campaign3 = Campaign.create!(
   account: account1,
+  user: user1,
   name: "Holiday Special Offer",
   subject: "🎄 Special Holiday Discount - Limited Time!",
   status: "draft",
@@ -174,6 +185,7 @@ campaign3 = Campaign.create!(
 
 campaign4 = Campaign.create!(
   account: account2,
+  user: user3,
   template: template3,
   name: "Product Launch Campaign",
   subject: "Exciting News: New Product Launch!",

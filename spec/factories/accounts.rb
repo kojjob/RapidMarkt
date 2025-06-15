@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :account do
-    name { "MyString" }
-    subdomain { "MyString" }
-    plan { "MyString" }
-    status { "MyString" }
+    name { "Test Account" }
+    subdomain { "test-account" }
+    plan { "free" }
+    status { "active" }
   end
 end
