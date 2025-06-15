@@ -1,18 +1,71 @@
+# Solid Queue configuration for Rails 8
 default: &default
   dispatchers:
     - polling_interval: 1
       batch_size: 500
   workers:
-    - queues: "*"
-      threads: 3
-      processes: <%= ENV.fetch("JOB_CONCURRENCY", 1) %>
+    # Critical operations - highest priority, dedicated worker
+    - queues: "critical"
+      threads: 1
+      processes: 1
       polling_interval: 0.1
+      
+    # Automation and campaigns - high priority
+    - queues: "automation,campaigns"
+      threads: 3
+      processes: <%= ENV.fetch("AUTOMATION_CONCURRENCY", 1) %>
+      polling_interval: 0.5
+      
+    # Enrichment and bulk operations - medium priority
+    - queues: "enrichment,bulk_operations,automation_scheduler"
+      threads: 2
+      processes: 1
+      polling_interval: 1.0
+      
+    # Maintenance and default - lower priority
+    - queues: "maintenance,default"
+      threads: 2
+      processes: 1
+      polling_interval: 2.0
 
 development:
   <<: *default
+  workers:
+    # Simplified configuration for development
+    - queues: "*"
+      threads: 2
+      processes: 1
+      polling_interval: 0.5
 
 test:
   <<: *default
+  workers:
+    # Single threaded for test consistency
+    - queues: "*"
+      threads: 1
+      processes: 1
+      polling_interval: 0.1
 
 production:
   <<: *default
+  workers:
+    # Production optimized configuration
+    - queues: "critical"
+      threads: 2
+      processes: 1
+      polling_interval: 0.1
+      
+    - queues: "automation,campaigns"
+      threads: 5
+      processes: <%= ENV.fetch("AUTOMATION_CONCURRENCY", 2) %>
+      polling_interval: 0.5
+      
+    - queues: "enrichment,bulk_operations"
+      threads: 3
+      processes: 1
+      polling_interval: 1.0
+      
+    - queues: "automation_scheduler,maintenance,default"
+      threads: 2
+      processes: 1
+      polling_interval: 2.0
