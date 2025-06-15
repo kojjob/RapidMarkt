@@ -81,6 +81,10 @@ class TemplatesController < ApplicationController
     render layout: false
   end
 
+  def ui_diagnostic
+    render layout: false
+  end
+
   private
 
   def set_template

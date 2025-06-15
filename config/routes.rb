@@ -52,6 +52,7 @@ Rails.application.routes.draw do
 
     collection do
       get :test_dropdowns
+      get :ui_diagnostic
     end
   end
 
