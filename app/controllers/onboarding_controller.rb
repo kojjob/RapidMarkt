@@ -288,7 +288,7 @@ class OnboardingController < ApplicationController
         title: 'Template Marketplace',
         description: 'Browse professional email templates',
         icon: '🎨',
-        link: templates_marketplace_path,
+        link: marketplace_templates_path,
         available: true
       }
     ]

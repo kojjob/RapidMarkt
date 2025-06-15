@@ -1,0 +1,233 @@
+<% content_for :title, "Template Marketplace - RapidMarkt" %>
+
+<!-- Modern Template Marketplace with Gradient Background -->
+<div class="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
+  <div class="px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header Section -->
+    <div class="text-center mb-12">
+      <div class="flex items-center justify-center mb-6">
+        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+          </svg>
+        </div>
+      </div>
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">Template Marketplace</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Discover professionally designed email templates to boost your marketing campaigns. 
+        Choose from hundreds of beautiful, responsive templates.
+      </p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+      <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+        <div class="text-3xl font-bold text-purple-600 mb-2"><%= @templates.count %></div>
+        <div class="text-gray-600">Total Templates</div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+        <div class="text-3xl font-bold text-green-600 mb-2"><%= @free_templates.count %></div>
+        <div class="text-gray-600">Free Templates</div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+        <div class="text-3xl font-bold text-blue-600 mb-2"><%= @categories.count %></div>
+        <div class="text-gray-600">Categories</div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+        <div class="text-3xl font-bold text-orange-600 mb-2"><%= @design_systems.count %></div>
+        <div class="text-gray-600">Design Systems</div>
+      </div>
+    </div>
+
+    <!-- Featured Templates Section -->
+    <% if @featured_templates.any? %>
+      <div class="mb-12">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-3xl font-bold text-gray-900">Featured Templates</h2>
+            <p class="text-gray-600 mt-2">Hand-picked templates with the highest ratings</p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <% @featured_templates.each do |template| %>
+            <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden">
+              <!-- Template Preview -->
+              <div class="h-48 bg-gradient-to-br from-purple-100 to-pink-100 relative overflow-hidden">
+                <% if template.thumbnail_url.present? %>
+                  <img src="<%= template.thumbnail_url %>" alt="<%= template.name %>" class="w-full h-full object-cover">
+                <% else %>
+                  <div class="flex items-center justify-center h-full">
+                    <svg class="w-16 h-16 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
+                <% end %>
+                
+                <!-- Featured Badge -->
+                <div class="absolute top-4 left-4">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    ⭐ Featured
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Template Info -->
+              <div class="p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">
+                  <%= template.name %>
+                </h3>
+                <p class="text-gray-600 text-sm mb-4">
+                  <%= truncate(template.description || template.subject, length: 100) %>
+                </p>
+                
+                <!-- Template Meta -->
+                <div class="flex items-center justify-between mb-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                    <%= template.template_type.humanize %>
+                  </span>
+                  <% if template.rating.present? %>
+                    <div class="flex items-center">
+                      <span class="text-yellow-400">★</span>
+                      <span class="text-sm text-gray-600 ml-1"><%= template.rating.round(1) %></span>
+                    </div>
+                  <% end %>
+                </div>
+                
+                <!-- Action Button -->
+                <div class="flex space-x-2">
+                  <%= link_to template_path(template), class: "flex-1 inline-flex items-center justify-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium" do %>
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                    View Template
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Popular Templates Section -->
+    <% if @popular_templates.any? %>
+      <div class="mb-12">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-3xl font-bold text-gray-900">Popular Templates</h2>
+            <p class="text-gray-600 mt-2">Most used templates by our community</p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <% @popular_templates.each do |template| %>
+            <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden">
+              <!-- Template Preview -->
+              <div class="h-40 bg-gradient-to-br from-blue-100 to-indigo-100 relative overflow-hidden">
+                <% if template.thumbnail_url.present? %>
+                  <img src="<%= template.thumbnail_url %>" alt="<%= template.name %>" class="w-full h-full object-cover">
+                <% else %>
+                  <div class="flex items-center justify-center h-full">
+                    <svg class="w-12 h-12 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
+                <% end %>
+              </div>
+              
+              <!-- Template Info -->
+              <div class="p-4">
+                <h3 class="text-md font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                  <%= template.name %>
+                </h3>
+                <p class="text-gray-600 text-sm mb-3">
+                  <%= truncate(template.description || template.subject, length: 80) %>
+                </p>
+                
+                <!-- Action Button -->
+                <%= link_to template_path(template), class: "w-full inline-flex items-center justify-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium" do %>
+                  View Template
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Free Templates Section -->
+    <% if @free_templates.any? %>
+      <div class="mb-12">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-3xl font-bold text-gray-900">Free Templates</h2>
+            <p class="text-gray-600 mt-2">Get started with these free, professional templates</p>
+          </div>
+          <%= link_to templates_path(pricing: 'free'), class: "text-green-600 hover:text-green-700 font-medium" do %>
+            View All Free Templates →
+          <% end %>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          <% @free_templates.each do |template| %>
+            <div class="group relative bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden">
+              <!-- Template Preview -->
+              <div class="h-32 bg-gradient-to-br from-green-100 to-emerald-100 relative overflow-hidden">
+                <% if template.thumbnail_url.present? %>
+                  <img src="<%= template.thumbnail_url %>" alt="<%= template.name %>" class="w-full h-full object-cover">
+                <% else %>
+                  <div class="flex items-center justify-center h-full">
+                    <svg class="w-8 h-8 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
+                <% end %>
+                
+                <!-- Free Badge -->
+                <div class="absolute top-2 right-2">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    FREE
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Template Info -->
+              <div class="p-3">
+                <h3 class="text-sm font-semibold text-gray-900 mb-1 group-hover:text-green-600 transition-colors">
+                  <%= template.name %>
+                </h3>
+                <%= link_to template_path(template), class: "w-full inline-flex items-center justify-center px-2 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-xs font-medium" do %>
+                  Use Template
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Call to Action -->
+    <div class="text-center bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-12 text-white">
+      <h2 class="text-3xl font-bold mb-4">Ready to Create Amazing Campaigns?</h2>
+      <p class="text-xl mb-8 text-purple-100">
+        Browse all templates or start creating your own custom design
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <%= link_to templates_path, class: "inline-flex items-center px-8 py-3 bg-white text-purple-600 rounded-xl font-semibold hover:bg-gray-100 transition-colors" do %>
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+          </svg>
+          Browse All Templates
+        <% end %>
+        <%= link_to new_template_path, class: "inline-flex items-center px-8 py-3 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-400 transition-colors border-2 border-purple-400" do %>
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          Create Custom Template
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

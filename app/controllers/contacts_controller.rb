@@ -24,7 +24,7 @@ class ContactsController < ApplicationController
       @contacts = @contacts.where(status: params[:status])
     end
 
-    @contacts = @contacts.page(params[:page])
+    @contacts = @contacts.page(params[:page]).per(15)
     @tags = @current_account.tags.order(:name)
   end
 

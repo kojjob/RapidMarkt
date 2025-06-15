@@ -283,16 +283,16 @@ class AnalyticsController < ApplicationController
 
   def calculate_campaign_stats(campaign)
     campaign_contacts = campaign.campaign_contacts
-    total_sent = campaign_contacts.where.not(sent_at: nil).count
-    total_opened = campaign_contacts.where.not(opened_at: nil).count
-    total_clicked = campaign_contacts.where.not(clicked_at: nil).count
+    total_sent = campaign_contacts.where.not(sent_at: nil).count || 0
+    total_opened = campaign_contacts.where.not(opened_at: nil).count || 0
+    total_clicked = campaign_contacts.where.not(clicked_at: nil).count || 0
 
     {
-      total_sent: total_sent,
-      total_opened: total_opened,
-      total_clicked: total_clicked,
-      open_rate: total_sent > 0 ? (total_opened.to_f / total_sent * 100).round(2) : 0,
-      click_rate: total_sent > 0 ? (total_clicked.to_f / total_sent * 100).round(2) : 0
+      sent: total_sent.to_i,
+      opens: total_opened.to_i,
+      clicks: total_clicked.to_i,
+      open_rate: total_sent > 0 ? (total_opened.to_f / total_sent * 100).round(2) : 0.0,
+      click_rate: total_sent > 0 ? (total_clicked.to_f / total_sent * 100).round(2) : 0.0
     }
   end
 end

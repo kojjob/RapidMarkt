@@ -71,23 +71,17 @@ class TemplatesController < ApplicationController
   end
 
   def preview
-    @contact = Contact.new(first_name: "John", last_name: "Doe", email: "john@example.com")
-    @rendered_content = TemplateRenderer.new(@template, @contact).render
-    render layout: false
-  end
-
-  def preview
     sample_data = {
       "contact.first_name" => params[:first_name] || "John",
       "contact.last_name" => params[:last_name] || "Doe",
       "contact.email" => params[:email] || "john.doe@example.com"
     }
-    
-    @preview = @template.render_preview(sample_data: sample_data)
-    
+
+    @rendered_content = @template.render_preview(sample_data: sample_data)
+
     respond_to do |format|
       format.html { render layout: false }
-      format.json { render json: @preview }
+      format.json { render json: @rendered_content }
     end
   end
 

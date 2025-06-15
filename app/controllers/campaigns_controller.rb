@@ -4,7 +4,7 @@ class CampaignsController < ApplicationController
   def index
     @campaigns = @current_account.campaigns.includes(:template)
                                 .order(created_at: :desc)
-                                .page(params[:page])
+                                .page(params[:page]).per(12)
   end
 
   def show
@@ -19,6 +19,8 @@ class CampaignsController < ApplicationController
   def new
     @campaign = @current_account.campaigns.build
     @templates = @current_account.templates.active
+    @contacts = @current_account.contacts
+    @tags = @current_account.tags
   end
 
   def create
@@ -28,20 +30,28 @@ class CampaignsController < ApplicationController
     if @campaign.save
       redirect_to @campaign, notice: "Campaign was successfully created."
     else
+      # Re-populate instance variables needed for the form
       @templates = @current_account.templates.active
+      @contacts = @current_account.contacts
+      @tags = @current_account.tags
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
     @templates = @current_account.templates.active
+    @contacts = @current_account.contacts
+    @tags = @current_account.tags
   end
 
   def update
     if @campaign.update(campaign_params)
       redirect_to @campaign, notice: "Campaign was successfully updated."
     else
+      # Re-populate instance variables needed for the form
       @templates = @current_account.templates.active
+      @contacts = @current_account.contacts
+      @tags = @current_account.tags
       render :edit, status: :unprocessable_entity
     end
   end

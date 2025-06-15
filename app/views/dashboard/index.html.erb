@@ -1,127 +1,205 @@
 <% content_for :title, "Dashboard - RapidMarkt" %>
 
-<div class="px-4 sm:px-6 lg:px-8">
-  <!-- Page header -->
-  <div class="sm:flex sm:items-center">
-    <div class="sm:flex-auto">
-      <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
-      <p class="mt-2 text-sm text-gray-700">
-        Welcome back! Here's what's happening with your marketing campaigns.
-      </p>
-    </div>
-    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-      <%= link_to "New Campaign", new_campaign_path, 
-          class: "inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto" %>
-    </div>
-  </div>
-
-  <!-- Stats -->
-  <div class="mt-8">
-    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-      <!-- Total Campaigns -->
-      <div class="bg-white overflow-hidden shadow rounded-lg">
-        <div class="p-5">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+<!-- Modern Dashboard with Gradient Background -->
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Welcome Header with Real-time Stats -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+      <div class="mb-6 lg:mb-0">
+        <div class="flex items-center space-x-3">
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
               </svg>
             </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">Total Campaigns</dt>
-                <dd class="text-lg font-medium text-gray-900"><%= @campaigns_count %></dd>
-              </dl>
-            </div>
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">Welcome back, <%= current_user.first_name %>!</h1>
+            <p class="text-lg text-gray-600 mt-1">Here's your marketing performance at a glance</p>
           </div>
         </div>
-        <div class="bg-gray-50 px-5 py-3">
-          <div class="text-sm">
-            <%= link_to "View all", campaigns_path, class: "font-medium text-indigo-700 hover:text-indigo-900" %>
+        
+        <!-- Real-time Activity Indicators -->
+        <div class="flex items-center space-x-6 mt-4">
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span class="text-sm text-gray-600"><%= @realtime_stats[:active_campaigns] %> campaigns active</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+            <span class="text-sm text-gray-600"><%= @realtime_stats[:recent_opens] %> opens in last hour</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+            <span class="text-sm text-gray-600"><%= @realtime_stats[:online_team_members] %> team members online</span>
           </div>
         </div>
       </div>
-
-      <!-- Total Contacts -->
-      <div class="bg-white overflow-hidden shadow rounded-lg">
-        <div class="p-5">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">Total Contacts</dt>
-                <dd class="text-lg font-medium text-gray-900"><%= @contacts_count %></dd>
-              </dl>
-            </div>
-          </div>
-        </div>
-        <div class="bg-gray-50 px-5 py-3">
-          <div class="text-sm">
-            <%= link_to "View all", contacts_path, class: "font-medium text-indigo-700 hover:text-indigo-900" %>
-          </div>
-        </div>
-      </div>
-
-      <!-- Emails Sent -->
-      <div class="bg-white overflow-hidden shadow rounded-lg">
-        <div class="p-5">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-            </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">Emails Sent</dt>
-                <dd class="text-lg font-medium text-gray-900"><%= number_with_delimiter(@campaign_stats[:total_sent]) %></dd>
-              </dl>
-            </div>
-          </div>
-        </div>
-        <div class="bg-gray-50 px-5 py-3">
-          <div class="text-sm">
-            <%= link_to "View analytics", analytics_path, class: "font-medium text-indigo-700 hover:text-indigo-900" %>
-          </div>
-        </div>
-      </div>
-
-      <!-- Open Rate -->
-      <div class="bg-white overflow-hidden shadow rounded-lg">
-        <div class="p-5">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-            </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">Open Rate</dt>
-                <dd class="text-lg font-medium text-gray-900">
-                  <% if @campaign_stats[:total_sent] > 0 %>
-                    <%= number_to_percentage((@campaign_stats[:total_opened].to_f / @campaign_stats[:total_sent] * 100), precision: 1) %>
-                  <% else %>
-                    0%
-                  <% end %>
-                </dd>
-              </dl>
-            </div>
-          </div>
-        </div>
-        <div class="bg-gray-50 px-5 py-3">
-          <div class="text-sm">
-            <%= link_to "View details", analytics_path, class: "font-medium text-indigo-700 hover:text-indigo-900" %>
-          </div>
-        </div>
+      
+      <!-- Quick Actions -->
+      <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+        <% @quick_actions.select { |action| action[:priority] == 'high' }.first(2).each do |action| %>
+          <%= link_to action[:link], class: "inline-flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-200 #{action[:color] == 'blue' ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl' : 'bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl'}" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <% case action[:icon] %>
+              <% when 'plus-circle' %>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              <% when 'send' %>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+              <% when 'upload' %>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+              <% end %>
+            </svg>
+            <%= action[:title] %>
+          <% end %>
+        <% end %>
       </div>
     </div>
-  </div>
+
+    <!-- Enhanced Stats Cards with Beautiful Design -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- Campaigns Card -->
+      <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+        <div class="relative p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 bg-blue-100 rounded-xl group-hover:bg-blue-200 transition-colors duration-300">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <% if @overview_stats[:campaigns][:growth] > 0 %>
+              <div class="flex items-center text-green-600">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                </svg>
+                <span class="text-sm font-medium"><%= @overview_stats[:campaigns][:growth] %>%</span>
+              </div>
+            <% end %>
+          </div>
+          <h3 class="text-3xl font-bold text-gray-900 mb-1"><%= number_with_delimiter(@overview_stats[:campaigns][:total]) %></h3>
+          <p class="text-gray-600 font-medium mb-3">Total Campaigns</p>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-500">Active: <span class="font-medium text-green-600"><%= @overview_stats[:campaigns][:active] %></span></span>
+            <span class="text-gray-500">Draft: <span class="font-medium text-yellow-600"><%= @overview_stats[:campaigns][:draft] %></span></span>
+          </div>
+          <div class="mt-4 pt-4 border-t border-gray-100">
+            <%= link_to campaigns_path, class: "text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center group" do %>
+              View all campaigns
+              <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contacts Card -->
+      <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+        <div class="absolute inset-0 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+        <div class="relative p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 bg-green-100 rounded-xl group-hover:bg-green-200 transition-colors duration-300">
+              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+            </div>
+            <% if @overview_stats[:contacts][:growth] > 0 %>
+              <div class="flex items-center text-green-600">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                </svg>
+                <span class="text-sm font-medium"><%= @overview_stats[:contacts][:growth] %>%</span>
+              </div>
+            <% end %>
+          </div>
+          <h3 class="text-3xl font-bold text-gray-900 mb-1"><%= number_with_delimiter(@overview_stats[:contacts][:total]) %></h3>
+          <p class="text-gray-600 font-medium mb-3">Total Contacts</p>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-500">Subscribed: <span class="font-medium text-green-600"><%= @overview_stats[:contacts][:subscribed] %></span></span>
+            <span class="text-gray-500">Engaged: <span class="font-medium text-purple-600"><%= @overview_stats[:contacts][:engagement_rate] %>%</span></span>
+          </div>
+          <div class="mt-4 pt-4 border-t border-gray-100">
+            <%= link_to contacts_path, class: "text-green-600 hover:text-green-700 font-medium text-sm flex items-center group" do %>
+              Manage contacts
+              <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email Performance Card -->
+      <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+        <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+        <div class="relative p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 bg-purple-100 rounded-xl group-hover:bg-purple-200 transition-colors duration-300">
+              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+            </div>
+            <div class="text-right">
+              <div class="text-2xl font-bold text-gray-900"><%= @overview_stats[:emails][:open_rate] %>%</div>
+              <div class="text-xs text-gray-500">Open Rate</div>
+            </div>
+          </div>
+          <h3 class="text-3xl font-bold text-gray-900 mb-1"><%= number_with_delimiter(@overview_stats[:emails][:sent]) %></h3>
+          <p class="text-gray-600 font-medium mb-3">Emails Sent</p>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-500">Opened: <span class="font-medium text-blue-600"><%= number_with_delimiter(@overview_stats[:emails][:opened]) %></span></span>
+            <span class="text-gray-500">Clicked: <span class="font-medium text-indigo-600"><%= number_with_delimiter(@overview_stats[:emails][:clicked]) %></span></span>
+          </div>
+          <div class="mt-4 pt-4 border-t border-gray-100">
+            <%= link_to analytics_path, class: "text-purple-600 hover:text-purple-700 font-medium text-sm flex items-center group" do %>
+              View analytics
+              <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revenue Card -->
+      <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+        <div class="absolute inset-0 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+        <div class="relative p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 bg-yellow-100 rounded-xl group-hover:bg-yellow-200 transition-colors duration-300">
+              <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+              </svg>
+            </div>
+            <% if @overview_stats[:revenue][:growth] > 0 %>
+              <div class="flex items-center text-green-600">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                </svg>
+                <span class="text-sm font-medium"><%= @overview_stats[:revenue][:growth] %>%</span>
+              </div>
+            <% end %>
+          </div>
+          <h3 class="text-3xl font-bold text-gray-900 mb-1">$<%= number_with_delimiter(@overview_stats[:revenue][:mrr]) %></h3>
+          <p class="text-gray-600 font-medium mb-3">Monthly Revenue</p>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-500">Churn: <span class="font-medium text-red-500"><%= @overview_stats[:revenue][:churn_rate] %>%</span></span>
+            <span class="text-gray-500">Plan: <span class="font-medium text-blue-600 capitalize"><%= @current_account.plan %></span></span>
+          </div>
+          <div class="mt-4 pt-4 border-t border-gray-100">
+            <%= link_to account_path, class: "text-yellow-600 hover:text-yellow-700 font-medium text-sm flex items-center group" do %>
+              Billing settings
+              <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
 
   <!-- Recent Campaigns -->
   <div class="mt-8">
@@ -196,16 +274,16 @@
           <% end %>
         </ul>
       <% else %>
-        <div class="text-center py-12">
-          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-          <h3 class="mt-2 text-sm font-medium text-gray-900">No campaigns</h3>
-          <p class="mt-1 text-sm text-gray-500">Get started by creating your first email campaign.</p>
-          <div class="mt-6">
-            <%= link_to "New Campaign", new_campaign_path, 
-                class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+        <div class="text-center py-8">
+          <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
           </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">No recent campaigns</h3>
+          <p class="text-gray-600 mb-4">Start creating campaigns to see activity here</p>
+          <%= link_to "New Campaign", new_campaign_path,
+              class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
         </div>
       <% end %>
     </div>
