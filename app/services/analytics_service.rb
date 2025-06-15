@@ -1,7 +1,7 @@
 class AnalyticsService
   include ActiveModel::Model
   include ActiveModel::Attributes
-  
+
   attr_reader :account, :errors
 
   def initialize(account)
@@ -147,33 +147,33 @@ class AnalyticsService
 
   def export_pdf(date_range)
     # Generate PDF report with charts and analytics
-    require 'prawn'
-    
+    require "prawn"
+
     campaigns = filter_by_date_range(@account.campaigns.sent, date_range)
-    
+
     Prawn::Document.generate do |pdf|
       pdf.text "Analytics Report - #{@account.name}", size: 20, style: :bold
       pdf.move_down 20
-      
+
       # Overview stats
       stats = overview_stats(date_range)
       pdf.text "Overview", size: 16, style: :bold
       pdf.move_down 10
-      
+
       pdf.text "Total Campaigns: #{stats[:total_campaigns]}"
       pdf.text "Emails Sent: #{stats[:emails_sent]}"
       pdf.text "Average Open Rate: #{stats[:average_open_rate]}%"
       pdf.text "Total Contacts: #{stats[:total_contacts]}"
-      
+
       pdf.move_down 20
-      
+
       # Campaign performance table
       pdf.text "Campaign Performance", size: 16, style: :bold
       pdf.move_down 10
-      
+
       performance_data = campaign_performance(date_range)
       if performance_data.any?
-        table_data = [["Campaign", "Subject", "Sent", "Opens", "Clicks", "Open Rate", "Click Rate"]]
+        table_data = [ [ "Campaign", "Subject", "Sent", "Opens", "Clicks", "Open Rate", "Click Rate" ] ]
         performance_data.each do |campaign|
           table_data << [
             campaign[:name].truncate(20),
@@ -185,12 +185,11 @@ class AnalyticsService
             "#{campaign[:click_rate]}%"
           ]
         end
-        
+
         pdf.table(table_data, header: true, width: pdf.bounds.width) do
-          style(row(0), background_color: 'DDDDDD', font_style: :bold)
+          style(row(0), background_color: "DDDDDD", font_style: :bold)
         end
       end
-      
     end.render
   rescue => e
     Rails.logger.error "PDF export failed: #{e.message}"
@@ -200,37 +199,37 @@ class AnalyticsService
   # Advanced analytics methods
   def funnel_analysis(date_range = nil)
     campaigns = filter_by_date_range(@account.campaigns.sent, date_range)
-    
+
     total_sent = campaigns.joins(:campaign_contacts).count
-    total_delivered = campaigns.joins(:campaign_contacts).where(campaign_contacts: { status: 'delivered' }).count
+    total_delivered = campaigns.joins(:campaign_contacts).where(campaign_contacts: { status: "delivered" }).count
     total_opened = campaigns.joins(:campaign_contacts).where.not(campaign_contacts: { opened_at: nil }).count
     total_clicked = campaigns.joins(:campaign_contacts).where.not(campaign_contacts: { clicked_at: nil }).count
-    
+
     {
       sent: { count: total_sent, percentage: 100.0 },
-      delivered: { 
-        count: total_delivered, 
+      delivered: {
+        count: total_delivered,
         percentage: total_sent > 0 ? (total_delivered.to_f / total_sent * 100).round(2) : 0
       },
-      opened: { 
-        count: total_opened, 
+      opened: {
+        count: total_opened,
         percentage: total_delivered > 0 ? (total_opened.to_f / total_delivered * 100).round(2) : 0
       },
-      clicked: { 
-        count: total_clicked, 
+      clicked: {
+        count: total_clicked,
         percentage: total_opened > 0 ? (total_clicked.to_f / total_opened * 100).round(2) : 0
       }
     }
   end
 
-  def cohort_analysis(period = 'month')
+  def cohort_analysis(period = "month")
     # Analyze contact engagement over time cohorts
     cohorts = {}
-    
+
     case period
-    when 'month'
+    when "month"
       @account.contacts.group_by { |c| c.created_at.beginning_of_month }
-    when 'week'
+    when "week"
       @account.contacts.group_by { |c| c.created_at.beginning_of_week }
     else
       @account.contacts.group_by { |c| c.created_at.beginning_of_month }
@@ -240,7 +239,7 @@ class AnalyticsService
         total_contacts: contacts.count,
         retention_data: {}
       }
-      
+
       # Calculate retention for each period after cohort
       (0..11).each do |period_offset|
         analysis_date = cohort_date + period_offset.send(period.pluralize)
@@ -250,26 +249,26 @@ class AnalyticsService
                  .where.not(opened_at: nil)
                  .exists?
         end
-        
+
         retention_rate = contacts.count > 0 ? (active_contacts.count.to_f / contacts.count * 100).round(2) : 0
         cohort_data[:retention_data][period_offset] = {
           active_contacts: active_contacts.count,
           retention_rate: retention_rate
         }
       end
-      
+
       cohorts[cohort_date] = cohort_data
     end
-    
+
     cohorts
   end
 
   def predictive_analytics
     # Predict future campaign performance based on historical data
-    campaigns = @account.campaigns.sent.where('sent_at >= ?', 6.months.ago)
-    
-    return { error: 'Insufficient data for predictions' } if campaigns.count < 10
-    
+    campaigns = @account.campaigns.sent.where("sent_at >= ?", 6.months.ago)
+
+    return { error: "Insufficient data for predictions" } if campaigns.count < 10
+
     # Calculate trends
     monthly_data = campaigns.group_by { |c| c.sent_at.beginning_of_month }
                            .transform_values do |month_campaigns|
@@ -279,22 +278,22 @@ class AnalyticsService
                                avg_click_rate: month_campaigns.average(:click_rate) || 0
                              }
                            end
-    
+
     # Simple linear regression for predictions
     sorted_months = monthly_data.keys.sort
-    
+
     if sorted_months.length >= 3
       # Predict next month's performance
       open_rate_trend = calculate_trend(sorted_months.map { |m| monthly_data[m][:avg_open_rate] })
       click_rate_trend = calculate_trend(sorted_months.map { |m| monthly_data[m][:avg_click_rate] })
-      
+
       next_month = sorted_months.last + 1.month
-      
+
       {
         predictions: {
           next_month: next_month,
-          predicted_open_rate: [open_rate_trend[:next_value], 0].max.round(2),
-          predicted_click_rate: [click_rate_trend[:next_value], 0].max.round(2),
+          predicted_open_rate: [ open_rate_trend[:next_value], 0 ].max.round(2),
+          predicted_click_rate: [ click_rate_trend[:next_value], 0 ].max.round(2),
           confidence: calculate_prediction_confidence(monthly_data)
         },
         historical_trend: {
@@ -303,7 +302,7 @@ class AnalyticsService
         }
       }
     else
-      { error: 'Need at least 3 months of data for reliable predictions' }
+      { error: "Need at least 3 months of data for reliable predictions" }
     end
   end
 
@@ -311,7 +310,7 @@ class AnalyticsService
     # Score contacts based on engagement patterns
     contacts_with_scores = @account.contacts.includes(:campaign_contacts).map do |contact|
       score = ContactEngagementScorer.new(contact).calculate_score
-      
+
       {
         contact_id: contact.id,
         email: contact.email,
@@ -321,52 +320,52 @@ class AnalyticsService
         last_activity: contact.last_opened_at || contact.created_at
       }
     end
-    
+
     # Sort by engagement score
     contacts_with_scores.sort_by { |c| -c[:engagement_score] }
   end
 
   def campaign_optimization_suggestions
-    recent_campaigns = @account.campaigns.sent.where('sent_at >= ?', 3.months.ago)
-    
+    recent_campaigns = @account.campaigns.sent.where("sent_at >= ?", 3.months.ago)
+
     suggestions = []
-    
+
     # Analyze send times
     send_time_analysis = analyze_optimal_send_times(recent_campaigns)
     if send_time_analysis[:suggestion].present?
       suggestions << {
-        type: 'send_time',
-        priority: 'high',
+        type: "send_time",
+        priority: "high",
         suggestion: send_time_analysis[:suggestion],
         data: send_time_analysis[:data]
       }
     end
-    
+
     # Analyze subject line performance
     subject_analysis = analyze_subject_line_performance(recent_campaigns)
     if subject_analysis[:suggestions].any?
       suggestions.concat(subject_analysis[:suggestions])
     end
-    
+
     # Analyze content performance
     content_analysis = analyze_content_performance(recent_campaigns)
     if content_analysis[:suggestions].any?
       suggestions.concat(content_analysis[:suggestions])
     end
-    
+
     # Analyze frequency optimization
     frequency_analysis = analyze_send_frequency(recent_campaigns)
     if frequency_analysis[:suggestion].present?
       suggestions << frequency_analysis
     end
-    
+
     suggestions
   end
 
   def benchmark_comparison
     # Compare account performance against industry benchmarks
-    account_stats = overview_stats('last_90_days')
-    
+    account_stats = overview_stats("last_90_days")
+
     # Industry benchmarks (these would come from a database or external service)
     industry_benchmarks = {
       average_open_rate: 21.33,
@@ -374,7 +373,7 @@ class AnalyticsService
       average_bounce_rate: 0.58,
       average_unsubscribe_rate: 0.05
     }
-    
+
     {
       account_performance: account_stats,
       industry_benchmarks: industry_benchmarks,
@@ -389,49 +388,49 @@ class AnalyticsService
   def advanced_segmentation_analysis
     # Analyze performance across different contact segments
     segments = {}
-    
+
     # Analyze by engagement level
     %w[high medium low].each do |level|
       contacts = get_contacts_by_engagement_level(level)
       next if contacts.empty?
-      
+
       segments[level] = analyze_segment_performance(contacts)
     end
-    
+
     # Analyze by lifecycle stage
     %w[lead prospect customer advocate].each do |stage|
       contacts = @account.contacts.where(lifecycle_stage: stage)
       next if contacts.empty?
-      
+
       segments["lifecycle_#{stage}"] = analyze_segment_performance(contacts)
     end
-    
+
     # Analyze by recency
-    segments['new_subscribers'] = analyze_segment_performance(@account.contacts.where('created_at >= ?', 30.days.ago))
-    segments['long_term_subscribers'] = analyze_segment_performance(@account.contacts.where('created_at <= ?', 1.year.ago))
-    
+    segments["new_subscribers"] = analyze_segment_performance(@account.contacts.where("created_at >= ?", 30.days.ago))
+    segments["long_term_subscribers"] = analyze_segment_performance(@account.contacts.where("created_at <= ?", 1.year.ago))
+
     segments
   end
 
   private
 
   def calculate_trend(values)
-    return { trend: 'insufficient_data', next_value: 0 } if values.length < 2
-    
+    return { trend: "insufficient_data", next_value: 0 } if values.length < 2
+
     n = values.length
     sum_x = (1..n).sum
     sum_y = values.sum
     sum_xy = values.each_with_index.sum { |y, i| y * (i + 1) }
     sum_x_squared = (1..n).sum { |x| x * x }
-    
+
     # Calculate slope (trend)
     slope = (n * sum_xy - sum_x * sum_y).to_f / (n * sum_x_squared - sum_x * sum_x)
     intercept = (sum_y - slope * sum_x).to_f / n
-    
+
     next_value = slope * (n + 1) + intercept
-    
+
     {
-      trend: slope > 0 ? 'increasing' : (slope < 0 ? 'decreasing' : 'stable'),
+      trend: slope > 0 ? "increasing" : (slope < 0 ? "decreasing" : "stable"),
       slope: slope.round(4),
       next_value: next_value.round(2),
       r_squared: calculate_r_squared(values, slope, intercept)
@@ -441,44 +440,44 @@ class AnalyticsService
   def calculate_r_squared(values, slope, intercept)
     n = values.length
     y_mean = values.sum.to_f / n
-    
+
     ss_tot = values.sum { |y| (y - y_mean) ** 2 }
     ss_res = values.each_with_index.sum { |y, i| (y - (slope * (i + 1) + intercept)) ** 2 }
-    
+
     return 0 if ss_tot == 0
-    
+
     (1 - ss_res / ss_tot).round(4)
   end
 
   def calculate_prediction_confidence(monthly_data)
     # Simple confidence calculation based on data consistency
     values = monthly_data.values.map { |v| v[:avg_open_rate] }
-    return 'low' if values.length < 3
-    
+    return "low" if values.length < 3
+
     coefficient_of_variation = (values.standard_deviation / values.mean) * 100
-    
+
     case coefficient_of_variation
     when 0..15
-      'high'
+      "high"
     when 15..25
-      'medium'
+      "medium"
     else
-      'low'
+      "low"
     end
   end
 
   def categorize_engagement_score(score)
     case score
     when 80..100
-      'highly_engaged'
+      "highly_engaged"
     when 60..79
-      'moderately_engaged'
+      "moderately_engaged"
     when 40..59
-      'somewhat_engaged'
+      "somewhat_engaged"
     when 20..39
-      'barely_engaged'
+      "barely_engaged"
     else
-      'not_engaged'
+      "not_engaged"
     end
   end
 
@@ -491,9 +490,9 @@ class AnalyticsService
         avg_click_rate: hour_campaigns.average(:click_rate) || 0
       }
     end
-    
+
     best_hour = send_time_data.max_by { |_, data| data[:avg_open_rate] }
-    
+
     if best_hour && send_time_data.size > 1
       {
         suggestion: "Consider sending campaigns around #{best_hour[0]}:00 for better open rates",
@@ -506,51 +505,51 @@ class AnalyticsService
 
   def analyze_subject_line_performance(campaigns)
     suggestions = []
-    
+
     # Analyze subject line length
     length_analysis = campaigns.group_by { |c| c.subject.length / 10 * 10 }.transform_values do |group|
       { count: group.count, avg_open_rate: group.average(:open_rate) || 0 }
     end
-    
+
     best_length = length_analysis.max_by { |_, data| data[:avg_open_rate] }
     if best_length
       suggestions << {
-        type: 'subject_length',
-        priority: 'medium',
+        type: "subject_length",
+        priority: "medium",
         suggestion: "Subject lines around #{best_length[0]}-#{best_length[0] + 10} characters perform best",
         data: length_analysis
       }
     end
-    
+
     # Analyze personalization
-    personalized = campaigns.select { |c| c.subject.include?('{{') }
-    non_personalized = campaigns.reject { |c| c.subject.include?('{{') }
-    
+    personalized = campaigns.select { |c| c.subject.include?("{{") }
+    non_personalized = campaigns.reject { |c| c.subject.include?("{{") }
+
     if personalized.any? && non_personalized.any?
       pers_avg = personalized.average(:open_rate) || 0
       non_pers_avg = non_personalized.average(:open_rate) || 0
-      
+
       if pers_avg > non_pers_avg
         suggestions << {
-          type: 'personalization',
-          priority: 'high',
+          type: "personalization",
+          priority: "high",
           suggestion: "Personalized subject lines perform #{((pers_avg - non_pers_avg) / non_pers_avg * 100).round(1)}% better",
           data: { personalized: pers_avg, non_personalized: non_pers_avg }
         }
       end
     end
-    
+
     { suggestions: suggestions }
   end
 
   def analyze_content_performance(campaigns)
     suggestions = []
-    
+
     # Analyze content length
     campaigns_with_length = campaigns.map do |c|
-      { campaign: c, word_count: ActionView::Base.full_sanitizer.sanitize(c.template&.body || '').split.length }
+      { campaign: c, word_count: ActionView::Base.full_sanitizer.sanitize(c.template&.body || "").split.length }
     end
-    
+
     length_groups = campaigns_with_length.group_by { |c| (c[:word_count] / 100) * 100 }
     length_performance = length_groups.transform_values do |group|
       campaigns_in_group = group.map { |c| c[:campaign] }
@@ -560,24 +559,24 @@ class AnalyticsService
         avg_click_rate: campaigns_in_group.average(:click_rate) || 0
       }
     end
-    
+
     best_length = length_performance.max_by { |_, data| data[:avg_click_rate] }
     if best_length && length_performance.size > 1
       suggestions << {
-        type: 'content_length',
-        priority: 'medium',
+        type: "content_length",
+        priority: "medium",
         suggestion: "Content with #{best_length[0]}-#{best_length[0] + 100} words tends to perform better",
         data: length_performance
       }
     end
-    
+
     { suggestions: suggestions }
   end
 
   def analyze_send_frequency(campaigns)
     # Analyze time between campaigns and performance
     sorted_campaigns = campaigns.order(:sent_at)
-    
+
     frequency_data = []
     sorted_campaigns.each_cons(2) do |prev_campaign, current_campaign|
       days_between = (current_campaign.sent_at.to_date - prev_campaign.sent_at.to_date).to_i
@@ -587,30 +586,30 @@ class AnalyticsService
         click_rate: current_campaign.click_rate || 0
       }
     end
-    
+
     return { suggestion: nil } if frequency_data.empty?
-    
+
     # Group by frequency ranges
     frequency_groups = frequency_data.group_by do |data|
       case data[:days_between]
       when 0..3
-        'very_frequent'
+        "very_frequent"
       when 4..7
-        'weekly'
+        "weekly"
       when 8..14
-        'bi_weekly'
+        "bi_weekly"
       when 15..30
-        'monthly'
+        "monthly"
       else
-        'infrequent'
+        "infrequent"
       end
     end
-    
+
     best_frequency = frequency_groups.max_by { |_, group| group.sum { |d| d[:open_rate] } / group.size }
-    
+
     {
-      type: 'send_frequency',
-      priority: 'medium',
+      type: "send_frequency",
+      priority: "medium",
       suggestion: "#{best_frequency[0]} sending frequency shows the best engagement",
       data: frequency_groups.transform_values { |group| group.sum { |d| d[:open_rate] } / group.size }
     }
@@ -618,55 +617,55 @@ class AnalyticsService
 
   def calculate_benchmark_comparison(account_value, benchmark_value)
     return 0 if benchmark_value == 0
-    
+
     percentage_diff = ((account_value - benchmark_value) / benchmark_value * 100).round(2)
-    
+
     {
       difference: percentage_diff,
-      status: percentage_diff > 0 ? 'above_benchmark' : 'below_benchmark',
+      status: percentage_diff > 0 ? "above_benchmark" : "below_benchmark",
       performance_level: case percentage_diff.abs
-                        when 0..5
-                          'similar'
-                        when 5..15
-                          'noticeable_difference'
-                        else
-                          'significant_difference'
-                        end
+                         when 0..5
+                          "similar"
+                         when 5..15
+                          "noticeable_difference"
+                         else
+                          "significant_difference"
+                         end
     }
   end
 
   def generate_benchmark_recommendations(account_stats, benchmarks)
     recommendations = []
-    
+
     if account_stats[:average_open_rate] < benchmarks[:average_open_rate]
       recommendations << {
-        type: 'open_rate',
-        priority: 'high',
-        message: 'Your open rate is below industry average. Consider improving subject lines and send times.',
+        type: "open_rate",
+        priority: "high",
+        message: "Your open rate is below industry average. Consider improving subject lines and send times.",
         target_improvement: (benchmarks[:average_open_rate] - account_stats[:average_open_rate]).round(2)
       }
     end
-    
+
     if (account_stats[:average_click_rate] || 0) < benchmarks[:average_click_rate]
       recommendations << {
-        type: 'click_rate',
-        priority: 'high',
-        message: 'Your click rate is below industry average. Focus on improving call-to-action and content relevance.',
+        type: "click_rate",
+        priority: "high",
+        message: "Your click rate is below industry average. Focus on improving call-to-action and content relevance.",
         target_improvement: (benchmarks[:average_click_rate] - (account_stats[:average_click_rate] || 0)).round(2)
       }
     end
-    
+
     recommendations
   end
 
   def get_contacts_by_engagement_level(level)
     case level
-    when 'high'
-      @account.contacts.where('engagement_score >= ?', 80)
-    when 'medium'
+    when "high"
+      @account.contacts.where("engagement_score >= ?", 80)
+    when "medium"
       @account.contacts.where(engagement_score: 40..79)
-    when 'low'
-      @account.contacts.where('engagement_score < ?', 40)
+    when "low"
+      @account.contacts.where("engagement_score < ?", 40)
     else
       @account.contacts.none
     end
@@ -674,14 +673,14 @@ class AnalyticsService
 
   def analyze_segment_performance(contacts)
     return {} if contacts.empty?
-    
+
     # Get campaigns that were sent to these contacts
     campaign_contacts = CampaignContact.joins(:campaign)
-                                     .where(contact: contacts, campaigns: { status: 'sent' })
-    
+                                     .where(contact: contacts, campaigns: { status: "sent" })
+
     total_sent = campaign_contacts.count
     return { total_sent: 0 } if total_sent == 0
-    
+
     {
       total_contacts: contacts.count,
       total_sent: total_sent,
@@ -701,50 +700,50 @@ class AnalyticsService
 
     def calculate_score
       score = 0
-      
+
       # Base score for subscription status
       score += case @contact.status
-               when 'subscribed' then 20
-               when 'unsubscribed' then 0
-               when 'bounced' then 0
-               else 10
-               end
-      
+      when "subscribed" then 20
+      when "unsubscribed" then 0
+      when "bounced" then 0
+      else 10
+      end
+
       # Recent activity bonus
       if @contact.last_opened_at.present?
         days_since_open = (Date.current - @contact.last_opened_at.to_date).to_i
         score += case days_since_open
-                 when 0..7 then 30
-                 when 8..30 then 20
-                 when 31..90 then 10
-                 else 0
-                 end
+        when 0..7 then 30
+        when 8..30 then 20
+        when 31..90 then 10
+        else 0
+        end
       end
-      
+
       # Click activity bonus
       if @contact.last_clicked_at.present?
         days_since_click = (Date.current - @contact.last_clicked_at.to_date).to_i
         score += case days_since_click
-                 when 0..7 then 25
-                 when 8..30 then 15
-                 when 31..90 then 5
-                 else 0
-                 end
+        when 0..7 then 25
+        when 8..30 then 15
+        when 31..90 then 5
+        else 0
+        end
       end
-      
+
       # Frequency of engagement
-      campaign_contacts = @contact.campaign_contacts.where('sent_at >= ?', 90.days.ago)
+      campaign_contacts = @contact.campaign_contacts.where("sent_at >= ?", 90.days.ago)
       if campaign_contacts.any?
         engagement_rate = campaign_contacts.where.not(opened_at: nil).count.to_f / campaign_contacts.count
         score += (engagement_rate * 25).round
       end
-      
+
       # Profile completeness
       score += 5 if @contact.first_name.present?
       score += 5 if @contact.last_name.present?
-      
+
       # Cap at 100
-      [score, 100].min
+      [ score, 100 ].min
     end
   end
 

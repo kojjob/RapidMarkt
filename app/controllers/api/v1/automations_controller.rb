@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 class Api::V1::AutomationsController < Api::BaseController
-  before_action :set_automation, only: [:show, :update, :destroy, :activate, :pause, :duplicate, :analytics, :enrollments]
+  before_action :set_automation, only: [ :show, :update, :destroy, :activate, :pause, :duplicate, :analytics, :enrollments ]
 
   # GET /api/v1/automations
   def index
     @automations = current_account.email_automations
                                  .includes(:automation_steps, :automation_enrollments)
                                  .order(:created_at)
-    
+
     @automations = filter_automations(@automations)
     @automations = @automations.page(params[:page]).per(params[:per_page] || 25)
-    
+
     render_success(
       automations: serialize_automations(@automations),
       pagination: pagination_data(@automations)
@@ -20,8 +20,8 @@ class Api::V1::AutomationsController < Api::BaseController
 
   # GET /api/v1/automations/:id
   def show
-    analytics = automation_service.automation_analytics(@automation.id, params[:period] || '30_days')
-    
+    analytics = automation_service.automation_analytics(@automation.id, params[:period] || "30_days")
+
     render_success(
       automation: serialize_automation_detail(@automation),
       analytics: analytics.success? ? analytics.data : {}
@@ -31,13 +31,13 @@ class Api::V1::AutomationsController < Api::BaseController
   # POST /api/v1/automations
   def create
     @automation = current_account.email_automations.build(automation_params)
-    
+
     if @automation.save
       create_automation_steps if automation_steps_params.present?
-      
+
       render_success(
         automation: serialize_automation_detail(@automation),
-        message: 'Automation created successfully'
+        message: "Automation created successfully"
       )
     else
       render_validation_errors(@automation)
@@ -48,10 +48,10 @@ class Api::V1::AutomationsController < Api::BaseController
   def update
     if @automation.update(automation_params)
       update_automation_steps if automation_steps_params.present?
-      
+
       render_success(
         automation: serialize_automation_detail(@automation),
-        message: 'Automation updated successfully'
+        message: "Automation updated successfully"
       )
     else
       render_validation_errors(@automation)
@@ -61,7 +61,7 @@ class Api::V1::AutomationsController < Api::BaseController
   # DELETE /api/v1/automations/:id
   def destroy
     @automation.destroy!
-    render_success(message: 'Automation deleted successfully')
+    render_success(message: "Automation deleted successfully")
   end
 
   # POST /api/v1/automations/:id/activate
@@ -69,7 +69,7 @@ class Api::V1::AutomationsController < Api::BaseController
     if @automation.activate!
       render_success(
         automation: serialize_automation_detail(@automation),
-        message: 'Automation activated successfully'
+        message: "Automation activated successfully"
       )
     else
       render_validation_errors(@automation)
@@ -81,7 +81,7 @@ class Api::V1::AutomationsController < Api::BaseController
     if @automation.pause!
       render_success(
         automation: serialize_automation_detail(@automation),
-        message: 'Automation paused successfully'
+        message: "Automation paused successfully"
       )
     else
       render_validation_errors(@automation)
@@ -91,26 +91,26 @@ class Api::V1::AutomationsController < Api::BaseController
   # POST /api/v1/automations/:id/duplicate
   def duplicate
     result = automation_service.duplicate_automation(@automation.id, params[:new_name])
-    
+
     if result.success?
       render_success(
         automation: serialize_automation_detail(result.data),
-        message: 'Automation duplicated successfully'
+        message: "Automation duplicated successfully"
       )
     else
-      render_error('Failed to duplicate automation', result.errors)
+      render_error("Failed to duplicate automation", result.errors)
     end
   end
 
   # GET /api/v1/automations/:id/analytics
   def analytics
-    period = params[:period] || '30_days'
+    period = params[:period] || "30_days"
     result = automation_service.automation_analytics(@automation.id, period)
-    
+
     if result.success?
       render_success(analytics: result.data)
     else
-      render_error('Failed to fetch analytics', result.errors)
+      render_error("Failed to fetch analytics", result.errors)
     end
   end
 
@@ -119,10 +119,10 @@ class Api::V1::AutomationsController < Api::BaseController
     @enrollments = @automation.automation_enrollments
                              .includes(:contact, :automation_executions)
                              .order(created_at: :desc)
-    
+
     @enrollments = filter_enrollments(@enrollments)
     @enrollments = @enrollments.page(params[:page]).per(params[:per_page] || 25)
-    
+
     render_success(
       enrollments: serialize_enrollments(@enrollments),
       pagination: pagination_data(@enrollments)
@@ -133,13 +133,13 @@ class Api::V1::AutomationsController < Api::BaseController
   def bulk_action
     automation_ids = params[:automation_ids]
     action = params[:action]
-    
+
     unless automation_ids.present? && action.present?
-      return render_error('Missing required parameters: automation_ids and action')
+      return render_error("Missing required parameters: automation_ids and action")
     end
-    
+
     result = execute_bulk_action(automation_ids, action)
-    
+
     if result[:success]
       render_success(
         data: result.except(:success),
@@ -155,7 +155,7 @@ class Api::V1::AutomationsController < Api::BaseController
   def set_automation
     @automation = current_account.email_automations.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    render_error('Automation not found', [], :not_found)
+    render_error("Automation not found", [], :not_found)
   end
 
   def automation_service
@@ -175,14 +175,14 @@ class Api::V1::AutomationsController < Api::BaseController
 
   def filter_automations(automations)
     automations = automations.where(status: params[:status]) if params[:status].present?
-    automations = automations.where('name ILIKE ?', "%#{params[:search]}%") if params[:search].present?
+    automations = automations.where("name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
     automations = automations.where(trigger_type: params[:trigger_type]) if params[:trigger_type].present?
     automations
   end
 
   def filter_enrollments(enrollments)
     enrollments = enrollments.where(status: params[:status]) if params[:status].present?
-    enrollments = enrollments.joins(:contact).where('contacts.email ILIKE ?', "%#{params[:contact_email]}%") if params[:contact_email].present?
+    enrollments = enrollments.joins(:contact).where("contacts.email ILIKE ?", "%#{params[:contact_email]}%") if params[:contact_email].present?
     enrollments
   end
 
@@ -192,7 +192,7 @@ class Api::V1::AutomationsController < Api::BaseController
         step_type: step_params[:step_type],
         step_order: index + 1,
         delay_amount: step_params[:delay_amount] || 0,
-        delay_unit: step_params[:delay_unit] || 'hours',
+        delay_unit: step_params[:delay_unit] || "hours",
         email_template_id: step_params[:email_template_id],
         custom_subject: step_params[:custom_subject],
         custom_body: step_params[:custom_body],
@@ -208,23 +208,23 @@ class Api::V1::AutomationsController < Api::BaseController
 
   def execute_bulk_action(automation_ids, action)
     automations = current_account.email_automations.where(id: automation_ids)
-    
+
     case action
-    when 'activate'
+    when "activate"
       bulk_activate_automations(automations)
-    when 'pause'
+    when "pause"
       bulk_pause_automations(automations)
-    when 'delete'
+    when "delete"
       bulk_delete_automations(automations)
     else
-      { success: false, message: 'Invalid action' }
+      { success: false, message: "Invalid action" }
     end
   end
 
   def bulk_activate_automations(automations)
     activated_count = 0
     failed_count = 0
-    
+
     automations.each do |automation|
       if automation.activate!
         activated_count += 1
@@ -232,7 +232,7 @@ class Api::V1::AutomationsController < Api::BaseController
         failed_count += 1
       end
     end
-    
+
     {
       success: true,
       message: "#{activated_count} automations activated successfully.",
@@ -246,7 +246,7 @@ class Api::V1::AutomationsController < Api::BaseController
   def bulk_pause_automations(automations)
     paused_count = 0
     failed_count = 0
-    
+
     automations.each do |automation|
       if automation.pause!
         paused_count += 1
@@ -254,7 +254,7 @@ class Api::V1::AutomationsController < Api::BaseController
         failed_count += 1
       end
     end
-    
+
     {
       success: true,
       message: "#{paused_count} automations paused successfully.",
@@ -267,15 +267,15 @@ class Api::V1::AutomationsController < Api::BaseController
 
   def bulk_delete_automations(automations)
     deleted_count = automations.count
-    
+
     # Schedule background job for safe deletion
     BulkOperationJob.perform_later(
-      operation: 'bulk_delete_automations',
+      operation: "bulk_delete_automations",
       resource_ids: automations.pluck(:id),
       account_id: current_account.id,
       user_id: current_user.id
     )
-    
+
     {
       success: true,
       message: "#{deleted_count} automations queued for deletion.",

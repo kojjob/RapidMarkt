@@ -28,15 +28,15 @@ class CreateAutomationEnrollments < ActiveRecord::Migration[8.0]
     add_index :automation_enrollments, :enrolled_at, if_not_exists: true
     add_index :automation_enrollments, :last_activity_at, if_not_exists: true
     add_index :automation_enrollments, :engagement_score, if_not_exists: true
-    add_index :automation_enrollments, [:email_automation_id, :contact_id], 
+    add_index :automation_enrollments, [ :email_automation_id, :contact_id ],
               name: 'index_automation_enrollments_on_automation_and_contact', if_not_exists: true
-    add_index :automation_enrollments, [:email_automation_id, :status], if_not_exists: true
+    add_index :automation_enrollments, [ :email_automation_id, :status ], if_not_exists: true
     add_index :automation_enrollments, :context, using: :gin, if_not_exists: true
     add_index :automation_enrollments, :tracking_data, using: :gin, if_not_exists: true
 
     # Unique constraint to prevent duplicate active/paused enrollments
-    add_index :automation_enrollments, [:email_automation_id, :contact_id], 
-              unique: true, 
+    add_index :automation_enrollments, [ :email_automation_id, :contact_id ],
+              unique: true,
               where: "status IN ('active', 'paused')",
               name: 'index_unique_active_automation_enrollments', if_not_exists: true
   end

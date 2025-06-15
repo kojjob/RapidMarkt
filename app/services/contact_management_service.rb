@@ -3,7 +3,7 @@
 class ContactManagementService
   include ActiveModel::Model
   include ActiveModel::Attributes
-  
+
   attr_reader :account, :errors
 
   def initialize(account:)
@@ -26,9 +26,9 @@ class ContactManagementService
     ApplicationRecord.transaction do
       contacts_data.each_with_index do |contact_data, index|
         import_results[:total_processed] += 1
-        
+
         result = import_single_contact(contact_data, options)
-        
+
         if result.success?
           import_results[:successful_imports] += 1
           import_results[:imported_contacts] << result.data
@@ -41,10 +41,10 @@ class ContactManagementService
           }
         end
       end
-      
+
       # Generate import summary
       audit_log("Bulk import completed: #{import_results[:successful_imports]} successful, #{import_results[:failed_imports]} failed")
-      
+
       Result.success(import_results)
     end
   rescue => e
@@ -56,35 +56,35 @@ class ContactManagementService
   def create_smart_segment(segment_params)
     segment_name = segment_params[:name]
     conditions = segment_params[:conditions] || []
-    
+
     # Build dynamic query based on conditions
     query = build_segment_query(conditions)
-    
+
     # Execute query to get matching contacts
     matching_contacts = @account.contacts.where(query[:sql], *query[:params])
-    
+
     # Create or update tag for this segment
     segment_tag = @account.tags.find_or_create_by(name: segment_name) do |tag|
-      tag.color = segment_params[:color] || '#007bff'  
+      tag.color = segment_params[:color] || "#007bff"
       tag.description = "Smart segment: #{segment_params[:description]}"
       tag.is_smart_segment = true
       tag.segment_conditions = conditions
     end
-    
+
     # Apply tag to matching contacts
     ApplicationRecord.transaction do
       # Clear existing segment assignments
       segment_tag.contact_tags.destroy_all
-      
+
       # Add new assignments
       matching_contacts.find_each do |contact|
         segment_tag.contact_tags.create!(contact: contact)
       end
-      
+
       segment_tag.update!(contacts_count: matching_contacts.count)
-      
+
       audit_log("Smart segment '#{segment_name}' created with #{matching_contacts.count} contacts")
-      
+
       Result.success({
         segment: segment_tag,
         contacts_count: matching_contacts.count,
@@ -102,10 +102,10 @@ class ContactManagementService
       score = EngagementScoreCalculator.new(contact).calculate
       contact.update_column(:engagement_score, score)
     end
-    
+
     # Update engagement segments
     update_engagement_segments
-    
+
     audit_log("Engagement scores calculated for all contacts")
     Result.success("Engagement scores updated successfully")
   end
@@ -113,11 +113,11 @@ class ContactManagementService
   # Contact lifecycle management
   def update_contact_lifecycle_stage(contact, stage, reason = nil)
     valid_stages = %w[lead prospect customer advocate churned]
-    
+
     return Result.failure("Invalid lifecycle stage") unless valid_stages.include?(stage)
-    
+
     old_stage = contact.lifecycle_stage
-    
+
     if contact.update(lifecycle_stage: stage, lifecycle_updated_at: Time.current)
       # Log lifecycle change
       contact.contact_lifecycle_logs.create!(
@@ -126,10 +126,10 @@ class ContactManagementService
         reason: reason,
         user: Current.user
       )
-      
+
       # Trigger lifecycle-based automations
       trigger_lifecycle_automations(contact, stage, old_stage)
-      
+
       audit_log("Contact #{contact.email} moved from #{old_stage} to #{stage}")
       Result.success(contact)
     else
@@ -152,7 +152,7 @@ class ContactManagementService
     duplicates = find_duplicate_contacts
     if duplicates.any?
       health_report[:issues_found] << {
-        type: 'duplicates',
+        type: "duplicates",
         count: duplicates.count,
         details: duplicates.first(10)
       }
@@ -163,7 +163,7 @@ class ContactManagementService
     invalid_emails = find_invalid_email_contacts
     if invalid_emails.any?
       health_report[:issues_found] << {
-        type: 'invalid_emails',
+        type: "invalid_emails",
         count: invalid_emails.count,
         details: invalid_emails.first(10)
       }
@@ -174,7 +174,7 @@ class ContactManagementService
     stale_contacts = find_stale_contacts
     if stale_contacts.any?
       health_report[:issues_found] << {
-        type: 'stale_contacts',
+        type: "stale_contacts",
         count: stale_contacts.count
       }
       health_report[:cleanup_suggestions] << "Consider re-engagement campaign for stale contacts"
@@ -184,7 +184,7 @@ class ContactManagementService
     incomplete_contacts = find_incomplete_contacts
     if incomplete_contacts.any?
       health_report[:issues_found] << {
-        type: 'incomplete_data',
+        type: "incomplete_data",
         count: incomplete_contacts.count
       }
       health_report[:cleanup_suggestions] << "Complete missing contact information"
@@ -216,15 +216,15 @@ class ContactManagementService
       if options[:archive_stale_contacts]
         stale_contacts = find_stale_contacts
         stale_contacts.update_all(
-          status: 'archived',
+          status: "archived",
           archived_at: Time.current,
-          archived_reason: 'Automated cleanup - no engagement for 6+ months'
+          archived_reason: "Automated cleanup - no engagement for 6+ months"
         )
         cleanup_results[:stale_contacts_archived] = stale_contacts.count
       end
 
       cleanup_results[:total_cleaned] = cleanup_results.values.sum
-      
+
       audit_log("Automated cleanup completed: #{cleanup_results[:total_cleaned]} actions taken")
       Result.success(cleanup_results)
     end
@@ -234,9 +234,9 @@ class ContactManagementService
   end
 
   # Contact enrichment from external sources
-  def enrich_contact_data(contact, sources = [:clearbit, :fullcontact])
+  def enrich_contact_data(contact, sources = [ :clearbit, :fullcontact ])
     enrichment_results = {
-      original_data: contact.attributes.slice('first_name', 'last_name', 'company', 'job_title', 'location'),
+      original_data: contact.attributes.slice("first_name", "last_name", "company", "job_title", "location"),
       enriched_data: {},
       sources_used: [],
       success: false
@@ -266,7 +266,7 @@ class ContactManagementService
     if enrichment_results[:enriched_data].any?
       contact.update!(enrichment_results[:enriched_data])
       contact.update!(last_enriched_at: Time.current)
-      
+
       enrichment_results[:success] = true
       audit_log("Contact #{contact.email} enriched from #{enrichment_results[:sources_used].join(', ')}")
     end
@@ -277,22 +277,22 @@ class ContactManagementService
   # Contact preference management
   def update_contact_preferences(contact, preferences)
     preference_updates = {}
-    
+
     # Email frequency preferences
     if preferences[:email_frequency].present?
       preference_updates[:email_frequency] = preferences[:email_frequency]
     end
-    
+
     # Content type preferences
     if preferences[:content_types].present?
       preference_updates[:preferred_content_types] = preferences[:content_types]
     end
-    
+
     # Communication channel preferences
     if preferences[:channels].present?
       preference_updates[:preferred_channels] = preferences[:channels]
     end
-    
+
     if contact.update(preference_updates)
       audit_log("Preferences updated for contact #{contact.email}")
       Result.success(contact)
@@ -311,7 +311,7 @@ class ContactManagementService
 
     # Check for duplicates
     existing_contact = @account.contacts.find_by(email: email)
-    
+
     if existing_contact
       if options[:update_duplicates]
         # Update existing contact
@@ -327,15 +327,15 @@ class ContactManagementService
 
     # Create new contact
     contact = @account.contacts.build(contact_data)
-    contact.status = 'subscribed' unless contact.status.present?
-    contact.subscribed_at = Time.current if contact.status == 'subscribed'
-    
+    contact.status = "subscribed" unless contact.status.present?
+    contact.subscribed_at = Time.current if contact.status == "subscribed"
+
     if contact.save
       # Apply default tags if specified
       if options[:default_tags].present?
         apply_tags_to_contact(contact, options[:default_tags])
       end
-      
+
       Result.success(contact)
     else
       Result.failure(contact.errors)
@@ -345,100 +345,100 @@ class ContactManagementService
   def build_segment_query(conditions)
     sql_parts = []
     params = []
-    
+
     conditions.each do |condition|
       case condition[:field]
-      when 'status'
+      when "status"
         sql_parts << "status = ?"
         params << condition[:value]
-      when 'created_at'
+      when "created_at"
         case condition[:operator]
-        when 'after'
+        when "after"
           sql_parts << "created_at > ?"
           params << Date.parse(condition[:value])
-        when 'before'
+        when "before"
           sql_parts << "created_at < ?"
           params << Date.parse(condition[:value])
         end
-      when 'engagement_score'
+      when "engagement_score"
         case condition[:operator]
-        when 'greater_than'
+        when "greater_than"
           sql_parts << "engagement_score > ?"
           params << condition[:value].to_i
-        when 'less_than'
+        when "less_than"
           sql_parts << "engagement_score < ?"
           params << condition[:value].to_i
         end
-      when 'tags'
-        if condition[:operator] == 'includes'
+      when "tags"
+        if condition[:operator] == "includes"
           sql_parts << "id IN (SELECT contact_id FROM contact_tags JOIN tags ON contact_tags.tag_id = tags.id WHERE tags.name = ?)"
           params << condition[:value]
         end
-      when 'last_opened_at'
+      when "last_opened_at"
         case condition[:operator]
-        when 'after'
+        when "after"
           sql_parts << "last_opened_at > ?"
           params << Date.parse(condition[:value])
-        when 'before'
+        when "before"
           sql_parts << "last_opened_at < ?"
           params << Date.parse(condition[:value])
-        when 'is_null'
+        when "is_null"
           sql_parts << "last_opened_at IS NULL"
         end
       end
     end
-    
+
     {
-      sql: sql_parts.join(' AND '),
+      sql: sql_parts.join(" AND "),
       params: params
     }
   end
 
   def update_engagement_segments
     # Update high engagement segment
-    high_engagement = @account.contacts.where('engagement_score >= ?', 80)
-    update_segment_tag('High Engagement', high_engagement)
-    
+    high_engagement = @account.contacts.where("engagement_score >= ?", 80)
+    update_segment_tag("High Engagement", high_engagement)
+
     # Update low engagement segment
-    low_engagement = @account.contacts.where('engagement_score <= ?', 20)
-    update_segment_tag('Low Engagement', low_engagement)
-    
+    low_engagement = @account.contacts.where("engagement_score <= ?", 20)
+    update_segment_tag("Low Engagement", low_engagement)
+
     # Update medium engagement segment
     medium_engagement = @account.contacts.where(engagement_score: 21..79)
-    update_segment_tag('Medium Engagement', medium_engagement)
+    update_segment_tag("Medium Engagement", medium_engagement)
   end
 
   def update_segment_tag(name, contacts)
     tag = @account.tags.find_or_create_by(name: name) do |t|
       t.is_smart_segment = true
       t.color = case name
-                when 'High Engagement' then '#28a745'
-                when 'Medium Engagement' then '#ffc107'
-                when 'Low Engagement' then '#dc3545'
-                end
+      when "High Engagement" then "#28a745"
+      when "Medium Engagement" then "#ffc107"
+      when "Low Engagement" then "#dc3545"
+      end
     end
-    
+
     # Clear existing assignments
     tag.contact_tags.destroy_all
-    
+
     # Add new assignments
     contacts.find_each do |contact|
       tag.contact_tags.create!(contact: contact)
     end
-    
+
     tag.update!(contacts_count: contacts.count)
   end
 
   def trigger_lifecycle_automations(contact, new_stage, old_stage)
     # This would trigger various automations based on lifecycle changes
     case new_stage
-    when 'customer'
+    when "customer"
       # Send welcome customer email
       # Add to customer onboarding sequence
-    when 'advocate'
+    when "advocate"
       # Send thank you email
       # Add to referral program
-    when 'churned'
+    when "churned"
       # Send win-back campaign
       # Remove from active campaigns
     end
@@ -448,7 +448,7 @@ class ContactManagementService
     @account.contacts
             .select(:email)
             .group(:email)
-            .having('COUNT(*) > 1')
+            .having("COUNT(*) > 1")
             .pluck(:email)
             .map { |email| @account.contacts.where(email: email) }
   end
@@ -459,14 +459,14 @@ class ContactManagementService
   end
 
   def find_stale_contacts
-    @account.contacts.where('last_opened_at < ? OR (last_opened_at IS NULL AND created_at < ?)', 
+    @account.contacts.where("last_opened_at < ? OR (last_opened_at IS NULL AND created_at < ?)",
                            6.months.ago, 6.months.ago)
   end
 
   def find_incomplete_contacts
     @account.contacts.where(
-      '(first_name IS NULL OR first_name = ?) OR (last_name IS NULL OR last_name = ?)',
-      '', ''
+      "(first_name IS NULL OR first_name = ?) OR (last_name IS NULL OR last_name = ?)",
+      "", ""
     )
   end
 
@@ -474,31 +474,31 @@ class ContactManagementService
     # Keep the oldest contact as the primary
     primary_contact = duplicate_contacts.order(:created_at).first
     duplicate_contacts_to_merge = duplicate_contacts.where.not(id: primary_contact.id)
-    
+
     ApplicationRecord.transaction do
       duplicate_contacts_to_merge.each do |duplicate|
         # Merge campaign associations
         duplicate.campaign_contacts.update_all(contact_id: primary_contact.id)
-        
+
         # Merge tags (avoid duplicates)
         duplicate.tags.each do |tag|
           unless primary_contact.tags.include?(tag)
             primary_contact.tags << tag
           end
         end
-        
+
         # Update primary contact with any missing information
         update_attrs = {}
         update_attrs[:first_name] = duplicate.first_name if primary_contact.first_name.blank? && duplicate.first_name.present?
         update_attrs[:last_name] = duplicate.last_name if primary_contact.last_name.blank? && duplicate.last_name.present?
         update_attrs[:company] = duplicate.company if primary_contact.company.blank? && duplicate.company.present?
-        
+
         primary_contact.update!(update_attrs) if update_attrs.any?
-        
+
         # Delete the duplicate
         duplicate.destroy!
       end
-      
+
       Result.success(primary_contact)
     end
   rescue => e
@@ -528,9 +528,9 @@ class ContactManagementService
   def audit_log(message)
     @account.audit_logs.create!(
       user: Current.user,
-      action: 'contact_management',
+      action: "contact_management",
       details: message,
-      resource_type: 'Contact'
+      resource_type: "Contact"
     )
   rescue => e
     Rails.logger.warn "Failed to create audit log: #{e.message}"
@@ -544,10 +544,10 @@ class ContactManagementService
 
     def calculate
       score = 0
-      
+
       # Base score for being subscribed
       score += 10 if @contact.subscribed?
-      
+
       # Points for recent activity
       if @contact.last_opened_at.present?
         days_since_last_open = (Date.current - @contact.last_opened_at.to_date).to_i
@@ -559,7 +559,7 @@ class ContactManagementService
           score += 10
         end
       end
-      
+
       # Points for click activity
       if @contact.last_clicked_at.present?
         days_since_last_click = (Date.current - @contact.last_clicked_at.to_date).to_i
@@ -571,18 +571,18 @@ class ContactManagementService
           score += 5
         end
       end
-      
+
       # Points for profile completeness
       score += 5 if @contact.first_name.present?
       score += 5 if @contact.last_name.present?
       score += 5 if @contact.company.present?
       score += 5 if @contact.job_title.present?
-      
+
       # Points for being a customer
-      score += 20 if @contact.lifecycle_stage == 'customer'
-      
+      score += 20 if @contact.lifecycle_stage == "customer"
+
       # Cap the score at 100
-      [score, 100].min
+      [ score, 100 ].min
     end
   end
 

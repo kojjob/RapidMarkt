@@ -17,7 +17,7 @@ class CreateAutomationSteps < ActiveRecord::Migration[8.0]
     add_index :automation_steps, :email_automation_id, if_not_exists: true
     add_index :automation_steps, :step_type, if_not_exists: true
     add_index :automation_steps, :email_template_id, if_not_exists: true
-    add_index :automation_steps, [:email_automation_id, :step_order], unique: true, if_not_exists: true
+    add_index :automation_steps, [ :email_automation_id, :step_order ], unique: true, if_not_exists: true
     add_index :automation_steps, :conditions, using: :gin, if_not_exists: true
 
     add_foreign_key :automation_steps, :templates, column: :email_template_id, if_not_exists: true

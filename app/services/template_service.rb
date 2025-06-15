@@ -3,7 +3,7 @@
 class TemplateService
   include ActiveModel::Model
   include ActiveModel::Attributes
-  
+
   attr_reader :template, :account, :errors
 
   def initialize(template: nil, account: nil)
@@ -15,22 +15,22 @@ class TemplateService
   # Create template with validation and component processing
   def create(params)
     @template = @account.templates.build(params.except(:components, :design_config))
-    
+
     ApplicationRecord.transaction do
       if @template.save
         # Process and save template components if provided
         if params[:components].present?
           process_template_components(params[:components])
         end
-        
+
         # Save design configuration
         if params[:design_config].present?
           save_design_configuration(params[:design_config])
         end
-        
+
         # Generate template preview
         generate_preview_images
-        
+
         audit_log("Template '#{@template.name}' created")
         Result.success(@template)
       else
@@ -52,20 +52,20 @@ class TemplateService
     begin
       # Build context for template rendering
       context = build_rendering_context(contact, options)
-      
+
       # Render subject and body with advanced interpolation
       rendered_subject = advanced_interpolate(@template.subject, context)
       rendered_body = advanced_interpolate(@template.body, context)
-      
+
       # Apply personalization rules
       if options[:personalization_enabled]
         rendered_subject = apply_personalization(rendered_subject, contact)
         rendered_body = apply_personalization(rendered_body, contact)
       end
-      
+
       # Track rendering for analytics
       track_template_render(contact, options)
-      
+
       result = {
         subject: rendered_subject,
         body: rendered_body,
@@ -73,7 +73,7 @@ class TemplateService
         tracking_pixel: generate_tracking_pixel(contact),
         unsubscribe_link: generate_unsubscribe_link(contact)
       }
-      
+
       Result.success(result)
     rescue => e
       Rails.logger.error "Template rendering failed: #{e.message}"
@@ -85,18 +85,18 @@ class TemplateService
   def clone(options = {})
     new_template = @template.dup
     new_template.name = options[:name] || "#{@template.name} (Copy)"
-    new_template.status = options[:status] || 'draft'
-    
+    new_template.status = options[:status] || "draft"
+
     # Clone design components if they exist
     if @template.design_config.present?
       new_template.design_config = @template.design_config.deep_dup
     end
-    
+
     ApplicationRecord.transaction do
       if new_template.save
         # Copy any associated files or assets
         copy_template_assets(new_template) if options[:copy_assets]
-        
+
         audit_log("Template '#{@template.name}' cloned as '#{new_template.name}'")
         Result.success(new_template)
       else
@@ -119,21 +119,21 @@ class TemplateService
 
     # Check for required elements
     validation_results = check_required_elements(validation_results)
-    
+
     # Validate HTML structure
     validation_results = validate_html_structure(validation_results)
-    
+
     # Check for accessibility issues
     validation_results = check_accessibility(validation_results)
-    
+
     # Validate email deliverability factors
     validation_results = check_deliverability(validation_results)
-    
+
     # Check for personalization variables
     validation_results = validate_personalization_variables(validation_results)
-    
+
     validation_results[:valid] = validation_results[:errors].empty?
-    
+
     Result.success(validation_results)
   end
 
@@ -142,7 +142,7 @@ class TemplateService
     return Result.failure("Template has no campaign history") unless @template.campaigns.any?
 
     campaigns = @template.campaigns.sent
-    
+
     insights = {
       usage_stats: calculate_usage_stats(campaigns),
       performance_metrics: calculate_performance_metrics(campaigns),
@@ -150,7 +150,7 @@ class TemplateService
       comparative_analysis: comparative_analysis(campaigns),
       best_performing_versions: best_performing_versions(campaigns)
     }
-    
+
     Result.success(insights)
   end
 
@@ -160,7 +160,7 @@ class TemplateService
     variant_template.name = "#{@template.name} (A/B Test)"
     variant_template.assign_attributes(variant_params)
     variant_template.ab_test_original_id = @template.id
-    
+
     if variant_template.save
       @template.update!(ab_test_enabled: true)
       audit_log("A/B test variant created for template '#{@template.name}'")
@@ -171,15 +171,15 @@ class TemplateService
   end
 
   # Export template in various formats
-  def export(format = 'html')
+  def export(format = "html")
     case format.downcase
-    when 'html'
+    when "html"
       export_html
-    when 'json'
+    when "json"
       export_json
-    when 'mjml'
+    when "mjml"
       export_mjml
-    when 'pdf'
+    when "pdf"
       export_pdf
     else
       Result.failure("Unsupported export format: #{format}")
@@ -195,11 +195,11 @@ class TemplateService
         type: component[:type],
         properties: component[:properties] || {},
         styles: component[:styles] || {},
-        content: component[:content] || '',
+        content: component[:content] || "",
         position: component[:position] || {}
       }
     end
-    
+
     # Store components configuration
     @template.update!(
       design_config: {
@@ -225,8 +225,8 @@ class TemplateService
   def build_rendering_context(contact, options)
     {
       contact: {
-        first_name: contact.first_name || '',
-        last_name: contact.last_name || '',
+        first_name: contact.first_name || "",
+        last_name: contact.last_name || "",
         email: contact.email,
         full_name: contact.full_name,
         tags: contact.tags.pluck(:name),
@@ -269,19 +269,19 @@ class TemplateService
   end
 
   def resolve_nested_variable(path, context)
-    keys = path.split('.')
+    keys = path.split(".")
     value = context
-    
+
     keys.each do |key|
       if value.is_a?(Hash)
         value = value[key.to_sym] || value[key.to_s]
       else
         return nil
       end
-      
+
       return nil if value.nil?
     end
-    
+
     value.to_s
   end
 
@@ -319,34 +319,34 @@ class TemplateService
     if @template.body.blank?
       results[:errors] << "Template body is required"
     end
-    
+
     if @template.subject.blank?
       results[:errors] << "Template subject is required"
     end
-    
+
     # Check for unsubscribe link
-    unless @template.body.include?('unsubscribe') || @template.body.include?('{{unsubscribe_url}}')
+    unless @template.body.include?("unsubscribe") || @template.body.include?("{{unsubscribe_url}}")
       results[:warnings] << "Template should include an unsubscribe link"
     end
-    
+
     results
   end
 
   def validate_html_structure(results)
     # Basic HTML validation
-    if @template.body.include?('<html') && !@template.body.include?('</html>')
+    if @template.body.include?("<html") && !@template.body.include?("</html>")
       results[:errors] << "Malformed HTML structure detected"
     end
-    
+
     results
   end
 
   def check_accessibility(results)
     # Check for accessibility issues
-    if @template.body.include?('<img') && !@template.body.include?('alt=')
+    if @template.body.include?("<img") && !@template.body.include?("alt=")
       results[:warnings] << "Images should have alt text for accessibility"
     end
-    
+
     results
   end
 
@@ -355,28 +355,28 @@ class TemplateService
     if @template.body.length > 102400 # 100KB
       results[:warnings] << "Template is quite large and may be truncated by email clients"
     end
-    
+
     # Check for spam triggers
-    spam_words = ['free', 'urgent', 'act now', 'limited time']
+    spam_words = [ "free", "urgent", "act now", "limited time" ]
     spam_found = spam_words.any? { |word| @template.body.downcase.include?(word) }
-    
+
     if spam_found
       results[:suggestions] << "Consider reviewing content for potential spam triggers"
     end
-    
+
     results
   end
 
   def validate_personalization_variables(results)
     # Check for undefined variables
     variables = @template.variable_placeholders
-    
+
     variables.each do |var|
       unless var.match?(/^(contact|account|system|campaign)\./)
         results[:warnings] << "Variable '#{var}' may not be defined"
       end
     end
-    
+
     results
   end
 
@@ -401,12 +401,12 @@ class TemplateService
 
   def calculate_performance_trend(campaigns)
     # Calculate performance trend over time
-    recent_campaigns = campaigns.where('created_at > ?', 3.months.ago)
-    older_campaigns = campaigns.where('created_at <= ?', 3.months.ago)
-    
+    recent_campaigns = campaigns.where("created_at > ?", 3.months.ago)
+    older_campaigns = campaigns.where("created_at <= ?", 3.months.ago)
+
     recent_avg = recent_campaigns.average(:open_rate) || 0
     older_avg = older_campaigns.average(:open_rate) || 0
-    
+
     if older_avg > 0
       ((recent_avg - older_avg) / older_avg * 100).round(2)
     else
@@ -416,22 +416,22 @@ class TemplateService
 
   def generate_optimization_suggestions(campaigns)
     suggestions = []
-    
+
     avg_open_rate = campaigns.average(:open_rate) || 0
     avg_click_rate = campaigns.average(:click_rate) || 0
-    
+
     if avg_open_rate < 20
       suggestions << "Consider A/B testing different subject lines to improve open rates"
     end
-    
+
     if avg_click_rate < 2
       suggestions << "Try adding more compelling calls-to-action to improve click rates"
     end
-    
+
     if @template.body.length < 200
       suggestions << "Consider adding more content to provide value to recipients"
     end
-    
+
     suggestions
   end
 
@@ -439,11 +439,11 @@ class TemplateService
     # Compare with account averages
     account_avg_open = @account.campaigns.sent.average(:open_rate) || 0
     template_avg_open = campaigns.average(:open_rate) || 0
-    
+
     {
       vs_account_average: {
         open_rate_difference: (template_avg_open - account_avg_open).round(2),
-        performance_category: template_avg_open > account_avg_open ? 'above_average' : 'below_average'
+        performance_category: template_avg_open > account_avg_open ? "above_average" : "below_average"
       }
     }
   end
@@ -469,18 +469,18 @@ class TemplateService
   def extract_layout_info(components)
     # Extract layout information from components
     {
-      columns: components.count { |c| c[:type] == 'column' },
-      sections: components.count { |c| c[:type] == 'section' },
-      structure: 'single_column' # This would be more sophisticated
+      columns: components.count { |c| c[:type] == "column" },
+      sections: components.count { |c| c[:type] == "section" },
+      structure: "single_column" # This would be more sophisticated
     }
   end
 
   def extract_theme_info(components)
     # Extract theme information
     {
-      primary_color: '#007bff',
-      font_family: 'Arial, sans-serif',
-      font_size: '14px'
+      primary_color: "#007bff",
+      font_family: "Arial, sans-serif",
+      font_size: "14px"
     }
   end
 
@@ -498,7 +498,7 @@ class TemplateService
       created_at: @template.created_at,
       updated_at: @template.updated_at
     }
-    
+
     Result.success(data.to_json)
   end
 
@@ -517,9 +517,9 @@ class TemplateService
   def audit_log(message)
     @account.audit_logs.create!(
       user: Current.user,
-      action: 'template_operation',
+      action: "template_operation",
       details: message,
-      resource_type: 'Template',
+      resource_type: "Template",
       resource_id: @template.id
     )
   rescue => e

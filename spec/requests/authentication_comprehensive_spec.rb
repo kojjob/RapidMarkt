@@ -138,12 +138,12 @@ RSpec.describe "Authentication Comprehensive Tests", type: :request do
       get "/campaigns/new"
       expect(response).to be_successful
 
-      post "/campaigns", params: { 
-        campaign: { 
-          name: "Test Campaign", 
-          subject: "Test Subject", 
-          status: "draft" 
-        } 
+      post "/campaigns", params: {
+        campaign: {
+          name: "Test Campaign",
+          subject: "Test Subject",
+          status: "draft"
+        }
       }
       expect(response).to be_redirect # Should redirect to campaign show page
     end
@@ -158,7 +158,7 @@ RSpec.describe "Authentication Comprehensive Tests", type: :request do
       sign_in user
       get "/campaigns"
       expect(response).to be_successful
-      
+
       # After sign_out, the session should be cleared
       sign_out user
       get "/campaigns"

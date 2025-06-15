@@ -14,6 +14,6 @@ class CreateContactLifecycleLogs < ActiveRecord::Migration[8.0]
     add_index :contact_lifecycle_logs, :from_stage, if_not_exists: true
     add_index :contact_lifecycle_logs, :to_stage, if_not_exists: true
     add_index :contact_lifecycle_logs, :created_at, if_not_exists: true
-    add_index :contact_lifecycle_logs, [:contact_id, :created_at], if_not_exists: true
+    add_index :contact_lifecycle_logs, [ :contact_id, :created_at ], if_not_exists: true
   end
 end

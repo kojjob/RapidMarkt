@@ -11,8 +11,8 @@ class CreateBrandVoices < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
-    add_index :brand_voices, [:account_id, :name], unique: true
+
+    add_index :brand_voices, [ :account_id, :name ], unique: true
     add_index :brand_voices, :tone
   end
 end

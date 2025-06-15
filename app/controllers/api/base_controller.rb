@@ -3,7 +3,7 @@
 class Api::BaseController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :authenticate_api_user!
-  
+
   respond_to :json
 
   protected
@@ -30,7 +30,7 @@ class Api::BaseController < ApplicationController
 
   def render_validation_errors(resource)
     render_error(
-      'Validation failed',
+      "Validation failed",
       resource.errors.full_messages,
       :unprocessable_entity
     )

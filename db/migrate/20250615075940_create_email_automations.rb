@@ -27,8 +27,8 @@ class CreateEmailAutomations < ActiveRecord::Migration[8.0]
     add_index :email_automations, :last_activity_at, if_not_exists: true
     add_index :email_automations, :engagement_score, if_not_exists: true
     add_index :email_automations, :ab_test_original_id, if_not_exists: true
-    add_index :email_automations, [:account_id, :status], if_not_exists: true
-    add_index :email_automations, [:trigger_type, :status], if_not_exists: true
+    add_index :email_automations, [ :account_id, :status ], if_not_exists: true
+    add_index :email_automations, [ :trigger_type, :status ], if_not_exists: true
     add_index :email_automations, :trigger_conditions, using: :gin, if_not_exists: true
     add_index :email_automations, :tracking_data, using: :gin, if_not_exists: true
 

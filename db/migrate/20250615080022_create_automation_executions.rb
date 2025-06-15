@@ -21,12 +21,12 @@ class CreateAutomationExecutions < ActiveRecord::Migration[8.0]
     add_index :automation_executions, :status, if_not_exists: true
     add_index :automation_executions, :scheduled_at, if_not_exists: true
     add_index :automation_executions, :executed_at, if_not_exists: true
-    add_index :automation_executions, [:status, :scheduled_at], if_not_exists: true
+    add_index :automation_executions, [ :status, :scheduled_at ], if_not_exists: true
     add_index :automation_executions, :error_details, using: :gin, if_not_exists: true
     add_index :automation_executions, :execution_data, using: :gin, if_not_exists: true
 
     # Index for finding due executions efficiently
-    add_index :automation_executions, [:scheduled_at, :status], 
+    add_index :automation_executions, [ :scheduled_at, :status ],
               where: "status = 'scheduled'",
               name: 'index_automation_executions_due_for_execution', if_not_exists: true
   end

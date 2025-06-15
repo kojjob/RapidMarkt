@@ -15,12 +15,12 @@ class AutomationExecution < ApplicationRecord
 
   # Enums
   enum :status, {
-    scheduled: 'scheduled',
-    executing: 'executing',
-    completed: 'completed',
-    failed: 'failed',
-    cancelled: 'cancelled',
-    skipped: 'skipped'
+    scheduled: "scheduled",
+    executing: "executing",
+    completed: "completed",
+    failed: "failed",
+    cancelled: "cancelled",
+    skipped: "skipped"
   }, prefix: true
 
   # JSON serialization
@@ -28,9 +28,9 @@ class AutomationExecution < ApplicationRecord
   serialize :error_details, coder: JSON
 
   # Scopes
-  scope :due_for_execution, -> { where(status: 'scheduled').where('scheduled_at <= ?', Time.current) }
-  scope :overdue, -> { where(status: 'scheduled').where('scheduled_at < ?', 1.hour.ago) }
-  scope :recent, -> { where('created_at >= ?', 7.days.ago) }
+  scope :due_for_execution, -> { where(status: "scheduled").where("scheduled_at <= ?", Time.current) }
+  scope :overdue, -> { where(status: "scheduled").where("scheduled_at < ?", 1.hour.ago) }
+  scope :recent, -> { where("created_at >= ?", 7.days.ago) }
 
   # Callbacks
   before_update :set_execution_timestamps
@@ -43,7 +43,7 @@ class AutomationExecution < ApplicationRecord
   end
 
   def self.cleanup_old_records(older_than = 6.months)
-    where('created_at < ?', older_than.ago).destroy_all
+    where("created_at < ?", older_than.ago).destroy_all
   end
 
   # Instance methods
@@ -57,12 +57,12 @@ class AutomationExecution < ApplicationRecord
 
   def execute!
     return false unless can_execute?
-    
-    update!(status: 'executing', started_at: Time.current)
-    
+
+    update!(status: "executing", started_at: Time.current)
+
     begin
       result = perform_execution
-      
+
       if result[:success]
         complete_execution(result[:data])
       else
@@ -75,27 +75,27 @@ class AutomationExecution < ApplicationRecord
 
   def cancel!
     return false unless scheduled?
-    
+
     update!(
-      status: 'cancelled',
+      status: "cancelled",
       cancelled_at: Time.current,
-      error_message: 'Execution cancelled'
+      error_message: "Execution cancelled"
     )
   end
 
   def skip!(reason = nil)
     update!(
-      status: 'skipped',
+      status: "skipped",
       executed_at: Time.current,
-      error_message: reason || 'Execution skipped'
+      error_message: reason || "Execution skipped"
     )
   end
 
   def retry!
     return false unless failed?
-    
+
     update!(
-      status: 'scheduled',
+      status: "scheduled",
       scheduled_at: Time.current,
       started_at: nil,
       executed_at: nil,
@@ -107,7 +107,7 @@ class AutomationExecution < ApplicationRecord
 
   def execution_duration
     return 0 unless started_at && executed_at
-    
+
     executed_at - started_at
   end
 
@@ -117,14 +117,14 @@ class AutomationExecution < ApplicationRecord
 
   def permanent_failure?
     return false unless error_details.present?
-    
+
     permanent_errors = [
-      'contact_unsubscribed',
-      'template_not_found',
-      'invalid_email_address'
+      "contact_unsubscribed",
+      "template_not_found",
+      "invalid_email_address"
     ]
-    
-    permanent_errors.include?(error_details['error_type'])
+
+    permanent_errors.include?(error_details["error_type"])
   end
 
   def execution_summary
@@ -144,13 +144,13 @@ class AutomationExecution < ApplicationRecord
 
   def perform_execution
     case automation_step.step_type
-    when 'email'
+    when "email"
       execute_email_step
-    when 'wait'
+    when "wait"
       execute_wait_step
-    when 'condition'
+    when "condition"
       execute_condition_step
-    when 'action'
+    when "action"
       execute_action_step
     else
       { success: false, error: "Unknown step type: #{automation_step.step_type}" }
@@ -159,33 +159,33 @@ class AutomationExecution < ApplicationRecord
 
   def execute_email_step
     contact = automation_enrollment.contact
-    
+
     # Check if contact can receive emails
     unless contact.can_receive_emails?
-      return { 
-        success: false, 
-        error: 'Contact cannot receive emails',
-        error_type: 'contact_unsubscribed'
+      return {
+        success: false,
+        error: "Contact cannot receive emails",
+        error_type: "contact_unsubscribed"
       }
     end
-    
+
     # Get template
     template = automation_step.email_template
     unless template
-      return { 
-        success: false, 
-        error: 'Email template not found',
-        error_type: 'template_not_found'
+      return {
+        success: false,
+        error: "Email template not found",
+        error_type: "template_not_found"
       }
     end
-    
+
     # Create and send campaign
     campaign = create_automation_campaign(template, contact)
-    
+
     if campaign
       { success: true, data: { campaign_id: campaign.id } }
     else
-      { success: false, error: 'Failed to create campaign' }
+      { success: false, error: "Failed to create campaign" }
     end
   end
 
@@ -196,7 +196,7 @@ class AutomationExecution < ApplicationRecord
 
   def execute_condition_step
     contact = automation_enrollment.contact
-    
+
     if automation_step.can_execute_for_contact?(contact)
       { success: true, data: { condition_met: true } }
     else
@@ -207,7 +207,7 @@ class AutomationExecution < ApplicationRecord
 
   def execute_action_step
     # Placeholder for custom actions (webhooks, API calls, etc.)
-    { success: true, data: { action: 'completed' } }
+    { success: true, data: { action: "completed" } }
   end
 
   def create_automation_campaign(template, contact)
@@ -215,21 +215,21 @@ class AutomationExecution < ApplicationRecord
       name: "#{email_automation.name} - Step #{automation_step.step_order}",
       subject: automation_step.custom_subject || template.subject,
       template: template,
-      status: 'sending',
+      status: "sending",
       user: email_automation.account.users.first, # Use account owner
       automation_step_id: automation_step.id,
       automation_execution_id: id
     )
-    
+
     # Add contact to campaign
     campaign.campaign_contacts.create!(
       contact: contact,
-      status: 'sending'
+      status: "sending"
     )
-    
+
     # Queue for sending
     CampaignSenderJob.perform_later(campaign.id)
-    
+
     campaign
   rescue => e
     Rails.logger.error "Failed to create automation campaign: #{e.message}"
@@ -238,11 +238,11 @@ class AutomationExecution < ApplicationRecord
 
   def complete_execution(data = {})
     update!(
-      status: 'completed',
+      status: "completed",
       executed_at: Time.current,
       execution_data: data
     )
-    
+
     # Advance enrollment to next step
     if automation_enrollment.advance_to_next_step!
       # Schedule next step
@@ -253,7 +253,7 @@ class AutomationExecution < ApplicationRecord
 
   def fail_execution(error_message, error_details = nil)
     update!(
-      status: 'failed',
+      status: "failed",
       executed_at: Time.current,
       error_message: error_message,
       error_details: {
@@ -262,7 +262,7 @@ class AutomationExecution < ApplicationRecord
         timestamp: Time.current.iso8601
       }
     )
-    
+
     # Mark enrollment as failed if this is a permanent failure
     if permanent_failure?
       automation_enrollment.fail!(error_message)
@@ -272,24 +272,24 @@ class AutomationExecution < ApplicationRecord
   def determine_error_type(error_message)
     case error_message.downcase
     when /unsubscribed|opted out/
-      'contact_unsubscribed'
+      "contact_unsubscribed"
     when /template.*not found/
-      'template_not_found'
+      "template_not_found"
     when /invalid.*email/
-      'invalid_email_address'
+      "invalid_email_address"
     when /rate limit|throttle/
-      'rate_limited'
+      "rate_limited"
     else
-      'general_error'
+      "general_error"
     end
   end
 
   def set_execution_timestamps
     if status_changed?
       case status
-      when 'executing'
+      when "executing"
         self.started_at ||= Time.current
-      when 'completed', 'failed', 'cancelled', 'skipped'
+      when "completed", "failed", "cancelled", "skipped"
         self.executed_at ||= Time.current
       end
     end
