@@ -55,6 +55,8 @@ Rails.application.routes.draw do
       get :ui_diagnostic
       get :enhanced_builder
       post :auto_save
+      get :components
+      post :generate
     end
   end
 

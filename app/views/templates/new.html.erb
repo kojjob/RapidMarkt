@@ -45,143 +45,617 @@
     </div>
   </div>
 
-  <!-- Enhanced Template Builder -->
-  <div class="mt-8">
-    <div class="bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 min-h-screen">
-      <!-- Template Builder Header -->
-      <div class="bg-white/95 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center justify-between h-16">
-            <!-- Logo and Title -->
-            <div class="flex items-center space-x-4">
-              <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"></path>
-                </svg>
-              </div>
-              <div>
-                <h1 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Template Builder</h1>
-                <p class="text-sm text-gray-600">Create beautiful email templates with AI</p>
-              </div>
-            </div>
+  <!-- Production-Ready Template Builder -->
+  <div class="template-builder-container"
+       data-controller="production-template-builder"
+       data-production-template-builder-template-id-value="<%= @template.id || 'new' %>"
+       data-production-template-builder-user-id-value="<%= current_user&.id %>"
+       data-production-template-builder-auto-save-value="true">
 
-            <!-- Action Buttons -->
-            <div class="flex items-center space-x-3">
-              <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                💾 Save Draft
-              </button>
-              <button type="button" class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200">
-                🚀 Publish Template
-              </button>
+    <!-- Modern Header -->
+    <header class="builder-header">
+      <div class="header-content">
+        <!-- Brand Section -->
+        <div class="brand-section">
+          <%= link_to root_path, class: "brand-link" do %>
+            <div class="brand-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+              </svg>
             </div>
+            <div class="brand-text">
+              <h1>RapidMarkt</h1>
+              <span>Template Builder</span>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Template Info -->
+        <div class="template-info">
+          <%= form_with model: @template, local: false, class: "template-form", data: { "production-template-builder-target": "form" } do |form| %>
+            <div class="form-group-inline">
+              <%= form.text_field :name,
+                  placeholder: "Template Name",
+                  class: "template-name-input",
+                  data: { "production-template-builder-target": "nameInput" } %>
+
+              <%= form.select :template_type,
+                  options_for_select([
+                    ['Email Campaign', 'email'],
+                    ['TikTok Video', 'tiktok'],
+                    ['Instagram Story', 'instagram_story'],
+                    ['Instagram Post', 'instagram_post'],
+                    ['YouTube Short', 'youtube_short'],
+                    ['LinkedIn Post', 'linkedin'],
+                    ['Landing Page', 'landing_page']
+                  ], @template.template_type),
+                  { prompt: 'Select Type' },
+                  { class: "template-type-select", data: { "production-template-builder-target": "typeSelect" } } %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="header-actions">
+          <div class="action-group">
+            <button type="button"
+                    class="btn btn-secondary"
+                    data-action="click->production-template-builder#preview"
+                    data-production-template-builder-target="previewBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              Preview
+            </button>
+
+            <button type="button"
+                    class="btn btn-secondary"
+                    data-action="click->production-template-builder#saveDraft"
+                    data-production-template-builder-target="saveBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                <polyline points="17,21 17,13 7,13 7,21"/>
+                <polyline points="7,3 7,8 15,8"/>
+              </svg>
+              Save Draft
+            </button>
+
+            <button type="button"
+                    class="btn btn-primary"
+                    data-action="click->production-template-builder#publish"
+                    data-production-template-builder-target="publishBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                <path d="M2 2l7.586 7.586"/>
+                <circle cx="11" cy="11" r="2"/>
+              </svg>
+              Publish
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- Template Builder Content -->
-      <div class="flex h-screen">
-        <!-- Template Type Selector -->
-        <div class="w-80 bg-white/80 backdrop-blur-xl border-r border-gray-200/50 overflow-y-auto">
-          <div class="p-6">
-            <h2 class="text-lg font-bold text-gray-900 mb-4">Choose Template Type</h2>
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div class="status-item">
+          <span class="status-label">Status:</span>
+          <span class="status-value" data-production-template-builder-target="statusText">
+            <%= @template.persisted? ? @template.status&.humanize || 'Draft' : 'New Template' %>
+          </span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Last Saved:</span>
+          <span class="status-value" data-production-template-builder-target="lastSaved">
+            <%= @template.updated_at&.strftime('%H:%M') || 'Never' %>
+          </span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Auto-save:</span>
+          <div class="toggle-switch">
+            <input type="checkbox"
+                   id="auto-save-toggle"
+                   checked
+                   data-action="change->production-template-builder#toggleAutoSave">
+            <label for="auto-save-toggle"></label>
+          </div>
+        </div>
+      </div>
+    </header>
 
-            <div class="grid gap-4">
-              <!-- Email Template -->
-              <div class="template-type-card group cursor-pointer p-4 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl border-2 border-transparent hover:border-blue-300 transition-all duration-300">
-                <div class="flex items-center space-x-3">
-                  <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900">Email Campaign</h3>
-                    <p class="text-sm text-gray-600">Newsletter, promotional, transactional</p>
-                  </div>
+    <!-- Main Builder Layout -->
+    <div class="builder-layout">
+      <!-- Sidebar: Tools & Components -->
+      <aside class="builder-sidebar" data-production-template-builder-target="sidebar">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+          <div class="sidebar-tabs">
+            <button class="tab-btn active"
+                    data-tab="components"
+                    data-action="click->production-template-builder#switchTab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+              </svg>
+              Components
+            </button>
+            <button class="tab-btn"
+                    data-tab="ai"
+                    data-action="click->production-template-builder#switchTab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+              </svg>
+              AI Generate
+            </button>
+            <button class="tab-btn"
+                    data-tab="settings"
+                    data-action="click->production-template-builder#switchTab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+              </svg>
+              Settings
+            </button>
+          </div>
+        </div>
+
+        <!-- Components Tab -->
+        <div class="tab-content active" data-tab-content="components">
+          <div class="search-section">
+            <div class="search-input-group">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="M21 21l-4.35-4.35"/>
+              </svg>
+              <input type="text"
+                     placeholder="Search components..."
+                     class="search-input"
+                     data-production-template-builder-target="searchInput"
+                     data-action="input->production-template-builder#searchComponents">
+            </div>
+
+            <select class="category-filter"
+                    data-production-template-builder-target="categoryFilter"
+                    data-action="change->production-template-builder#filterByCategory">
+              <option value="">All Categories</option>
+              <option value="headers">Headers</option>
+              <option value="content">Content Blocks</option>
+              <option value="buttons">Buttons & CTAs</option>
+              <option value="images">Images & Media</option>
+              <option value="social">Social Media</option>
+              <option value="tiktok">TikTok</option>
+              <option value="instagram">Instagram</option>
+              <option value="youtube">YouTube</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="ecommerce">E-commerce</option>
+              <option value="forms">Forms</option>
+            </select>
+          </div>
+
+          <!-- Component Grid -->
+          <div class="components-grid" data-production-template-builder-target="componentsGrid">
+            <!-- Components will be loaded dynamically -->
+          </div>
+        </div>
+
+        <!-- AI Generate Tab -->
+        <div class="tab-content" data-tab-content="ai">
+          <div class="ai-form">
+            <div class="form-section">
+              <label class="form-label">Describe your template</label>
+              <textarea class="form-textarea"
+                        rows="4"
+                        placeholder="E.g., Create a modern TikTok video template for a fitness brand with trending hashtags and call-to-action..."
+                        data-production-template-builder-target="aiPrompt"></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Platform</label>
+                <select class="form-select" data-production-template-builder-target="aiPlatform">
+                  <option value="email">📧 Email</option>
+                  <option value="tiktok">🎵 TikTok</option>
+                  <option value="instagram">📸 Instagram</option>
+                  <option value="youtube">📺 YouTube</option>
+                  <option value="linkedin">💼 LinkedIn</option>
+                  <option value="facebook">📘 Facebook</option>
+                  <option value="twitter">🐦 Twitter/X</option>
+                  <option value="website">🌐 Website</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Content Type</label>
+                <select class="form-select" data-production-template-builder-target="aiContentType">
+                  <option value="promotional">🎯 Promotional</option>
+                  <option value="educational">📚 Educational</option>
+                  <option value="entertaining">🎭 Entertaining</option>
+                  <option value="trending">🔥 Trending</option>
+                  <option value="viral">⚡ Viral</option>
+                  <option value="story">📖 Story</option>
+                  <option value="tutorial">🎓 Tutorial</option>
+                  <option value="behind-scenes">🎬 Behind Scenes</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Industry</label>
+                <select class="form-select" data-production-template-builder-target="aiIndustry">
+                  <option value="general">General</option>
+                  <option value="tech">Technology</option>
+                  <option value="ecommerce">E-commerce</option>
+                  <option value="healthcare">Healthcare</option>
+                  <option value="finance">Finance</option>
+                  <option value="education">Education</option>
+                  <option value="fitness">Fitness & Health</option>
+                  <option value="food">Food & Beverage</option>
+                  <option value="fashion">Fashion & Beauty</option>
+                  <option value="travel">Travel & Lifestyle</option>
+                  <option value="gaming">Gaming & Entertainment</option>
+                  <option value="music">Music & Arts</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Tone</label>
+                <select class="form-select" data-production-template-builder-target="aiTone">
+                  <option value="professional">Professional</option>
+                  <option value="friendly">Friendly</option>
+                  <option value="casual">Casual</option>
+                  <option value="formal">Formal</option>
+                  <option value="playful">Playful</option>
+                  <option value="energetic">Energetic</option>
+                  <option value="trendy">Trendy</option>
+                  <option value="authentic">Authentic</option>
+                  <option value="inspiring">Inspiring</option>
+                  <option value="humorous">Humorous</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="button"
+                    class="btn btn-primary btn-full"
+                    data-action="click->production-template-builder#generateWithAI"
+                    data-production-template-builder-target="generateBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+              </svg>
+              Generate Template
+            </button>
+
+            <!-- AI Loading State -->
+            <div class="ai-loading hidden" data-production-template-builder-target="aiLoading">
+              <div class="loading-spinner"></div>
+              <p>Generating your template...</p>
+            </div>
+
+            <!-- AI Results -->
+            <div class="ai-results hidden" data-production-template-builder-target="aiResults">
+              <!-- Results will be populated here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="tab-content" data-tab-content="settings">
+          <div class="settings-form">
+            <div class="settings-section">
+              <h3>Template Settings</h3>
+
+              <div class="form-group">
+                <label class="form-label">Canvas Size</label>
+                <select class="form-select" data-production-template-builder-target="canvasSize">
+                  <option value="email">Email (600px)</option>
+                  <option value="tiktok">TikTok (9:16)</option>
+                  <option value="instagram-story">Instagram Story (9:16)</option>
+                  <option value="instagram-post">Instagram Post (1:1)</option>
+                  <option value="youtube-short">YouTube Short (9:16)</option>
+                  <option value="linkedin">LinkedIn Post (1200x628)</option>
+                  <option value="custom">Custom Size</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Background</label>
+                <div class="color-picker-group">
+                  <input type="color"
+                         class="color-picker"
+                         value="#ffffff"
+                         data-production-template-builder-target="backgroundColor">
+                  <input type="text"
+                         class="color-input"
+                         value="#ffffff"
+                         data-production-template-builder-target="backgroundColorText">
                 </div>
               </div>
 
-              <!-- Landing Page -->
-              <div class="template-type-card group cursor-pointer p-4 bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl border-2 border-transparent hover:border-green-300 transition-all duration-300">
-                <div class="flex items-center space-x-3">
-                  <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900">Landing Page</h3>
-                    <p class="text-sm text-gray-600">Lead capture, product launch</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Social Media -->
-              <div class="template-type-card group cursor-pointer p-4 bg-gradient-to-br from-pink-50 to-rose-100 rounded-xl border-2 border-transparent hover:border-pink-300 transition-all duration-300">
-                <div class="flex items-center space-x-3">
-                  <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 4v10a2 2 0 002 2h6a2 2 0 002-2V8M7 8h10M7 8l-2-2m12 2l2-2"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900">Social Media</h3>
-                    <p class="text-sm text-gray-600">TikTok, Instagram, Facebook, LinkedIn</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- TikTok Specific -->
-              <div class="template-type-card group cursor-pointer p-4 bg-gradient-to-br from-gray-900 to-black rounded-xl border-2 border-transparent hover:border-gray-600 transition-all duration-300">
-                <div class="flex items-center space-x-3">
-                  <div class="w-12 h-12 bg-gradient-to-br from-gray-800 to-black rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-.88-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-white">TikTok Content</h3>
-                    <p class="text-sm text-gray-300">Vertical videos, trending content</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- YouTube Shorts -->
-              <div class="template-type-card group cursor-pointer p-4 bg-gradient-to-br from-red-50 to-red-100 rounded-xl border-2 border-transparent hover:border-red-300 transition-all duration-300">
-                <div class="flex items-center space-x-3">
-                  <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900">YouTube Shorts</h3>
-                    <p class="text-sm text-gray-600">Short-form video content</p>
-                  </div>
+              <div class="form-group">
+                <label class="form-label">Grid</label>
+                <div class="toggle-group">
+                  <input type="checkbox"
+                         id="grid-toggle"
+                         data-production-template-builder-target="gridToggle"
+                         data-action="change->production-template-builder#toggleGrid">
+                  <label for="grid-toggle">Show Grid</label>
                 </div>
               </div>
             </div>
 
-            <!-- AI Assistant -->
-            <div class="mt-8 p-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl border border-purple-200">
-              <div class="flex items-center space-x-3 mb-3">
-                <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                  </svg>
-                </div>
-                <h3 class="font-semibold text-gray-900">AI Assistant</h3>
+            <div class="settings-section">
+              <h3>Export Settings</h3>
+
+              <div class="form-group">
+                <label class="form-label">Format</label>
+                <select class="form-select" data-production-template-builder-target="exportFormat">
+                  <option value="html">HTML</option>
+                  <option value="png">PNG Image</option>
+                  <option value="jpg">JPG Image</option>
+                  <option value="pdf">PDF</option>
+                </select>
               </div>
-              <p class="text-sm text-gray-600 mb-3">Describe what you want to create and let AI build it for you.</p>
-              <textarea placeholder="E.g., Create a modern newsletter for a tech startup..."
-                        rows="3"
-                        class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg border border-purple-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"></textarea>
-              <button type="button" class="mt-3 w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200">
-                ✨ Generate with AI
+
+              <div class="form-group">
+                <label class="form-label">Quality</label>
+                <select class="form-select" data-production-template-builder-target="exportQuality">
+                  <option value="high">High Quality</option>
+                  <option value="medium">Medium Quality</option>
+                  <option value="low">Low Quality</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Canvas Area -->
+      <main class="canvas-area" data-production-template-builder-target="canvasArea">
+        <!-- Canvas Toolbar -->
+        <div class="canvas-toolbar">
+          <div class="toolbar-section">
+            <div class="zoom-controls">
+              <button type="button"
+                      class="toolbar-btn"
+                      data-action="click->production-template-builder#zoomOut"
+                      title="Zoom Out">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="M21 21l-4.35-4.35"/>
+                  <path d="M8 11h6"/>
+                </svg>
+              </button>
+
+              <span class="zoom-level" data-production-template-builder-target="zoomLevel">100%</span>
+
+              <button type="button"
+                      class="toolbar-btn"
+                      data-action="click->production-template-builder#zoomIn"
+                      title="Zoom In">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="M21 21l-4.35-4.35"/>
+                  <path d="M11 8v6"/>
+                  <path d="M8 11h6"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="toolbar-section">
+            <button type="button"
+                    class="toolbar-btn"
+                    data-action="click->production-template-builder#undo"
+                    data-production-template-builder-target="undoBtn"
+                    title="Undo (Ctrl+Z)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 7v6h6"/>
+                <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"/>
+              </svg>
+            </button>
+
+            <button type="button"
+                    class="toolbar-btn"
+                    data-action="click->production-template-builder#redo"
+                    data-production-template-builder-target="redoBtn"
+                    title="Redo (Ctrl+Shift+Z)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 7v6h-6"/>
+                <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3l3 2.7"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="toolbar-section">
+            <button type="button"
+                    class="toolbar-btn"
+                    data-action="click->production-template-builder#toggleGrid"
+                    data-production-template-builder-target="gridBtn"
+                    title="Toggle Grid">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+              </svg>
+            </button>
+
+            <button type="button"
+                    class="toolbar-btn"
+                    data-action="click->production-template-builder#toggleRulers"
+                    data-production-template-builder-target="rulersBtn"
+                    title="Toggle Rulers">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3h18v18H3z"/>
+                <path d="M3 9h18"/>
+                <path d="M9 3v18"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="toolbar-section">
+            <div class="device-preview">
+              <button type="button"
+                      class="device-btn active"
+                      data-device="desktop"
+                      data-action="click->production-template-builder#switchDevice"
+                      title="Desktop View">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+              </button>
+
+              <button type="button"
+                      class="device-btn"
+                      data-device="tablet"
+                      data-action="click->production-template-builder#switchDevice"
+                      title="Tablet View">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="4" y="2" width="16" height="20" rx="2" ry="2"/>
+                  <line x1="12" y1="18" x2="12.01" y2="18"/>
+                </svg>
+              </button>
+
+              <button type="button"
+                      class="device-btn"
+                      data-device="mobile"
+                      data-action="click->production-template-builder#switchDevice"
+                      title="Mobile View">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                  <line x1="12" y1="18" x2="12.01" y2="18"/>
+                </svg>
               </button>
             </div>
           </div>
         </div>
+
+        <!-- Canvas Container -->
+        <div class="canvas-container" data-production-template-builder-target="canvasContainer">
+          <div class="canvas-wrapper">
+            <!-- Canvas -->
+            <div class="template-canvas"
+                 data-production-template-builder-target="canvas"
+                 data-canvas-type="<%= @template.template_type || 'email' %>">
+
+              <!-- Drop Zone (shown when canvas is empty) -->
+              <div class="canvas-drop-zone"
+                   data-production-template-builder-target="dropZone"
+                   style="<%= @template.content.present? ? 'display: none;' : '' %>">
+                <div class="drop-zone-content">
+                  <div class="drop-zone-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                      <polyline points="14,2 14,8 20,8"/>
+                      <line x1="16" y1="13" x2="8" y2="13"/>
+                      <line x1="16" y1="17" x2="8" y2="17"/>
+                      <polyline points="10,9 9,9 8,9"/>
+                    </svg>
+                  </div>
+                  <h3>Start Building Your Template</h3>
+                  <p>Drag components from the sidebar or use AI to generate content</p>
+                  <div class="drop-zone-actions">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-action="click->production-template-builder#showComponents">
+                      Browse Components
+                    </button>
+                    <button type="button"
+                            class="btn btn-primary"
+                            data-action="click->production-template-builder#showAI">
+                      Generate with AI
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Template Content -->
+              <div class="template-content"
+                   data-production-template-builder-target="templateContent">
+                <%= @template.content&.html_safe %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Properties Panel (shown when component is selected) -->
+        <div class="properties-panel hidden" data-production-template-builder-target="propertiesPanel">
+          <div class="properties-header">
+            <h3>Component Properties</h3>
+            <button type="button"
+                    class="close-btn"
+                    data-action="click->production-template-builder#closeProperties">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="properties-content" data-production-template-builder-target="propertiesContent">
+            <!-- Properties will be populated dynamically -->
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modals and Overlays -->
+
+    <!-- Preview Modal -->
+    <div class="modal-overlay hidden" data-production-template-builder-target="previewModal">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3>Template Preview</h3>
+          <button type="button"
+                  class="close-btn"
+                  data-action="click->production-template-builder#closePreview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-content">
+          <div class="preview-container" data-production-template-builder-target="previewContainer">
+            <!-- Preview content will be populated here -->
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button"
+                  class="btn btn-secondary"
+                  data-action="click->production-template-builder#closePreview">
+            Close
+          </button>
+          <button type="button"
+                  class="btn btn-primary"
+                  data-action="click->production-template-builder#exportTemplate">
+            Export Template
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" data-production-template-builder-target="loadingOverlay">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <p data-production-template-builder-target="loadingText">Processing...</p>
+      </div>
+    </div>
+  </div>
 
         <!-- Main Builder Area -->
         <div class="flex-1 flex">
