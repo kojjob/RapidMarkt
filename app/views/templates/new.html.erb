@@ -552,7 +552,7 @@
               <!-- Drop Zone (shown when canvas is empty) -->
               <div class="canvas-drop-zone"
                    data-production-template-builder-target="dropZone"
-                   style="<%= @template.content.present? ? 'display: none;' : '' %>">
+                   style="<%= @template.body.present? ? 'display: none;' : '' %>">
                 <div class="drop-zone-content">
                   <div class="drop-zone-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -583,7 +583,7 @@
               <!-- Template Content -->
               <div class="template-content"
                    data-production-template-builder-target="templateContent">
-                <%= @template.content&.html_safe %>
+                <%= @template.body&.html_safe %>
               </div>
             </div>
           </div>

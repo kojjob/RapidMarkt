@@ -561,7 +561,7 @@ export default class extends Controller {
     return {
       name: this.hasNameInputTarget ? this.nameInputTarget.value : '',
       template_type: this.hasTypeSelectTarget ? this.typeSelectTarget.value : 'email',
-      content: this.hasCanvasTarget ? this.canvasTarget.innerHTML : '',
+      body: this.hasCanvasTarget ? this.canvasTarget.innerHTML : '',
       settings: this.getTemplateSettings(),
       user_id: this.userIdValue
     }
@@ -601,9 +601,9 @@ export default class extends Controller {
             'Content-Type': 'application/json',
             'X-CSRF-Token': this.csrfTokenValue
           },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             template_id: this.templateIdValue,
-            content: templateData.content 
+            content: templateData.body
           })
         })
 

@@ -97,7 +97,7 @@ class TemplatesController < ApplicationController
     if template_id.present? && template_id != 'new'
       template = current_user.templates.find_by(id: template_id)
       if template
-        template.update(content: content, updated_at: Time.current)
+        template.update(body: content, updated_at: Time.current)
         render json: { success: true, message: 'Auto-saved successfully', last_saved: template.updated_at.strftime('%H:%M') }
       else
         render json: { success: false, message: 'Template not found' }, status: :not_found
