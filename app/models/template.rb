@@ -1,6 +1,7 @@
 class Template < ApplicationRecord
   # Associations
   belongs_to :account
+  belongs_to :brand_voice, optional: true
   has_many :campaigns, dependent: :nullify
 
   # Enums
@@ -137,5 +138,22 @@ class Template < ApplicationRecord
     # This would generate a proper unsubscribe URL
     # For now, return a placeholder
     "[UNSUBSCRIBE_URL_FOR_#{contact.id}]"
+  end
+
+  def apply_brand_voice(content = nil)
+    return content || self.content unless brand_voice
+    
+    target_content = content || self.content
+    BrandVoiceService.new(brand_voice).apply_voice(target_content)
+  end
+
+  def content_with_brand_voice
+    apply_brand_voice
+  end
+
+  def brand_voice_compatibility_score
+    return nil unless brand_voice
+    
+    BrandVoiceService.new(brand_voice).analyze_content_compatibility(content)
   end
 end

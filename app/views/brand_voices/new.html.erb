@@ -1,0 +1,181 @@
+<% content_for :title, "Create Brand Voice" %>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center">
+      <%= link_to brand_voices_path, class: "text-gray-400 hover:text-gray-600 mr-4" do %>
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      <% end %>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">🎭 Create Brand Voice</h1>
+        <p class="mt-2 text-sm text-gray-700">
+          Define how your brand should sound and communicate with your audience.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="bg-white shadow rounded-lg">
+    <div class="px-6 py-8">
+      <%= form_with model: @brand_voice, local: true, class: "space-y-6" do |form| %>
+        <% if @brand_voice.errors.any? %>
+          <div class="rounded-md bg-red-50 p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">Please fix the following errors:</h3>
+                <div class="mt-2 text-sm text-red-700">
+                  <ul class="list-disc pl-5 space-y-1">
+                    <% @brand_voice.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Basic Information -->
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div>
+            <%= form.label :name, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :name, 
+                class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+                placeholder: "e.g., Professional, Friendly, Casual" %>
+            <p class="mt-1 text-xs text-gray-500">A descriptive name for this brand voice</p>
+          </div>
+
+          <div>
+            <%= form.label :tone, class: "block text-sm font-medium text-gray-700" %>
+            <%= form.select :tone, 
+                options_for_select(BrandVoice.tones.keys.map { |tone| [tone.humanize, tone] }, @brand_voice.tone),
+                { prompt: "Select a tone" },
+                { class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" } %>
+            <p class="mt-1 text-xs text-gray-500">The overall tone of communication</p>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <%= form.label :description, class: "block text-sm font-medium text-gray-700" %>
+          <%= form.text_area :description, 
+              rows: 3,
+              class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+              placeholder: "Describe when and how this brand voice should be used..." %>
+          <p class="mt-1 text-xs text-gray-500">Optional description of this brand voice</p>
+        </div>
+
+        <!-- Personality Traits -->
+        <div>
+          <%= form.label :personality_traits, "Personality Traits", class: "block text-sm font-medium text-gray-700" %>
+          <div class="mt-2">
+            <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              <% %w[professional friendly casual authoritative empathetic confident humorous sophisticated approachable expert conversational inspiring trustworthy innovative].each do |trait| %>
+                <label class="relative flex items-start">
+                  <div class="flex items-center h-5">
+                    <input type="checkbox" 
+                           name="brand_voice[personality_traits][]" 
+                           value="<%= trait %>"
+                           class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                           <%= 'checked' if @brand_voice.personality_traits_list.include?(trait) %>>
+                  </div>
+                  <div class="ml-3 text-sm">
+                    <span class="font-medium text-gray-700"><%= trait.humanize %></span>
+                  </div>
+                </label>
+              <% end %>
+            </div>
+          </div>
+          <p class="mt-2 text-xs text-gray-500">Select personality traits that define this brand voice</p>
+        </div>
+
+        <!-- Vocabulary Preferences -->
+        <div>
+          <%= form.label :vocabulary_preferences, "Vocabulary Preferences", class: "block text-sm font-medium text-gray-700" %>
+          <div class="mt-2 space-y-3">
+            <div>
+              <label class="text-sm font-medium text-gray-600">Preferred Words/Phrases</label>
+              <textarea name="brand_voice[vocabulary_preferences][preferred_words]" 
+                        rows="2" 
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        placeholder="Enter preferred words or phrases, separated by commas"><%= @brand_voice.vocabulary_preferences_data['preferred_words'] %></textarea>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-600">Words to Avoid</label>
+              <textarea name="brand_voice[vocabulary_preferences][avoid_words]" 
+                        rows="2" 
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        placeholder="Enter words to avoid, separated by commas"><%= @brand_voice.vocabulary_preferences_data['avoid_words'] %></textarea>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-600">Industry Terminology</label>
+              <textarea name="brand_voice[vocabulary_preferences][industry_terms]" 
+                        rows="2" 
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        placeholder="Enter industry-specific terms, separated by commas"><%= @brand_voice.vocabulary_preferences_data['industry_terms'] %></textarea>
+            </div>
+          </div>
+          <p class="mt-2 text-xs text-gray-500">Define vocabulary preferences for this brand voice</p>
+        </div>
+
+        <!-- Writing Style Rules -->
+        <div>
+          <%= form.label :writing_style_rules, "Writing Style Rules", class: "block text-sm font-medium text-gray-700" %>
+          <div class="mt-2 space-y-3">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div>
+                <label class="text-sm font-medium text-gray-600">Sentence Length</label>
+                <select name="brand_voice[writing_style_rules][sentence_length]" 
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <option value="">Select preference</option>
+                  <option value="short" <%= 'selected' if @brand_voice.writing_style_rules_data['sentence_length'] == 'short' %>>Short & Punchy</option>
+                  <option value="medium" <%= 'selected' if @brand_voice.writing_style_rules_data['sentence_length'] == 'medium' %>>Medium Length</option>
+                  <option value="long" <%= 'selected' if @brand_voice.writing_style_rules_data['sentence_length'] == 'long' %>>Long & Detailed</option>
+                  <option value="varied" <%= 'selected' if @brand_voice.writing_style_rules_data['sentence_length'] == 'varied' %>>Varied</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-gray-600">Formality Level</label>
+                <select name="brand_voice[writing_style_rules][formality]" 
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <option value="">Select level</option>
+                  <option value="very_formal" <%= 'selected' if @brand_voice.writing_style_rules_data['formality'] == 'very_formal' %>>Very Formal</option>
+                  <option value="formal" <%= 'selected' if @brand_voice.writing_style_rules_data['formality'] == 'formal' %>>Formal</option>
+                  <option value="neutral" <%= 'selected' if @brand_voice.writing_style_rules_data['formality'] == 'neutral' %>>Neutral</option>
+                  <option value="casual" <%= 'selected' if @brand_voice.writing_style_rules_data['formality'] == 'casual' %>>Casual</option>
+                  <option value="very_casual" <%= 'selected' if @brand_voice.writing_style_rules_data['formality'] == 'very_casual' %>>Very Casual</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-600">Additional Style Guidelines</label>
+              <textarea name="brand_voice[writing_style_rules][guidelines]" 
+                        rows="3" 
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        placeholder="Enter specific writing style guidelines..."><%= @brand_voice.writing_style_rules_data['guidelines'] %></textarea>
+            </div>
+          </div>
+          <p class="mt-2 text-xs text-gray-500">Define writing style rules and guidelines</p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
+          <%= link_to "Cancel", brand_voices_path, 
+              class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+          
+          <%= form.submit "Create Brand Voice", 
+              class: "inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,152 @@
+<% content_for :title, "Brand Voices" %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center sm:justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">🎭 Brand Voices</h1>
+      <p class="mt-2 text-sm text-gray-700">
+        Create and manage different voices for your brand communications. Each voice defines how your content sounds and feels.
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <%= link_to new_brand_voice_path, 
+          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Create Brand Voice
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="mb-6">
+    <div class="flex flex-wrap gap-2">
+      <%= link_to brand_voices_path, 
+          class: "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium #{ params[:tone].blank? ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-800 hover:bg-gray-200' }" do %>
+        All Tones
+      <% end %>
+      
+      <% BrandVoice.tones.keys.each do |tone| %>
+        <%= link_to brand_voices_path(tone: tone), 
+            class: "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium #{ params[:tone] == tone ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-800 hover:bg-gray-200' }" do %>
+          <%= tone.humanize %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Brand Voices Grid -->
+  <% if @brand_voices.any? %>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <% @brand_voices.each do |brand_voice| %>
+        <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow duration-200">
+          <div class="p-6">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <span class="text-indigo-600 font-semibold text-sm">
+                      <%= brand_voice.tone.first.upcase %>
+                    </span>
+                  </div>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-lg font-medium text-gray-900">
+                    <%= link_to brand_voice.name, brand_voice, class: "hover:text-indigo-600" %>
+                  </h3>
+                  <p class="text-sm text-gray-500">
+                    <%= brand_voice.tone.humanize %> tone
+                  </p>
+                </div>
+              </div>
+              
+              <!-- Actions Dropdown -->
+              <div class="relative" data-controller="dropdown">
+                <button data-action="click->dropdown#toggle" 
+                        class="text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+                  <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                  </svg>
+                </button>
+                
+                <div data-dropdown-target="menu" 
+                     class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                  <div class="py-1">
+                    <%= link_to brand_voice, 
+                        class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" do %>
+                      View
+                    <% end %>
+                    
+                    <%= link_to edit_brand_voice_path(brand_voice), 
+                        class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" do %>
+                      Edit
+                    <% end %>
+                    
+                    <%= link_to brand_voice, method: :delete, 
+                        data: { confirm: "Are you sure you want to delete this brand voice?" },
+                        class: "block px-4 py-2 text-sm text-red-700 hover:bg-red-50" do %>
+                      Delete
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Description -->
+            <% if brand_voice.description.present? %>
+              <p class="text-sm text-gray-600 mb-4">
+                <%= truncate(brand_voice.description, length: 100) %>
+              </p>
+            <% end %>
+            
+            <!-- Personality Traits -->
+            <% if brand_voice.personality_traits_list.any? %>
+              <div class="mb-4">
+                <p class="text-xs font-medium text-gray-500 mb-2">Personality Traits</p>
+                <div class="flex flex-wrap gap-1">
+                  <% brand_voice.personality_traits_list.first(3).each do |trait| %>
+                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                      <%= trait.humanize %>
+                    </span>
+                  <% end %>
+                  <% if brand_voice.personality_traits_list.length > 3 %>
+                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                      +<%= brand_voice.personality_traits_list.length - 3 %> more
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+            
+            <!-- Footer -->
+            <div class="flex items-center justify-between text-xs text-gray-500">
+              <span>Created <%= time_ago_in_words(brand_voice.created_at) %> ago</span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <!-- Empty State -->
+    <div class="text-center py-12">
+      <div class="mx-auto h-24 w-24 text-gray-400">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a2 2 0 012-2h2a2 2 0 012 2v6a3 3 0 01-3 3z"></path>
+        </svg>
+      </div>
+      <h3 class="mt-4 text-lg font-medium text-gray-900">No brand voices yet</h3>
+      <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
+        Create your first brand voice to define how your content should sound and feel.
+      </p>
+      <div class="mt-6">
+        <%= link_to new_brand_voice_path, 
+            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700" do %>
+          Create Your First Brand Voice
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

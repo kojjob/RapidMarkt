@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  resources :brand_voices do
+    member do
+      post :test_voice
+    end
+  end
   devise_for :users
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -43,6 +48,10 @@ Rails.application.routes.draw do
     member do
       get :preview
       post :duplicate
+    end
+
+    collection do
+      get :test_dropdowns
     end
   end
 
