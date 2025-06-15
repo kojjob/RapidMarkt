@@ -26,7 +26,7 @@ Rails.application.config.after_initialize do
       job_class: "AutomationMaintenanceJob",
       interval: 1.hour,
       queue: "maintenance",
-      args: ["cleanup"]
+      args: [ "cleanup" ]
     },
 
     # Full maintenance every 6 hours
@@ -35,7 +35,7 @@ Rails.application.config.after_initialize do
       job_class: "AutomationMaintenanceJob",
       interval: 6.hours,
       queue: "maintenance",
-      args: ["all"]
+      args: [ "all" ]
     },
 
     # Process scheduled campaigns every 5 minutes
@@ -139,13 +139,13 @@ class JobScheduler
 
   # Manual job scheduling methods for development/testing
   def self.schedule_all_jobs
-    ProcessScheduledAutomationsJob.set(queue: 'automation_scheduler').perform_later
-    ProcessScheduledCampaignsJob.set(queue: 'campaigns').perform_later
-    ProcessContactEnrichmentQueueJob.set(queue: 'enrichment').perform_later
-    AnalyticsProcessorJob.set(queue: 'default').perform_later
+    ProcessScheduledAutomationsJob.set(queue: "automation_scheduler").perform_later
+    ProcessScheduledCampaignsJob.set(queue: "campaigns").perform_later
+    ProcessContactEnrichmentQueueJob.set(queue: "enrichment").perform_later
+    AnalyticsProcessorJob.set(queue: "default").perform_later
   end
 
   def self.schedule_maintenance
-    AutomationMaintenanceJob.set(queue: 'maintenance').perform_later('cleanup')
+    AutomationMaintenanceJob.set(queue: "maintenance").perform_later("cleanup")
   end
 end

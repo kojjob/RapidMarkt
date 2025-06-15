@@ -97,25 +97,25 @@ class TemplatesController < ApplicationController
     elsif params[:template_id].present?
       @template = @current_account.templates.find(params[:template_id])
     end
-    render layout: false
+    render layout: "builder"
   end
 
   def auto_save
     template_id = params[:template_id]
     content = params[:content]
 
-    if template_id.present? && template_id != 'new'
+    if template_id.present? && template_id != "new"
       template = current_user.templates.find_by(id: template_id)
       if template
         template.update(body: content, updated_at: Time.current)
-        render json: { success: true, message: 'Auto-saved successfully', last_saved: template.updated_at.strftime('%H:%M') }
+        render json: { success: true, message: "Auto-saved successfully", last_saved: template.updated_at.strftime("%H:%M") }
       else
-        render json: { success: false, message: 'Template not found' }, status: :not_found
+        render json: { success: false, message: "Template not found" }, status: :not_found
       end
     else
       # Store in session for new templates
       session[:template_draft] = { content: content, updated_at: Time.current }
-      render json: { success: true, message: 'Draft saved to session', last_saved: Time.current.strftime('%H:%M') }
+      render json: { success: true, message: "Draft saved to session", last_saved: Time.current.strftime("%H:%M") }
     end
   end
 
@@ -123,89 +123,89 @@ class TemplatesController < ApplicationController
     # Return available components for the builder
     components = [
       {
-        id: 'email-header',
-        name: 'Email Header',
-        category: 'headers',
-        platform: 'email',
-        description: 'Professional email header with logo and navigation',
-        thumbnail: asset_path('components/email-header.svg'),
+        id: "email-header",
+        name: "Email Header",
+        category: "headers",
+        platform: "email",
+        description: "Professional email header with logo and navigation",
+        thumbnail: asset_path("components/email-header.svg"),
         html: email_header_html,
         css: email_header_css,
         responsive: true
       },
       {
-        id: 'tiktok-video',
-        name: 'TikTok Video Template',
-        category: 'tiktok',
-        platform: 'tiktok',
-        description: 'Vertical video template with trending effects',
-        thumbnail: asset_path('components/tiktok-video.svg'),
+        id: "tiktok-video",
+        name: "TikTok Video Template",
+        category: "tiktok",
+        platform: "tiktok",
+        description: "Vertical video template with trending effects",
+        thumbnail: asset_path("components/tiktok-video.svg"),
         html: tiktok_video_html,
         css: tiktok_video_css,
-        aspect_ratio: '9:16'
+        aspect_ratio: "9:16"
       },
       {
-        id: 'instagram-story',
-        name: 'Instagram Story',
-        category: 'instagram',
-        platform: 'instagram',
-        description: 'Story template with interactive elements',
-        thumbnail: asset_path('components/instagram-story.svg'),
+        id: "instagram-story",
+        name: "Instagram Story",
+        category: "instagram",
+        platform: "instagram",
+        description: "Story template with interactive elements",
+        thumbnail: asset_path("components/instagram-story.svg"),
         html: instagram_story_html,
         css: instagram_story_css,
-        aspect_ratio: '9:16'
+        aspect_ratio: "9:16"
       },
       {
-        id: 'youtube-short',
-        name: 'YouTube Short',
-        category: 'youtube',
-        platform: 'youtube',
-        description: 'Short-form video content template',
-        thumbnail: asset_path('components/youtube-short.svg'),
+        id: "youtube-short",
+        name: "YouTube Short",
+        category: "youtube",
+        platform: "youtube",
+        description: "Short-form video content template",
+        thumbnail: asset_path("components/youtube-short.svg"),
         html: youtube_short_html,
         css: youtube_short_css,
-        aspect_ratio: '9:16'
+        aspect_ratio: "9:16"
       },
       {
-        id: 'linkedin-post',
-        name: 'LinkedIn Post',
-        category: 'social',
-        platform: 'linkedin',
-        description: 'Professional content for business network',
-        thumbnail: asset_path('components/linkedin-post.svg'),
+        id: "linkedin-post",
+        name: "LinkedIn Post",
+        category: "social",
+        platform: "linkedin",
+        description: "Professional content for business network",
+        thumbnail: asset_path("components/linkedin-post.svg"),
         html: linkedin_post_html,
         css: linkedin_post_css,
         professional: true
       },
       {
-        id: 'cta-button',
-        name: 'Call-to-Action Button',
-        category: 'buttons',
-        platform: 'universal',
-        description: 'Prominent action button with customizable styling',
-        thumbnail: asset_path('components/cta-button.svg'),
+        id: "cta-button",
+        name: "Call-to-Action Button",
+        category: "buttons",
+        platform: "universal",
+        description: "Prominent action button with customizable styling",
+        thumbnail: asset_path("components/cta-button.svg"),
         html: cta_button_html,
         css: cta_button_css,
         customizable: true
       },
       {
-        id: 'image-gallery',
-        name: 'Image Gallery',
-        category: 'images',
-        platform: 'universal',
-        description: 'Responsive image gallery with lightbox',
-        thumbnail: asset_path('components/image-gallery.svg'),
+        id: "image-gallery",
+        name: "Image Gallery",
+        category: "images",
+        platform: "universal",
+        description: "Responsive image gallery with lightbox",
+        thumbnail: asset_path("components/image-gallery.svg"),
         html: image_gallery_html,
         css: image_gallery_css,
         responsive: true
       },
       {
-        id: 'contact-form',
-        name: 'Contact Form',
-        category: 'forms',
-        platform: 'universal',
-        description: 'Professional contact form with validation',
-        thumbnail: asset_path('components/contact-form.svg'),
+        id: "contact-form",
+        name: "Contact Form",
+        category: "forms",
+        platform: "universal",
+        description: "Professional contact form with validation",
+        thumbnail: asset_path("components/contact-form.svg"),
         html: contact_form_html,
         css: contact_form_css,
         interactive: true
@@ -236,7 +236,7 @@ class TemplatesController < ApplicationController
   rescue => e
     render json: {
       success: false,
-      message: 'AI generation failed. Please try again.',
+      message: "AI generation failed. Please try again.",
       error: e.message
     }, status: :unprocessable_entity
   end
@@ -259,29 +259,29 @@ class TemplatesController < ApplicationController
     # In production, you would integrate with OpenAI, Claude, or another AI service
 
     base_templates = {
-      'tiktok' => {
+      "tiktok" => {
         html: tiktok_ai_template(prompt, content_type, industry, tone),
         css: tiktok_video_css,
-        metadata: { platform: 'tiktok', type: content_type, industry: industry, tone: tone }
+        metadata: { platform: "tiktok", type: content_type, industry: industry, tone: tone }
       },
-      'instagram' => {
+      "instagram" => {
         html: instagram_ai_template(prompt, content_type, industry, tone),
         css: instagram_story_css,
-        metadata: { platform: 'instagram', type: content_type, industry: industry, tone: tone }
+        metadata: { platform: "instagram", type: content_type, industry: industry, tone: tone }
       },
-      'email' => {
+      "email" => {
         html: email_ai_template(prompt, content_type, industry, tone),
         css: email_header_css,
-        metadata: { platform: 'email', type: content_type, industry: industry, tone: tone }
+        metadata: { platform: "email", type: content_type, industry: industry, tone: tone }
       },
-      'linkedin' => {
+      "linkedin" => {
         html: linkedin_ai_template(prompt, content_type, industry, tone),
         css: linkedin_post_css,
-        metadata: { platform: 'linkedin', type: content_type, industry: industry, tone: tone }
+        metadata: { platform: "linkedin", type: content_type, industry: industry, tone: tone }
       }
     }
 
-    base_templates[platform] || base_templates['email']
+    base_templates[platform] || base_templates["email"]
   end
 
   def tiktok_ai_template(prompt, content_type, industry, tone)
@@ -377,10 +377,10 @@ class TemplatesController < ApplicationController
   # Content generators
   def generate_tiktok_title(prompt, content_type, industry, tone)
     titles = {
-      'promotional' => ["🔥 Don't Miss This!", "Limited Time Only!", "You NEED This!"],
-      'educational' => ["Learn This Quick Tip!", "Did You Know?", "Pro Tip Alert!"],
-      'entertaining' => ["This Will Make You Laugh", "Plot Twist!", "Wait for It..."],
-      'trending' => ["Everyone's Doing This", "New Trend Alert!", "Going Viral!"]
+      "promotional" => [ "🔥 Don't Miss This!", "Limited Time Only!", "You NEED This!" ],
+      "educational" => [ "Learn This Quick Tip!", "Did You Know?", "Pro Tip Alert!" ],
+      "entertaining" => [ "This Will Make You Laugh", "Plot Twist!", "Wait for It..." ],
+      "trending" => [ "Everyone's Doing This", "New Trend Alert!", "Going Viral!" ]
     }
     titles[content_type]&.sample || "Amazing Content!"
   end
@@ -390,29 +390,29 @@ class TemplatesController < ApplicationController
   end
 
   def generate_tiktok_hashtags(content_type, industry)
-    base_tags = ['#fyp', '#viral', '#trending']
+    base_tags = [ "#fyp", "#viral", "#trending" ]
     content_tags = {
-      'promotional' => ['#sale', '#deal', '#offer'],
-      'educational' => ['#learn', '#tips', '#howto'],
-      'entertaining' => ['#funny', '#comedy', '#entertainment'],
-      'trending' => ['#trend', '#challenge', '#popular']
+      "promotional" => [ "#sale", "#deal", "#offer" ],
+      "educational" => [ "#learn", "#tips", "#howto" ],
+      "entertaining" => [ "#funny", "#comedy", "#entertainment" ],
+      "trending" => [ "#trend", "#challenge", "#popular" ]
     }
     industry_tags = {
-      'tech' => ['#tech', '#innovation', '#digital'],
-      'fitness' => ['#fitness', '#health', '#workout'],
-      'food' => ['#food', '#recipe', '#cooking'],
-      'fashion' => ['#fashion', '#style', '#outfit']
+      "tech" => [ "#tech", "#innovation", "#digital" ],
+      "fitness" => [ "#fitness", "#health", "#workout" ],
+      "food" => [ "#food", "#recipe", "#cooking" ],
+      "fashion" => [ "#fashion", "#style", "#outfit" ]
     }
 
     all_tags = base_tags + (content_tags[content_type] || []) + (industry_tags[industry] || [])
-    all_tags.first(8).join(' ')
+    all_tags.first(8).join(" ")
   end
 
   def generate_instagram_title(prompt, content_type, industry, tone)
     case tone
-    when 'professional' then "Professional #{industry.humanize} Insights"
-    when 'friendly' then "Hey there! Let's talk #{industry}"
-    when 'trendy' then "The Latest in #{industry.humanize}"
+    when "professional" then "Professional #{industry.humanize} Insights"
+    when "friendly" then "Hey there! Let's talk #{industry}"
+    when "trendy" then "The Latest in #{industry.humanize}"
     else "Discover #{industry.humanize}"
     end
   end
@@ -423,9 +423,9 @@ class TemplatesController < ApplicationController
 
   def generate_email_subject(prompt, content_type, industry, tone)
     case content_type
-    when 'promotional' then "Special Offer: #{prompt.truncate(30)}"
-    when 'educational' then "Learn: #{prompt.truncate(40)}"
-    when 'trending' then "Trending Now: #{prompt.truncate(35)}"
+    when "promotional" then "Special Offer: #{prompt.truncate(30)}"
+    when "educational" then "Learn: #{prompt.truncate(40)}"
+    when "trending" then "Trending Now: #{prompt.truncate(35)}"
     else prompt.truncate(50)
     end
   end
