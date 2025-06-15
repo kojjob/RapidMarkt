@@ -77,6 +77,10 @@ class TemplatesController < ApplicationController
     render layout: false
   end
 
+  def test_dropdowns
+    render layout: false
+  end
+
   private
 
   def set_template
