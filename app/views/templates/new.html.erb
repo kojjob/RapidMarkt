@@ -4,7 +4,7 @@
     <ol role="list" class="flex items-center space-x-4">
       <li>
         <div>
-          <%= link_to dashboard_index_path, class: "text-gray-400 hover:text-gray-500" do %>
+          <%= link_to dashboard_path, class: "text-gray-400 hover:text-gray-500" do %>
             <svg class="flex-shrink-0 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
             </svg>
@@ -45,8 +45,395 @@
     </div>
   </div>
 
-  <!-- Form -->
+  <!-- Enhanced Template Builder -->
   <div class="mt-8">
-    <%= render 'form', template: @template %>
+    <div class="bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 min-h-screen">
+      <!-- Template Builder Header -->
+      <div class="bg-white/95 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-16">
+            <!-- Logo and Title -->
+            <div class="flex items-center space-x-4">
+              <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"></path>
+                </svg>
+              </div>
+              <div>
+                <h1 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Template Builder</h1>
+                <p class="text-sm text-gray-600">Create beautiful email templates with AI</p>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center space-x-3">
+              <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                💾 Save Draft
+              </button>
+              <button type="button" class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200">
+                🚀 Publish Template
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Template Builder Content -->
+      <div class="flex h-screen">
+        <!-- Template Type Selector -->
+        <div class="w-80 bg-white/80 backdrop-blur-xl border-r border-gray-200/50 overflow-y-auto">
+          <div class="p-6">
+            <h2 class="text-lg font-bold text-gray-900 mb-4">Choose Template Type</h2>
+
+            <div class="grid gap-4">
+              <!-- Email Template -->
+              <div class="template-type-card group cursor-pointer p-4 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl border-2 border-transparent hover:border-blue-300 transition-all duration-300">
+                <div class="flex items-center space-x-3">
+                  <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900">Email Campaign</h3>
+                    <p class="text-sm text-gray-600">Newsletter, promotional, transactional</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Landing Page -->
+              <div class="template-type-card group cursor-pointer p-4 bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl border-2 border-transparent hover:border-green-300 transition-all duration-300">
+                <div class="flex items-center space-x-3">
+                  <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900">Landing Page</h3>
+                    <p class="text-sm text-gray-600">Lead capture, product launch</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Social Media -->
+              <div class="template-type-card group cursor-pointer p-4 bg-gradient-to-br from-pink-50 to-rose-100 rounded-xl border-2 border-transparent hover:border-pink-300 transition-all duration-300">
+                <div class="flex items-center space-x-3">
+                  <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 4v10a2 2 0 002 2h6a2 2 0 002-2V8M7 8h10M7 8l-2-2m12 2l2-2"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900">Social Media</h3>
+                    <p class="text-sm text-gray-600">Instagram, Facebook, LinkedIn</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Assistant -->
+            <div class="mt-8 p-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl border border-purple-200">
+              <div class="flex items-center space-x-3 mb-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                </div>
+                <h3 class="font-semibold text-gray-900">AI Assistant</h3>
+              </div>
+              <p class="text-sm text-gray-600 mb-3">Describe what you want to create and let AI build it for you.</p>
+              <textarea placeholder="E.g., Create a modern newsletter for a tech startup..."
+                        rows="3"
+                        class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg border border-purple-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"></textarea>
+              <button type="button" class="mt-3 w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200">
+                ✨ Generate with AI
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Builder Area -->
+        <div class="flex-1 flex">
+          <!-- Canvas Area -->
+          <div class="flex-1 p-6">
+            <div class="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-200/50 h-full overflow-hidden">
+              <!-- Canvas Header -->
+              <div class="bg-gray-50/80 backdrop-blur-sm border-b border-gray-200/50 px-6 py-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-4">
+                    <h3 class="font-semibold text-gray-900">Email Canvas</h3>
+                    <div class="flex items-center space-x-2 text-sm text-gray-600">
+                      <span>📱 Mobile</span>
+                      <span>•</span>
+                      <span>💻 Desktop</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <button type="button" class="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                      </svg>
+                    </button>
+                    <button type="button" class="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Canvas Content -->
+              <div class="p-6 h-full overflow-y-auto">
+                <div class="max-w-2xl mx-auto">
+                  <!-- Drop Zone -->
+                  <div class="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-purple-400 transition-colors duration-300">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                      </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Start Building Your Template</h3>
+                    <p class="text-gray-600 mb-4">Drag components from the library or use AI to generate content</p>
+                    <div class="flex justify-center space-x-3">
+                      <button type="button" class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-100 rounded-lg hover:bg-purple-200 transition-colors duration-200">
+                        📦 Browse Components
+                      </button>
+                      <button type="button" class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200">
+                        🤖 Generate with AI
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Component Library -->
+          <div class="w-80 bg-white/80 backdrop-blur-xl border-l border-gray-200/50 overflow-y-auto"
+               data-controller="component-library template-ai"
+               data-component-library-components-value="[]"
+               data-component-library-categories-value="[]">
+
+            <!-- Component Library Tabs -->
+            <div class="border-b border-gray-200 bg-white/95 backdrop-blur-xl">
+              <nav class="flex space-x-8 px-6 py-4" aria-label="Tabs">
+                <button class="library-tab-btn text-purple-600 border-purple-600 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm"
+                        data-tab="library"
+                        onclick="showTab('library')">
+                  📦 Library
+                </button>
+                <button class="library-tab-btn text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm"
+                        data-tab="ai"
+                        onclick="showTab('ai')">
+                  🤖 AI Generate
+                </button>
+                <button class="library-tab-btn text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm"
+                        data-tab="favorites"
+                        onclick="showTab('favorites')">
+                  ❤️ Favorites
+                </button>
+              </nav>
+            </div>
+
+            <!-- Component Library Tab -->
+            <div id="library-tab" class="tab-content p-6">
+              <div class="mb-6">
+                <h3 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">Component Library</h3>
+                <p class="text-gray-600 text-sm font-medium">Professional components ready to use</p>
+              </div>
+
+              <!-- Search and Filter -->
+              <div class="space-y-4 mb-6">
+                <div class="relative">
+                  <input type="text"
+                         placeholder="Search components..."
+                         class="w-full pl-10 pr-4 py-3 text-sm bg-white/80 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white border border-gray-200 transition-all duration-300 placeholder-gray-500"
+                         data-component-library-target="searchInput">
+                  <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                  </div>
+                </div>
+
+                <select class="w-full px-3 py-3 text-sm bg-white/80 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-purple-500 border border-gray-200 transition-all duration-300"
+                        data-component-library-target="categoryFilter"
+                        data-action="change->component-library#filterComponents">
+                  <option value="all">All Categories</option>
+                  <option value="headers">📰 Headers</option>
+                  <option value="content">📝 Content</option>
+                  <option value="buttons">🔘 Buttons</option>
+                  <option value="images">🖼️ Images</option>
+                  <option value="social">📱 Social</option>
+                  <option value="ecommerce">🛒 E-commerce</option>
+                </select>
+              </div>
+
+              <!-- Component Grid -->
+              <div class="component-grid space-y-4" data-component-library-target="componentGrid">
+                <!-- Sample Components -->
+                <div class="component-card bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div class="component-thumbnail relative">
+                    <div class="aspect-w-16 aspect-h-9 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                      <div class="text-2xl">📰</div>
+                    </div>
+                  </div>
+                  <div class="component-info p-4">
+                    <h3 class="font-bold text-gray-900 mb-1">Header Section</h3>
+                    <p class="text-sm text-gray-600 mb-3">Clean header with logo and navigation</p>
+                    <div class="component-actions flex space-x-2">
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        👁️ Preview
+                      </button>
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200">
+                        ✨ Use
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="component-card bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div class="component-thumbnail relative">
+                    <div class="aspect-w-16 aspect-h-9 bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center">
+                      <div class="text-2xl">🔘</div>
+                    </div>
+                  </div>
+                  <div class="component-info p-4">
+                    <h3 class="font-bold text-gray-900 mb-1">Call-to-Action</h3>
+                    <p class="text-sm text-gray-600 mb-3">Prominent action button with gradient</p>
+                    <div class="component-actions flex space-x-2">
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        👁️ Preview
+                      </button>
+                      <button class="flex-1 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200">
+                        ✨ Use
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Generate Tab -->
+            <div id="ai-tab" class="tab-content hidden p-6">
+              <div class="mb-6">
+                <h3 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">AI Template Generator</h3>
+                <p class="text-gray-600 text-sm font-medium">Describe what you want and let AI create it</p>
+              </div>
+
+              <!-- AI Generation Form -->
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Describe your template</label>
+                  <textarea placeholder="E.g., Create a modern newsletter template for a tech startup with a hero section, product features, and call-to-action..."
+                            rows="4"
+                            class="w-full px-3 py-3 text-sm bg-white/80 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-purple-500 border border-gray-200 transition-all duration-300 placeholder-gray-500 resize-none"
+                            data-template-ai-target="promptInput"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Industry</label>
+                    <select class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg focus:ring-2 focus:ring-purple-500 border border-gray-200"
+                            data-template-ai-target="industrySelect">
+                      <option value="general">General</option>
+                      <option value="tech">Technology</option>
+                      <option value="ecommerce">E-commerce</option>
+                      <option value="healthcare">Healthcare</option>
+                      <option value="finance">Finance</option>
+                      <option value="education">Education</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tone</label>
+                    <select class="w-full px-3 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-lg focus:ring-2 focus:ring-purple-500 border border-gray-200"
+                            data-template-ai-target="toneSelect">
+                      <option value="professional">Professional</option>
+                      <option value="friendly">Friendly</option>
+                      <option value="casual">Casual</option>
+                      <option value="formal">Formal</option>
+                      <option value="playful">Playful</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="button"
+                        class="w-full px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105"
+                        data-template-ai-target="generateButton"
+                        data-action="click->template-ai#generate">
+                  ✨ Generate Template
+                </button>
+              </div>
+
+              <!-- Loading Indicator -->
+              <div class="hidden mt-6 text-center" data-template-ai-target="loadingIndicator">
+                <div class="inline-flex items-center px-4 py-2 text-sm font-medium text-purple-600 bg-purple-100 rounded-lg">
+                  <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Generating your template...
+                </div>
+              </div>
+
+              <!-- AI Result Container -->
+              <div class="hidden mt-6" data-template-ai-target="resultContainer">
+                <div data-template-ai-target="previewArea">
+                  <!-- AI generated template preview will appear here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Favorites Tab -->
+            <div id="favorites-tab" class="tab-content hidden p-6">
+              <div class="mb-6">
+                <h3 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">Favorite Components</h3>
+                <p class="text-gray-600 text-sm font-medium">Your saved components for quick access</p>
+              </div>
+
+              <div data-component-library-target="favoritesList">
+                <div class="text-center text-gray-500 py-12">
+                  <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                  </div>
+                  <p class="font-medium">No favorites yet</p>
+                  <p class="text-sm">Heart components to save them here</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Switching Script -->
+    <script>
+      function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+          tab.classList.add('hidden');
+        });
+
+        // Remove active state from all buttons
+        document.querySelectorAll('.library-tab-btn').forEach(btn => {
+          btn.classList.remove('text-purple-600', 'border-purple-600');
+          btn.classList.add('text-gray-500', 'border-transparent');
+        });
+
+        // Show selected tab
+        document.getElementById(tabName + '-tab').classList.remove('hidden');
+
+        // Add active state to selected button
+        const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+        activeBtn.classList.remove('text-gray-500', 'border-transparent');
+        activeBtn.classList.add('text-purple-600', 'border-purple-600');
+      }
+    </script>
   </div>
 </div>
