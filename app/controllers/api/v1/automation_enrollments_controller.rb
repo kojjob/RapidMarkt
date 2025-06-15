@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
 class Api::V1::AutomationEnrollmentsController < Api::BaseController
-  before_action :set_enrollment, only: [:show, :destroy, :pause, :resume]
+  before_action :set_enrollment, only: [ :show, :destroy, :pause, :resume ]
 
   # GET /api/v1/automation_enrollments
   def index
     @enrollments = current_account.email_automations
                                  .joins(:automation_enrollments)
-                                 .includes(automation_enrollments: [:contact, :automation_executions])
+                                 .includes(automation_enrollments: [ :contact, :automation_executions ])
                                  .flat_map(&:automation_enrollments)
-    
+
     @enrollments = filter_enrollments(@enrollments)
     @enrollments = Kaminari.paginate_array(@enrollments)
                           .page(params[:page])
                           .per(params[:per_page] || 25)
-    
+
     render_success(
       enrollments: serialize_enrollments(@enrollments),
       pagination: pagination_data(@enrollments)
@@ -32,36 +32,36 @@ class Api::V1::AutomationEnrollmentsController < Api::BaseController
   def create
     automation = current_account.email_automations.find(enrollment_params[:automation_id])
     contact = current_account.contacts.find(enrollment_params[:contact_id])
-    
+
     result = automation_service.execute_automation(automation, {
       contact: contact,
       context: enrollment_params[:context] || {}
     })
-    
+
     if result.success?
       render_success(
         enrollment: serialize_enrollment_detail(result.data),
-        message: 'Contact enrolled in automation successfully'
+        message: "Contact enrolled in automation successfully"
       )
     else
-      render_error('Failed to enroll contact', result.errors)
+      render_error("Failed to enroll contact", result.errors)
     end
   end
 
   # DELETE /api/v1/automation_enrollments/:id
   def destroy
     @enrollment.destroy!
-    render_success(message: 'Enrollment deleted successfully')
+    render_success(message: "Enrollment deleted successfully")
   end
 
   # POST /api/v1/automation_enrollments/:id/pause
   def pause
-    reason = params[:reason] || 'Paused via API'
-    
+    reason = params[:reason] || "Paused via API"
+
     if @enrollment.pause!(reason)
       render_success(
         enrollment: serialize_enrollment_detail(@enrollment),
-        message: 'Enrollment paused successfully'
+        message: "Enrollment paused successfully"
       )
     else
       render_validation_errors(@enrollment)
@@ -73,7 +73,7 @@ class Api::V1::AutomationEnrollmentsController < Api::BaseController
     if @enrollment.resume!
       render_success(
         enrollment: serialize_enrollment_detail(@enrollment),
-        message: 'Enrollment resumed successfully'
+        message: "Enrollment resumed successfully"
       )
     else
       render_validation_errors(@enrollment)
@@ -89,7 +89,7 @@ class Api::V1::AutomationEnrollmentsController < Api::BaseController
                                 .automation_enrollments
                                 .find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    render_error('Enrollment not found', [], :not_found)
+    render_error("Enrollment not found", [], :not_found)
   end
 
   def automation_service

@@ -5,7 +5,7 @@ class AutomationStep < ApplicationRecord
 
   # Associations
   belongs_to :email_automation
-  belongs_to :email_template, class_name: 'Template', optional: true
+  belongs_to :email_template, class_name: "Template", optional: true
   has_many :automation_executions, dependent: :destroy
 
   # Validations
@@ -16,17 +16,17 @@ class AutomationStep < ApplicationRecord
 
   # Enums
   enum :step_type, {
-    email: 'email',
-    wait: 'wait',
-    condition: 'condition',
-    action: 'action'
+    email: "email",
+    wait: "wait",
+    condition: "condition",
+    action: "action"
   }, prefix: true
 
   enum :delay_unit, {
-    minutes: 'minutes',
-    hours: 'hours',
-    days: 'days',
-    weeks: 'weeks'
+    minutes: "minutes",
+    hours: "hours",
+    days: "days",
+    weeks: "weeks"
   }, prefix: :delay
 
   # JSON serialization
@@ -34,8 +34,8 @@ class AutomationStep < ApplicationRecord
 
   # Scopes
   scope :ordered, -> { order(:step_order) }
-  scope :email_steps, -> { where(step_type: 'email') }
-  scope :condition_steps, -> { where(step_type: 'condition') }
+  scope :email_steps, -> { where(step_type: "email") }
+  scope :condition_steps, -> { where(step_type: "condition") }
 
   # Callbacks
   before_save :validate_step_configuration
@@ -43,13 +43,13 @@ class AutomationStep < ApplicationRecord
   # Instance methods
   def delay_in_seconds
     case delay_unit
-    when 'minutes'
+    when "minutes"
       delay_amount.minutes
-    when 'hours'
+    when "hours"
       delay_amount.hours
-    when 'days'
+    when "days"
       delay_amount.days
-    when 'weeks'
+    when "weeks"
       delay_amount.weeks
     else
       0
@@ -63,7 +63,7 @@ class AutomationStep < ApplicationRecord
       automation_enrollment: enrollment,
       automation_step: self,
       scheduled_at: execution_time,
-      status: 'scheduled'
+      status: "scheduled"
     )
   end
 
@@ -90,16 +90,16 @@ class AutomationStep < ApplicationRecord
 
   def success_rate
     return 0 if execution_count == 0
-    
+
     (success_count.to_f / execution_count * 100).round(2)
   end
 
   def next_step
-    email_automation.automation_steps.where('step_order > ?', step_order).order(:step_order).first
+    email_automation.automation_steps.where("step_order > ?", step_order).order(:step_order).first
   end
 
   def previous_step
-    email_automation.automation_steps.where('step_order < ?', step_order).order(step_order: :desc).first
+    email_automation.automation_steps.where("step_order < ?", step_order).order(step_order: :desc).first
   end
 
   def duplicate
@@ -112,30 +112,30 @@ class AutomationStep < ApplicationRecord
 
   def validate_step_configuration
     case step_type
-    when 'email'
-      errors.add(:email_template, 'is required for email steps') if email_template.blank? && custom_body.blank?
-    when 'condition'
-      errors.add(:conditions, 'are required for condition steps') if conditions.blank?
-    when 'wait'
-      errors.add(:delay_amount, 'must be greater than 0 for wait steps') if delay_amount <= 0
+    when "email"
+      errors.add(:email_template, "is required for email steps") if email_template.blank? && custom_body.blank?
+    when "condition"
+      errors.add(:conditions, "are required for condition steps") if conditions.blank?
+    when "wait"
+      errors.add(:delay_amount, "must be greater than 0 for wait steps") if delay_amount <= 0
     end
   end
 
   def evaluate_condition(condition, contact)
-    field = condition['field']
-    operator = condition['operator']
-    value = condition['value']
+    field = condition["field"]
+    operator = condition["operator"]
+    value = condition["value"]
 
     case field
-    when 'status'
+    when "status"
       evaluate_status_condition(contact, operator, value)
-    when 'tag'
+    when "tag"
       evaluate_tag_condition(contact, operator, value)
-    when 'engagement_score'
+    when "engagement_score"
       evaluate_engagement_condition(contact, operator, value)
-    when 'last_opened_at'
+    when "last_opened_at"
       evaluate_date_condition(contact.last_opened_at, operator, value)
-    when 'created_at'
+    when "created_at"
       evaluate_date_condition(contact.created_at, operator, value)
     else
       true # Default to true for unknown conditions
@@ -144,9 +144,9 @@ class AutomationStep < ApplicationRecord
 
   def evaluate_status_condition(contact, operator, value)
     case operator
-    when 'equals'
+    when "equals"
       contact.status == value
-    when 'not_equals'
+    when "not_equals"
       contact.status != value
     else
       false
@@ -155,9 +155,9 @@ class AutomationStep < ApplicationRecord
 
   def evaluate_tag_condition(contact, operator, value)
     case operator
-    when 'has'
+    when "has"
       contact.tags.exists?(name: value)
-    when 'does_not_have'
+    when "does_not_have"
       !contact.tags.exists?(name: value)
     else
       false
@@ -166,13 +166,13 @@ class AutomationStep < ApplicationRecord
 
   def evaluate_engagement_condition(contact, operator, value)
     engagement_score = contact.engagement_score || 0
-    
+
     case operator
-    when 'greater_than'
+    when "greater_than"
       engagement_score > value.to_f
-    when 'less_than'
+    when "less_than"
       engagement_score < value.to_f
-    when 'equals'
+    when "equals"
       engagement_score == value.to_f
     else
       false
@@ -181,25 +181,25 @@ class AutomationStep < ApplicationRecord
 
   def evaluate_date_condition(date_value, operator, value)
     return false if date_value.blank?
-    
+
     comparison_date = case value
-                     when 'today'
+    when "today"
                        Date.current
-                     when 'yesterday'
+    when "yesterday"
                        1.day.ago.to_date
-                     when /^\d+_days_ago$/
-                       days = value.split('_').first.to_i
+    when /^\d+_days_ago$/
+                       days = value.split("_").first.to_i
                        days.days.ago.to_date
-                     else
+    else
                        Date.parse(value) rescue Date.current
-                     end
-    
+    end
+
     case operator
-    when 'after'
+    when "after"
       date_value.to_date > comparison_date
-    when 'before'
+    when "before"
       date_value.to_date < comparison_date
-    when 'on'
+    when "on"
       date_value.to_date == comparison_date
     else
       false

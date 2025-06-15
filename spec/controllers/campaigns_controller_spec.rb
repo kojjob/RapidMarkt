@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CampaignsController, type: :controller do
   routes { Rails.application.routes }
-  
+
   let(:account) { create(:account) }
   let(:user) { create(:user, account: account) }
 

@@ -1,18 +1,18 @@
 class CampaignSenderJob < ApplicationJob
   queue_as QueuePriorities::CAMPAIGNS
-  
+
   retry_on StandardError, wait: :exponentially_longer, attempts: 3
   retry_on Net::TimeoutError, wait: 1.minute, attempts: 5
   discard_on ActiveRecord::RecordNotFound
-  
+
   # Rate limiting to prevent overwhelming email services
   rate_limit to: 200, within: 1.minute, by: :account_id
 
   def perform(campaign_id, options = {})
     campaign = Campaign.find(campaign_id)
-    
+
     # Check if this is an automation campaign
-    is_automation = options[:automation] || campaign.metadata&.dig('is_automation')
+    is_automation = options[:automation] || campaign.metadata&.dig("is_automation")
 
     # Validate campaign can be sent
     unless campaign.can_be_sent?
@@ -36,7 +36,7 @@ class CampaignSenderJob < ApplicationJob
       # Process contacts in batches for better memory management
       sent_count = 0
       failed_count = 0
-      
+
       contacts.find_in_batches(batch_size: 100) do |contact_batch|
         contact_batch.each do |contact|
           result = send_email_to_contact(campaign, contact)
@@ -45,7 +45,7 @@ class CampaignSenderJob < ApplicationJob
           else
             failed_count += 1
           end
-          
+
           # Update progress periodically
           if (sent_count + failed_count) % 50 == 0
             update_campaign_progress(campaign, sent_count, failed_count, total_contacts)
@@ -67,7 +67,7 @@ class CampaignSenderJob < ApplicationJob
       )
 
       Rails.logger.info "Campaign #{campaign.id} completed: #{sent_count} sent, #{failed_count} failed"
-      
+
       # Trigger post-send automation if not already an automation
       unless is_automation
         trigger_post_send_automations(campaign)
@@ -122,7 +122,7 @@ class CampaignSenderJob < ApplicationJob
         campaign: campaign,
         contact: contact,
         sent_at: Time.current,
-        status: 'sending'
+        status: "sending"
       )
 
       # Render email content with contact variables
@@ -131,56 +131,56 @@ class CampaignSenderJob < ApplicationJob
 
       # Send email using ActionMailer or external service
       delivery_result = deliver_email(campaign, contact, rendered_subject, rendered_content)
-      
+
       if delivery_result[:success]
         # Update campaign contact status
         campaign_contact.update!(
-          status: 'sent',
+          status: "sent",
           delivered_at: Time.current,
           message_id: delivery_result[:message_id]
         )
-        
+
         # Log contact activity
         ContactActivityLog.create!(
           contact: contact,
           account: contact.account,
-          activity_type: 'email_sent',
+          activity_type: "email_sent",
           metadata: {
             campaign_id: campaign.id,
             subject: rendered_subject,
             message_id: delivery_result[:message_id]
           }
         )
-        
+
         # Update contact engagement tracking
         contact.touch(:last_email_sent_at)
-        
+
         Rails.logger.debug "Email sent to #{contact.email} for campaign #{campaign.id}"
         { success: true, message_id: delivery_result[:message_id] }
       else
         # Update campaign contact with failure
         campaign_contact.update!(
-          status: 'failed',
+          status: "failed",
           error_message: delivery_result[:error]
         )
-        
+
         Rails.logger.error "Failed to deliver email to #{contact.email}: #{delivery_result[:error]}"
         { success: false, error: delivery_result[:error] }
       end
 
     rescue => e
       Rails.logger.error "Failed to send email to #{contact.email} for campaign #{campaign.id}: #{e.message}"
-      
+
       # Update campaign contact if it was created
       campaign_contact&.update!(
-        status: 'failed',
+        status: "failed",
         error_message: e.message
       )
-      
+
       { success: false, error: e.message }
     end
   end
-  
+
   def deliver_email(campaign, contact, subject, content)
     # Use ActionMailer for now - this could be enhanced to use external services
     begin
@@ -190,16 +190,16 @@ class CampaignSenderJob < ApplicationJob
         subject: subject,
         content: content
       ).deliver_now
-      
+
       { success: true, message_id: SecureRandom.uuid }
     rescue => e
       { success: false, error: e.message }
     end
   end
-  
+
   def update_campaign_progress(campaign, sent_count, failed_count, total_contacts)
     progress_percentage = ((sent_count + failed_count).to_f / total_contacts * 100).round(2)
-    
+
     campaign.update!(
       metadata: campaign.metadata.merge({
         progress_percentage: progress_percentage,
@@ -209,57 +209,57 @@ class CampaignSenderJob < ApplicationJob
       })
     )
   end
-  
+
   def trigger_post_send_automations(campaign)
     # Find automations triggered by campaign sends
     automations = campaign.account.email_automations
-                          .where(trigger_type: 'campaign_sent')
+                          .where(trigger_type: "campaign_sent")
                           .where(active: true)
-    
+
     automations.each do |automation|
       # Check if automation conditions match this campaign
       trigger_conditions = automation.trigger_conditions || {}
-      
+
       # Check campaign tags
-      if trigger_conditions['campaign_tags'].present?
-        required_tags = trigger_conditions['campaign_tags']
+      if trigger_conditions["campaign_tags"].present?
+        required_tags = trigger_conditions["campaign_tags"]
         campaign_tag_names = campaign.tags.pluck(:name)
-        
+
         next unless (required_tags & campaign_tag_names).any?
       end
-      
+
       # Check campaign type
-      if trigger_conditions['campaign_type'].present?
-        next unless campaign.send_type == trigger_conditions['campaign_type']
+      if trigger_conditions["campaign_type"].present?
+        next unless campaign.send_type == trigger_conditions["campaign_type"]
       end
-      
+
       # Enroll campaign contacts in automation
-      campaign.contacts.where(status: 'subscribed').find_each do |contact|
+      campaign.contacts.where(status: "subscribed").find_each do |contact|
         # Skip if already enrolled
         next if automation.automation_enrollments.exists?(contact: contact)
-        
+
         enrollment = AutomationEnrollment.create!(
           email_automation: automation,
           contact: contact,
-          status: 'active',
+          status: "active",
           enrolled_at: Time.current,
           trigger_data: {
             campaign_id: campaign.id,
             campaign_name: campaign.name,
-            enrolled_via: 'post_campaign_send'
+            enrolled_via: "post_campaign_send"
           }
         )
-        
+
         # Start automation
         first_step = automation.automation_steps.order(:step_order).first
         if first_step
           execution = AutomationExecution.create!(
             automation_enrollment: enrollment,
             automation_step: first_step,
-            status: 'pending',
+            status: "pending",
             scheduled_at: Time.current
           )
-          
+
           ProcessAutomationExecutionJob.perform_later(execution.id)
         end
       end
@@ -293,7 +293,7 @@ class CampaignSenderJob < ApplicationJob
     when "last_name"
       contact.last_name || ""
     when "full_name"
-      [contact.first_name, contact.last_name].compact.join(" ").presence || "there"
+      [ contact.first_name, contact.last_name ].compact.join(" ").presence || "there"
     when "email"
       contact.email
     when "company_name", "account_name"
@@ -334,7 +334,7 @@ class CampaignSenderJob < ApplicationJob
       end
     end
   end
-  
+
   def account_id
     # Extract account ID for rate limiting
     campaign = Campaign.find(arguments.first)

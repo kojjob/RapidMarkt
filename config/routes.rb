@@ -92,7 +92,7 @@ Rails.application.routes.draw do
   # API routes
   namespace :api do
     namespace :v1 do
-      resources :automations, only: [:index, :show, :create, :update, :destroy] do
+      resources :automations, only: [ :index, :show, :create, :update, :destroy ] do
         member do
           post :activate
           post :pause
@@ -106,14 +106,14 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :automation_enrollments, only: [:index, :show, :create, :destroy] do
+      resources :automation_enrollments, only: [ :index, :show, :create, :destroy ] do
         member do
           post :pause
           post :resume
         end
       end
 
-      resources :automation_executions, only: [:index, :show] do
+      resources :automation_executions, only: [ :index, :show ] do
         member do
           post :retry
         end

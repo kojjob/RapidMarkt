@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 class AutomationsController < ApplicationController
-  before_action :set_automation, only: [:show, :edit, :update, :destroy, :activate, :pause, :duplicate, :analytics]
+  before_action :set_automation, only: [ :show, :edit, :update, :destroy, :activate, :pause, :duplicate, :analytics ]
 
   def index
     @automations = current_account.email_automations
                                  .includes(:automation_steps, :automation_enrollments)
                                  .order(:created_at)
-    
+
     @automations = @automations.where(status: params[:status]) if params[:status].present?
-    @automations = @automations.where('name ILIKE ?', "%#{params[:search]}%") if params[:search].present?
-    
+    @automations = @automations.where("name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
+
     respond_to do |format|
       format.html
       format.json { render json: automation_list_json }
@@ -20,7 +20,7 @@ class AutomationsController < ApplicationController
   def show
     @analytics = automation_analytics_service.automation_analytics(@automation.id).data
     @enrollments = @automation.automation_enrollments.includes(:contact).recent.limit(100)
-    
+
     respond_to do |format|
       format.html
       format.json { render json: automation_detail_json }
@@ -34,12 +34,12 @@ class AutomationsController < ApplicationController
 
   def create
     @automation = current_account.email_automations.build(automation_params)
-    
+
     if @automation.save
       # Create initial steps if provided
       create_automation_steps if params[:steps].present?
-      
-      redirect_to @automation, notice: 'Automation was successfully created.'
+
+      redirect_to @automation, notice: "Automation was successfully created."
     else
       @templates = current_account.templates.active
       render :new, status: :unprocessable_entity
@@ -54,8 +54,8 @@ class AutomationsController < ApplicationController
     if @automation.update(automation_params)
       # Update steps if provided
       update_automation_steps if params[:steps].present?
-      
-      redirect_to @automation, notice: 'Automation was successfully updated.'
+
+      redirect_to @automation, notice: "Automation was successfully updated."
     else
       @templates = current_account.templates.active
       render :edit, status: :unprocessable_entity
@@ -64,41 +64,41 @@ class AutomationsController < ApplicationController
 
   def destroy
     @automation.destroy!
-    redirect_to automations_url, notice: 'Automation was successfully deleted.'
+    redirect_to automations_url, notice: "Automation was successfully deleted."
   end
 
   def activate
     if @automation.activate!
-      render json: { status: 'success', message: 'Automation activated successfully.' }
+      render json: { status: "success", message: "Automation activated successfully." }
     else
-      render json: { status: 'error', errors: @automation.errors.full_messages }
+      render json: { status: "error", errors: @automation.errors.full_messages }
     end
   end
 
   def pause
     if @automation.pause!
-      render json: { status: 'success', message: 'Automation paused successfully.' }
+      render json: { status: "success", message: "Automation paused successfully." }
     else
-      render json: { status: 'error', errors: @automation.errors.full_messages }
+      render json: { status: "error", errors: @automation.errors.full_messages }
     end
   end
 
   def duplicate
     result = automation_service.duplicate_automation(@automation.id, params[:new_name])
-    
+
     if result.success?
-      redirect_to result.data, notice: 'Automation duplicated successfully.'
+      redirect_to result.data, notice: "Automation duplicated successfully."
     else
-      redirect_to @automation, alert: result.errors.join(', ')
+      redirect_to @automation, alert: result.errors.join(", ")
     end
   end
 
   def analytics
-    period = params[:period] || '30_days'
+    period = params[:period] || "30_days"
     @analytics = automation_analytics_service.automation_analytics(@automation.id, period).data
-    
+
     respond_to do |format|
-      format.html { render partial: 'analytics_data' }
+      format.html { render partial: "analytics_data" }
       format.json { render json: @analytics }
     end
   end
@@ -106,18 +106,18 @@ class AutomationsController < ApplicationController
   def bulk_action
     automation_ids = params[:automation_ids]
     action = params[:bulk_action]
-    
+
     case action
-    when 'activate'
+    when "activate"
       result = bulk_activate_automations(automation_ids)
-    when 'pause'
+    when "pause"
       result = bulk_pause_automations(automation_ids)
-    when 'delete'
+    when "delete"
       result = bulk_delete_automations(automation_ids)
     else
-      result = { success: false, message: 'Invalid action' }
+      result = { success: false, message: "Invalid action" }
     end
-    
+
     render json: result
   end
 
@@ -148,7 +148,7 @@ class AutomationsController < ApplicationController
         step_type: step_params[:step_type],
         step_order: index + 1,
         delay_amount: step_params[:delay_amount] || 0,
-        delay_unit: step_params[:delay_unit] || 'hours',
+        delay_unit: step_params[:delay_unit] || "hours",
         email_template_id: step_params[:email_template_id],
         custom_subject: step_params[:custom_subject],
         custom_body: step_params[:custom_body],
@@ -166,13 +166,13 @@ class AutomationsController < ApplicationController
   def bulk_activate_automations(automation_ids)
     automations = current_account.email_automations.where(id: automation_ids)
     activated_count = 0
-    
+
     automations.each do |automation|
       if automation.activate!
         activated_count += 1
       end
     end
-    
+
     {
       success: true,
       message: "#{activated_count} automations activated successfully.",
@@ -185,13 +185,13 @@ class AutomationsController < ApplicationController
   def bulk_pause_automations(automation_ids)
     automations = current_account.email_automations.where(id: automation_ids)
     paused_count = 0
-    
+
     automations.each do |automation|
       if automation.pause!
         paused_count += 1
       end
     end
-    
+
     {
       success: true,
       message: "#{paused_count} automations paused successfully.",
@@ -204,15 +204,15 @@ class AutomationsController < ApplicationController
   def bulk_delete_automations(automation_ids)
     automations = current_account.email_automations.where(id: automation_ids)
     deleted_count = automations.count
-    
+
     # Schedule background job for safe deletion
     BulkOperationJob.perform_later(
-      operation: 'bulk_delete_automations',
+      operation: "bulk_delete_automations",
       resource_ids: automation_ids,
       account_id: current_account.id,
       user_id: current_user.id
     )
-    
+
     {
       success: true,
       message: "#{deleted_count} automations queued for deletion.",

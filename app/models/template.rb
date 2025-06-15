@@ -147,7 +147,7 @@ class Template < ApplicationRecord
 
   def apply_brand_voice(content = nil)
     return content || self.content unless brand_voice
-    
+
     target_content = content || self.content
     BrandVoiceService.new(brand_voice).apply_voice(target_content)
   end
@@ -158,7 +158,7 @@ class Template < ApplicationRecord
 
   def brand_voice_compatibility_score
     return nil unless brand_voice
-    
+
     BrandVoiceService.new(brand_voice).analyze_content_compatibility(content)
   end
 
@@ -170,27 +170,27 @@ class Template < ApplicationRecord
   # Trackable engagement calculation
   def calculate_engagement_score
     score = 0
-    
+
     # Base score for template status
     score += case status
-             when 'active' then 30
-             when 'draft' then 10
-             else 0
-             end
-    
+    when "active" then 30
+    when "draft" then 10
+    else 0
+    end
+
     # Usage-based scoring
     campaign_count = campaigns.count
-    score += [campaign_count * 5, 40].min
-    
+    score += [ campaign_count * 5, 40 ].min
+
     # Performance-based scoring from campaigns
     if campaigns.sent.any?
       avg_open_rate = campaigns.sent.average(:open_rate) || 0
       avg_click_rate = campaigns.sent.average(:click_rate) || 0
-      
-      score += [avg_open_rate * 0.2, 20].min
-      score += [avg_click_rate * 1.5, 10].min
+
+      score += [ avg_open_rate * 0.2, 20 ].min
+      score += [ avg_click_rate * 1.5, 10 ].min
     end
-    
-    [score, 100].min
+
+    [ score, 100 ].min
   end
 end

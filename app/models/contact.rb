@@ -119,54 +119,54 @@ class Contact < ApplicationRecord
   # Get engagement level as human-readable string
   def engagement_level_text
     case engagement_level
-    when 'highly_engaged'
-      'Highly Engaged'
-    when 'moderately_engaged'
-      'Moderately Engaged'
-    when 'somewhat_engaged'
-      'Somewhat Engaged'
-    when 'barely_engaged'
-      'Barely Engaged'
-    when 'not_engaged'
-      'Not Engaged'
+    when "highly_engaged"
+      "Highly Engaged"
+    when "moderately_engaged"
+      "Moderately Engaged"
+    when "somewhat_engaged"
+      "Somewhat Engaged"
+    when "barely_engaged"
+      "Barely Engaged"
+    when "not_engaged"
+      "Not Engaged"
     else
-      'Unknown'
+      "Unknown"
     end
   end
 
   # Calculate contact's value score
   def value_score
     score = 0
-    
+
     # Engagement score contributes 40%
     score += (engagement_score || 0) * 0.4
-    
+
     # Activity recency contributes 30%
     if last_opened_at.present?
       days_ago = (Date.current - last_opened_at.to_date).to_i
       recency_score = case days_ago
-                      when 0..7 then 100
-                      when 8..30 then 70
-                      when 31..90 then 40
-                      else 10
-                      end
+      when 0..7 then 100
+      when 8..30 then 70
+      when 31..90 then 40
+      else 10
+      end
       score += recency_score * 0.3
     end
-    
+
     # Profile completeness contributes 20%
     completeness = profile_completeness_percentage
     score += completeness * 0.2
-    
+
     # Lifecycle stage contributes 10%
     lifecycle_score = case lifecycle_stage
-                      when 'customer' then 100
-                      when 'advocate' then 90
-                      when 'prospect' then 60
-                      when 'lead' then 30
-                      else 10
-                      end
+    when "customer" then 100
+    when "advocate" then 90
+    when "prospect" then 60
+    when "lead" then 30
+    else 10
+    end
     score += lifecycle_score * 0.1
-    
+
     score.round(2)
   end
 
@@ -174,14 +174,14 @@ class Contact < ApplicationRecord
   def profile_completeness_percentage
     total_fields = 6
     completed_fields = 0
-    
+
     completed_fields += 1 if first_name.present?
     completed_fields += 1 if last_name.present?
     completed_fields += 1 if email.present? # Always present due to validation
     completed_fields += 1 if company.present?
     completed_fields += 1 if job_title.present?
     completed_fields += 1 if location.present?
-    
+
     (completed_fields.to_f / total_fields * 100).round(2)
   end
 
@@ -218,49 +218,49 @@ class Contact < ApplicationRecord
   # Trackable engagement calculation (override from concern)
   def calculate_engagement_score
     score = 0
-    
+
     # Base score for subscription status
     score += case status
-             when 'subscribed' then 20
-             when 'unsubscribed' then 0
-             when 'bounced' then 0
-             else 10
-             end
-    
+    when "subscribed" then 20
+    when "unsubscribed" then 0
+    when "bounced" then 0
+    else 10
+    end
+
     # Recent email activity
     if last_opened_at.present?
       days_since_open = (Date.current - last_opened_at.to_date).to_i
       score += case days_since_open
-               when 0..7 then 30
-               when 8..30 then 20
-               when 31..90 then 10
-               else 0
-               end
+      when 0..7 then 30
+      when 8..30 then 20
+      when 31..90 then 10
+      else 0
+      end
     end
-    
+
     # Click activity
     if last_clicked_at.present?
       days_since_click = (Date.current - last_clicked_at.to_date).to_i
       score += case days_since_click
-               when 0..7 then 25
-               when 8..30 then 15
-               when 31..90 then 5
-               else 0
-               end
+      when 0..7 then 25
+      when 8..30 then 15
+      when 31..90 then 5
+      else 0
+      end
     end
-    
+
     # Profile completeness
     score += profile_completeness_percentage * 0.2
-    
+
     # Lifecycle stage bonus
     score += case lifecycle_stage
-             when 'customer' then 20
-             when 'advocate' then 15
-             when 'prospect' then 10
-             when 'lead' then 5
-             else 0
-             end
-    
-    [score, 100].min
+    when "customer" then 20
+    when "advocate" then 15
+    when "prospect" then 10
+    when "lead" then 5
+    else 0
+    end
+
+    [ score, 100 ].min
   end
 end

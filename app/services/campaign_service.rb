@@ -3,7 +3,7 @@
 class CampaignService
   include ActiveModel::Model
   include ActiveModel::Attributes
-  
+
   attr_reader :campaign, :account, :errors
 
   def initialize(campaign: nil, account: nil)
@@ -21,13 +21,13 @@ class CampaignService
       if @campaign.save
         attach_contacts(params[:contact_ids]) if params[:contact_ids].present?
         attach_tags(params[:tag_ids]) if params[:tag_ids].present?
-        
+
         # Initialize analytics tracking
         initialize_campaign_analytics
-        
+
         # Log campaign creation
         audit_log("Campaign '#{@campaign.name}' created")
-        
+
         Result.success(@campaign)
       else
         @errors.merge!(@campaign.errors)
@@ -41,19 +41,19 @@ class CampaignService
   end
 
   # Schedule a campaign for later sending
-  def schedule(datetime, timezone = 'UTC')
+  def schedule(datetime, timezone = "UTC")
     return Result.failure("Campaign must be in draft status") unless @campaign.draft?
     return Result.failure("Invalid scheduling time") if datetime.blank? || datetime <= Time.current
 
     # Convert timezone if provided
-    scheduled_time = timezone != 'UTC' ? 
-      Time.zone.parse(datetime.to_s).in_time_zone(timezone).utc : 
+    scheduled_time = timezone != "UTC" ?
+      Time.zone.parse(datetime.to_s).in_time_zone(timezone).utc :
       datetime
 
-    if @campaign.update(status: 'scheduled', scheduled_at: scheduled_time)
+    if @campaign.update(status: "scheduled", scheduled_at: scheduled_time)
       # Schedule the background job
       CampaignSenderJob.set(wait_until: scheduled_time).perform_later(@campaign.id)
-      
+
       audit_log("Campaign '#{@campaign.name}' scheduled for #{scheduled_time}")
       Result.success(@campaign)
     else
@@ -66,16 +66,16 @@ class CampaignService
     return Result.failure("Campaign cannot be sent") unless @campaign.can_be_sent?
     return Result.failure("No contacts selected") if @campaign.contacts.empty?
 
-    @campaign.update!(status: 'sending')
-    
+    @campaign.update!(status: "sending")
+
     # Enqueue immediate sending
     CampaignSenderJob.perform_later(@campaign.id)
-    
+
     audit_log("Campaign '#{@campaign.name}' sent immediately")
     Result.success(@campaign)
   rescue => e
     Rails.logger.error "Campaign sending failed: #{e.message}"
-    @campaign.update(status: 'draft') if @campaign&.sending?
+    @campaign.update(status: "draft") if @campaign&.sending?
     Result.failure("Failed to send campaign: #{e.message}")
   end
 
@@ -83,7 +83,7 @@ class CampaignService
   def duplicate(new_name = nil)
     new_campaign = @campaign.dup
     new_campaign.name = new_name || "#{@campaign.name} (Copy)"
-    new_campaign.status = 'draft'
+    new_campaign.status = "draft"
     new_campaign.scheduled_at = nil
     new_campaign.sent_at = nil
     new_campaign.open_rate = nil
@@ -95,7 +95,7 @@ class CampaignService
         # Copy associations
         copy_campaign_contacts(new_campaign)
         copy_campaign_tags(new_campaign)
-        
+
         audit_log("Campaign '#{@campaign.name}' duplicated as '#{new_campaign.name}'")
         Result.success(new_campaign)
       else
@@ -111,10 +111,10 @@ class CampaignService
   def pause
     return Result.failure("Only sending campaigns can be paused") unless @campaign.sending?
 
-    if @campaign.update(status: 'paused')
+    if @campaign.update(status: "paused")
       # Cancel any pending jobs
       cancel_pending_jobs
-      
+
       audit_log("Campaign '#{@campaign.name}' paused")
       Result.success(@campaign)
     else
@@ -126,10 +126,10 @@ class CampaignService
   def resume
     return Result.failure("Only paused campaigns can be resumed") unless @campaign.paused?
 
-    if @campaign.update(status: 'sending')
+    if @campaign.update(status: "sending")
       # Re-enqueue remaining sends
       enqueue_remaining_sends
-      
+
       audit_log("Campaign '#{@campaign.name}' resumed")
       Result.success(@campaign)
     else
@@ -158,12 +158,12 @@ class CampaignService
       variant_campaign = @campaign.dup
       variant_campaign.name = "#{@campaign.name} (Variant B)"
       variant_campaign.assign_attributes(variant_params)
-      
+
       if variant_campaign.save
         # Mark both as A/B test campaigns
-        @campaign.update!(ab_test_group: 'A', ab_test_parent_id: @campaign.id)
-        variant_campaign.update!(ab_test_group: 'B', ab_test_parent_id: @campaign.id)
-        
+        @campaign.update!(ab_test_group: "A", ab_test_parent_id: @campaign.id)
+        variant_campaign.update!(ab_test_group: "B", ab_test_parent_id: @campaign.id)
+
         audit_log("A/B test setup for campaign '#{@campaign.name}'")
         Result.success(variant_campaign)
       else
@@ -196,7 +196,7 @@ class CampaignService
     @campaign.campaign_contacts.find_each do |cc|
       new_campaign.campaign_contacts.create!(
         contact: cc.contact,
-        status: 'pending'
+        status: "pending"
       )
     end
   end
@@ -251,7 +251,7 @@ class CampaignService
   def calculate_delivery_rate
     total_sent = @campaign.campaign_contacts.sent.count
     return 0 if total_sent.zero?
-    
+
     delivered = @campaign.campaign_contacts.delivered.count
     ((delivered.to_f / total_sent) * 100).round(2)
   end
@@ -259,7 +259,7 @@ class CampaignService
   def calculate_bounce_rate
     total_sent = @campaign.campaign_contacts.sent.count
     return 0 if total_sent.zero?
-    
+
     bounced = @campaign.campaign_contacts.bounced.count
     ((bounced.to_f / total_sent) * 100).round(2)
   end
@@ -280,9 +280,9 @@ class CampaignService
   def audit_log(message)
     @account.audit_logs.create!(
       user: Current.user,
-      action: 'campaign_operation',
+      action: "campaign_operation",
       details: message,
-      resource_type: 'Campaign',
+      resource_type: "Campaign",
       resource_id: @campaign.id
     )
   rescue => e

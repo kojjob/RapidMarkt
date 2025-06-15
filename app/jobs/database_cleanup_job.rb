@@ -5,7 +5,7 @@ class DatabaseCleanupJob < ApplicationJob
 
   def perform
     Rails.logger.info "Starting database cleanup at #{Time.current}"
-    
+
     cleanup_results = {
       audit_logs_cleaned: 0,
       old_executions_cleaned: 0,
@@ -14,12 +14,12 @@ class DatabaseCleanupJob < ApplicationJob
     }
 
     # Clean up old audit logs (older than 6 months)
-    old_audit_logs = AuditLog.where('created_at < ?', 6.months.ago)
+    old_audit_logs = AuditLog.where("created_at < ?", 6.months.ago)
     cleanup_results[:audit_logs_cleaned] = old_audit_logs.count
     old_audit_logs.delete_all
 
     # Clean up old automation executions (older than 3 months)
-    old_executions = AutomationExecution.where('created_at < ?', 3.months.ago)
+    old_executions = AutomationExecution.where("created_at < ?", 3.months.ago)
     cleanup_results[:old_executions_cleaned] = old_executions.count
     old_executions.delete_all
 
@@ -31,7 +31,7 @@ class DatabaseCleanupJob < ApplicationJob
 
     # Clean up Solid Cache entries (let Solid Cache handle its own cleanup)
     # This is handled automatically by Solid Cache based on max_age and max_size settings
-    
+
     # Clean up temporary files older than 1 day
     cleanup_temp_files
 
@@ -39,12 +39,12 @@ class DatabaseCleanupJob < ApplicationJob
     optimize_database_performance
 
     Rails.logger.info "Database cleanup completed: #{cleanup_results}"
-    
+
     # Create audit log for cleanup
     AuditLog.create!(
-      action: 'database_cleanup',
+      action: "database_cleanup",
       details: "Database cleanup completed: #{cleanup_results}",
-      resource_type: 'System',
+      resource_type: "System",
       user: nil,
       account: nil
     )
@@ -53,7 +53,7 @@ class DatabaseCleanupJob < ApplicationJob
   rescue => e
     Rails.logger.error "Database cleanup failed: #{e.message}"
     Rails.logger.error e.backtrace.join("\n")
-    
+
     # Re-raise for job retry mechanism
     raise e
   end
@@ -61,10 +61,10 @@ class DatabaseCleanupJob < ApplicationJob
   private
 
   def cleanup_temp_files
-    temp_dir = Rails.root.join('tmp', 'storage')
+    temp_dir = Rails.root.join("tmp", "storage")
     return unless temp_dir.exist?
 
-    old_files = Dir.glob(temp_dir.join('**', '*'))
+    old_files = Dir.glob(temp_dir.join("**", "*"))
                   .select { |f| File.file?(f) }
                   .select { |f| File.mtime(f) < 1.day.ago }
 
@@ -79,7 +79,7 @@ class DatabaseCleanupJob < ApplicationJob
 
   def optimize_database_performance
     # Only run VACUUM and ANALYZE in PostgreSQL
-    return unless ActiveRecord::Base.connection.adapter_name == 'PostgreSQL'
+    return unless ActiveRecord::Base.connection.adapter_name == "PostgreSQL"
 
     # Get list of tables to optimize
     tables_to_optimize = %w[

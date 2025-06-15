@@ -164,29 +164,29 @@ class Campaign < ApplicationRecord
   # Trackable engagement calculation
   def calculate_engagement_score
     score = 0
-    
+
     # Base score for campaign status
     score += case status
-             when 'sent' then 40
-             when 'sending' then 20
-             when 'scheduled' then 10
-             else 0
-             end
-    
+    when "sent" then 40
+    when "sending" then 20
+    when "scheduled" then 10
+    else 0
+    end
+
     # Performance-based scoring
     if sent? && open_rate.present?
-      score += [open_rate * 0.4, 30].min
+      score += [ open_rate * 0.4, 30 ].min
     end
-    
+
     if sent? && click_rate.present?
-      score += [click_rate * 2, 20].min
+      score += [ click_rate * 2, 20 ].min
     end
-    
+
     # Recency bonus
     if sent_at.present? && sent_at >= 30.days.ago
       score += 10
     end
-    
-    [score, 100].min
+
+    [ score, 100 ].min
   end
 end

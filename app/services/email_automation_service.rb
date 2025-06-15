@@ -3,7 +3,7 @@
 class EmailAutomationService
   include ActiveModel::Model
   include ActiveModel::Attributes
-  
+
   attr_reader :account, :errors
 
   def initialize(account:)
@@ -16,7 +16,7 @@ class EmailAutomationService
     sequence_name = params[:name]
     trigger_conditions = params[:trigger_conditions] || {}
     emails = params[:emails] || []
-    
+
     return Result.failure("Sequence name is required") if sequence_name.blank?
     return Result.failure("At least one email is required") if emails.empty?
 
@@ -25,18 +25,18 @@ class EmailAutomationService
       automation = @account.email_automations.create!(
         name: sequence_name,
         description: params[:description],
-        trigger_type: params[:trigger_type] || 'manual',
+        trigger_type: params[:trigger_type] || "manual",
         trigger_conditions: trigger_conditions,
-        status: 'draft'
+        status: "draft"
       )
 
       # Create email steps
       emails.each_with_index do |email_data, index|
         automation.automation_steps.create!(
-          step_type: 'email',
+          step_type: "email",
           step_order: index + 1,
           delay_amount: email_data[:delay_amount] || 0,
-          delay_unit: email_data[:delay_unit] || 'days',
+          delay_unit: email_data[:delay_unit] || "days",
           email_template_id: email_data[:template_id],
           custom_subject: email_data[:custom_subject],
           custom_body: email_data[:custom_body],
@@ -55,21 +55,21 @@ class EmailAutomationService
   # Set up welcome email automation
   def setup_welcome_automation(template_id, delay_hours = 0)
     welcome_automation = @account.email_automations.find_or_create_by(
-      trigger_type: 'contact_subscribed',
-      name: 'Welcome Email'
+      trigger_type: "contact_subscribed",
+      name: "Welcome Email"
     ) do |automation|
-      automation.description = 'Automatic welcome email for new subscribers'
-      automation.status = 'active'
+      automation.description = "Automatic welcome email for new subscribers"
+      automation.status = "active"
     end
 
     # Clear existing steps and create new one
     welcome_automation.automation_steps.destroy_all
-    
+
     welcome_automation.automation_steps.create!(
-      step_type: 'email',
+      step_type: "email",
       step_order: 1,
       delay_amount: delay_hours,
-      delay_unit: 'hours',
+      delay_unit: "hours",
       email_template_id: template_id
     )
 
@@ -80,14 +80,14 @@ class EmailAutomationService
   # Set up abandoned cart recovery (for e-commerce integrations)
   def setup_cart_recovery_automation(templates_and_delays)
     recovery_automation = @account.email_automations.find_or_create_by(
-      trigger_type: 'cart_abandoned',
-      name: 'Cart Recovery'
+      trigger_type: "cart_abandoned",
+      name: "Cart Recovery"
     ) do |automation|
-      automation.description = 'Recover abandoned shopping carts'
-      automation.status = 'active'
-      automation.trigger_conditions = { 
+      automation.description = "Recover abandoned shopping carts"
+      automation.status = "active"
+      automation.trigger_conditions = {
         cart_value_min: 10.0,
-        abandoned_hours: 1 
+        abandoned_hours: 1
       }
     end
 
@@ -97,14 +97,14 @@ class EmailAutomationService
     # Create recovery sequence
     templates_and_delays.each_with_index do |(template_id, delay_hours), index|
       recovery_automation.automation_steps.create!(
-        step_type: 'email',
+        step_type: "email",
         step_order: index + 1,
         delay_amount: delay_hours,
-        delay_unit: 'hours',
+        delay_unit: "hours",
         email_template_id: template_id,
         conditions: {
-          'cart_still_abandoned' => true,
-          'customer_not_purchased' => true
+          "cart_still_abandoned" => true,
+          "customer_not_purchased" => true
         }
       )
     end
@@ -116,22 +116,22 @@ class EmailAutomationService
   # Set up re-engagement automation for inactive contacts
   def setup_reengagement_automation(inactive_days = 90)
     reengagement_automation = @account.email_automations.find_or_create_by(
-      trigger_type: 'contact_inactive',
-      name: 'Re-engagement Campaign'
+      trigger_type: "contact_inactive",
+      name: "Re-engagement Campaign"
     ) do |automation|
       automation.description = "Re-engage contacts inactive for #{inactive_days}+ days"
-      automation.status = 'active'
-      automation.trigger_conditions = { 
+      automation.status = "active"
+      automation.trigger_conditions = {
         inactive_days: inactive_days,
-        last_engagement: 'email_open'
+        last_engagement: "email_open"
       }
     end
 
     # Create re-engagement sequence
     reengagement_steps = [
-      { delay: 0, subject: "We miss you! Here's what you've been missing", template_type: 'reengagement_soft' },
-      { delay: 7, subject: "One last try - special offer inside", template_type: 'reengagement_offer' },
-      { delay: 14, subject: "Confirm you want to stay subscribed", template_type: 'reengagement_confirmation' }
+      { delay: 0, subject: "We miss you! Here's what you've been missing", template_type: "reengagement_soft" },
+      { delay: 7, subject: "One last try - special offer inside", template_type: "reengagement_offer" },
+      { delay: 14, subject: "Confirm you want to stay subscribed", template_type: "reengagement_confirmation" }
     ]
 
     reengagement_automation.automation_steps.destroy_all
@@ -139,12 +139,12 @@ class EmailAutomationService
     reengagement_steps.each_with_index do |step_data, index|
       # Find or create appropriate template
       template = find_or_create_reengagement_template(step_data[:template_type], step_data[:subject])
-      
+
       reengagement_automation.automation_steps.create!(
-        step_type: 'email',
+        step_type: "email",
         step_order: index + 1,
         delay_amount: step_data[:delay],
-        delay_unit: 'days',
+        delay_unit: "days",
         email_template_id: template.id,
         custom_subject: step_data[:subject]
       )
@@ -176,7 +176,7 @@ class EmailAutomationService
 
     # Check if contact is already in this automation
     existing_enrollment = automation.automation_enrollments.find_by(contact: contact)
-    
+
     if existing_enrollment&.active?
       return Result.success("Contact already enrolled in automation")
     end
@@ -184,7 +184,7 @@ class EmailAutomationService
     # Create new enrollment
     enrollment = automation.automation_enrollments.create!(
       contact: contact,
-      status: 'active',
+      status: "active",
       enrolled_at: Time.current,
       current_step: 1,
       context: context.except(:contact)
@@ -214,7 +214,7 @@ class EmailAutomationService
         processed_count += 1 if result.success?
       rescue => e
         Rails.logger.error "Failed to execute automation step #{execution.id}: #{e.message}"
-        execution.update!(status: 'failed', error_message: e.message)
+        execution.update!(status: "failed", error_message: e.message)
       end
     end
 
@@ -224,30 +224,30 @@ class EmailAutomationService
   # A/B test automation sequences
   def setup_automation_ab_test(automation_id, variant_params)
     original_automation = @account.email_automations.find(automation_id)
-    
+
     # Create variant automation
     variant_automation = original_automation.dup
     variant_automation.name = "#{original_automation.name} (Variant B)"
     variant_automation.assign_attributes(variant_params.except(:steps))
     variant_automation.ab_test_original_id = original_automation.id
     variant_automation.ab_test_split_percentage = variant_params[:split_percentage] || 50
-    
+
     ApplicationRecord.transaction do
       variant_automation.save!
-      
+
       # Copy and modify steps if provided
       if variant_params[:steps].present?
         create_variant_steps(variant_automation, variant_params[:steps])
       else
         copy_automation_steps(original_automation, variant_automation)
       end
-      
+
       # Mark original as A/B test
       original_automation.update!(
         ab_test_enabled: true,
         ab_test_split_percentage: 100 - variant_automation.ab_test_split_percentage
       )
-      
+
       audit_log("A/B test created for automation '#{original_automation.name}'")
       Result.success(variant_automation)
     end
@@ -257,18 +257,18 @@ class EmailAutomationService
   end
 
   # Get automation performance analytics
-  def automation_analytics(automation_id, period = '30_days')
+  def automation_analytics(automation_id, period = "30_days")
     automation = @account.email_automations.find(automation_id)
-    
-    start_date = case period
-                 when '7_days' then 7.days.ago
-                 when '30_days' then 30.days.ago
-                 when '90_days' then 90.days.ago
-                 else 30.days.ago
-                 end
 
-    enrollments = automation.automation_enrollments.where('enrolled_at >= ?', start_date)
-    
+    start_date = case period
+    when "7_days" then 7.days.ago
+    when "30_days" then 30.days.ago
+    when "90_days" then 90.days.ago
+    else 30.days.ago
+    end
+
+    enrollments = automation.automation_enrollments.where("enrolled_at >= ?", start_date)
+
     analytics = {
       total_enrollments: enrollments.count,
       active_enrollments: enrollments.active.count,
@@ -288,21 +288,21 @@ class EmailAutomationService
     return true if automation.trigger_conditions.blank?
 
     conditions = automation.trigger_conditions
-    
+
     case automation.trigger_type
-    when 'contact_subscribed'
+    when "contact_subscribed"
       true # Always trigger for new subscriptions
-    when 'contact_inactive'
+    when "contact_inactive"
       contact = context[:contact]
       return false unless contact
-      
-      inactive_days = conditions['inactive_days'] || 90
+
+      inactive_days = conditions["inactive_days"] || 90
       last_activity = contact.last_opened_at || contact.created_at
       (Date.current - last_activity.to_date).to_i >= inactive_days
-    when 'cart_abandoned'
+    when "cart_abandoned"
       cart_value = context[:cart_value] || 0
-      min_value = conditions['cart_value_min'] || 0
-      
+      min_value = conditions["cart_value_min"] || 0
+
       cart_value >= min_value
     else
       true
@@ -311,23 +311,23 @@ class EmailAutomationService
 
   def schedule_automation_step(enrollment, step)
     execution_time = case step.delay_unit
-                     when 'minutes'
+    when "minutes"
                        step.delay_amount.minutes.from_now
-                     when 'hours'
+    when "hours"
                        step.delay_amount.hours.from_now
-                     when 'days'
+    when "days"
                        step.delay_amount.days.from_now
-                     when 'weeks'
+    when "weeks"
                        step.delay_amount.weeks.from_now
-                     else
+    else
                        Time.current
-                     end
+    end
 
     AutomationExecution.create!(
       automation_enrollment: enrollment,
       automation_step: step,
       scheduled_at: execution_time,
-      status: 'scheduled'
+      status: "scheduled"
     )
   end
 
@@ -337,40 +337,40 @@ class EmailAutomationService
     contact = enrollment.contact
 
     case step.step_type
-    when 'email'
+    when "email"
       send_automation_email(step, contact, enrollment.context)
-    when 'wait'
+    when "wait"
       # Just mark as completed, next step will be scheduled
-      execution.update!(status: 'completed', executed_at: Time.current)
-    when 'condition'
+      execution.update!(status: "completed", executed_at: Time.current)
+    when "condition"
       # Evaluate condition and branch accordingly
       evaluate_automation_condition(step, contact, enrollment)
     else
-      execution.update!(status: 'skipped', executed_at: Time.current)
+      execution.update!(status: "skipped", executed_at: Time.current)
     end
 
     # Schedule next step if not the last one
-    next_step = step.automation.automation_steps.where('step_order > ?', step.step_order).order(:step_order).first
+    next_step = step.automation.automation_steps.where("step_order > ?", step.step_order).order(:step_order).first
     if next_step
       schedule_automation_step(enrollment, next_step)
       enrollment.update!(current_step: next_step.step_order)
     else
-      enrollment.update!(status: 'completed', completed_at: Time.current)
+      enrollment.update!(status: "completed", completed_at: Time.current)
     end
 
-    execution.update!(status: 'completed', executed_at: Time.current)
+    execution.update!(status: "completed", executed_at: Time.current)
     Result.success(execution)
   end
 
   def send_automation_email(step, contact, context)
     template = Template.find(step.email_template_id)
-    
+
     # Create campaign for this automation email
     campaign = @account.campaigns.create!(
       name: "#{step.automation.name} - Step #{step.step_order}",
       subject: step.custom_subject || template.subject,
       template: template,
-      status: 'sending',
+      status: "sending",
       user: Current.user || @account.users.first,
       automation_step_id: step.id
     )
@@ -378,7 +378,7 @@ class EmailAutomationService
     # Add contact to campaign
     campaign.campaign_contacts.create!(
       contact: contact,
-      status: 'sending'
+      status: "sending"
     )
 
     # Send the email
@@ -393,23 +393,23 @@ class EmailAutomationService
 
   def find_or_create_reengagement_template(template_type, subject)
     template = @account.templates.find_by(template_type: template_type)
-    
+
     unless template
       template = @account.templates.create!(
         name: "#{template_type.humanize} Template",
         subject: subject,
         body: generate_reengagement_template_body(template_type),
-        template_type: 'email',
-        status: 'active'
+        template_type: "email",
+        status: "active"
       )
     end
-    
+
     template
   end
 
   def generate_reengagement_template_body(template_type)
     case template_type
-    when 'reengagement_soft'
+    when "reengagement_soft"
       <<~HTML
         <h2>We miss you, {{contact.first_name}}!</h2>
         <p>It's been a while since we've heard from you. Here's what you've been missing:</p>
@@ -422,7 +422,7 @@ class EmailAutomationService
           Catch up now
         </a>
       HTML
-    when 'reengagement_offer'
+    when "reengagement_offer"
       <<~HTML
         <h2>One last try, {{contact.first_name}}</h2>
         <p>We really want to keep you in the loop! Here's a special 20% off offer just for you:</p>
@@ -433,7 +433,7 @@ class EmailAutomationService
           Claim your discount
         </a>
       HTML
-    when 'reengagement_confirmation'
+    when "reengagement_confirmation"
       <<~HTML
         <h2>Do you still want to hear from us?</h2>
         <p>Hi {{contact.first_name}}, we notice you haven't been opening our emails lately.</p>
@@ -451,10 +451,10 @@ class EmailAutomationService
   def create_variant_steps(variant_automation, variant_steps)
     variant_steps.each_with_index do |step_data, index|
       variant_automation.automation_steps.create!(
-        step_type: step_data[:step_type] || 'email',
+        step_type: step_data[:step_type] || "email",
         step_order: index + 1,
         delay_amount: step_data[:delay_amount] || 0,
-        delay_unit: step_data[:delay_unit] || 'days',
+        delay_unit: step_data[:delay_unit] || "days",
         email_template_id: step_data[:template_id],
         custom_subject: step_data[:custom_subject],
         custom_body: step_data[:custom_body],
@@ -480,18 +480,18 @@ class EmailAutomationService
 
   def calculate_automation_conversion_rate(enrollments)
     return 0 if enrollments.empty?
-    
+
     completed = enrollments.completed.count
     (completed.to_f / enrollments.count * 100).round(2)
   end
 
   def analyze_step_performance(automation, enrollments)
     step_performance = {}
-    
+
     automation.automation_steps.order(:step_order).each do |step|
       executions = AutomationExecution.joins(:automation_enrollment)
                                      .where(automation_step: step, automation_enrollments: { id: enrollments.ids })
-      
+
       step_performance[step.id] = {
         step_order: step.step_order,
         step_type: step.step_type,
@@ -501,7 +501,7 @@ class EmailAutomationService
         completion_rate: executions.any? ? (executions.completed.count.to_f / executions.count * 100).round(2) : 0
       }
     end
-    
+
     step_performance
   end
 
@@ -517,15 +517,15 @@ class EmailAutomationService
 
   def analyze_drop_off_points(automation, enrollments)
     drop_offs = {}
-    
+
     automation.automation_steps.order(:step_order).each do |step|
-      enrolled_at_step = enrollments.where('current_step >= ?', step.step_order).count
-      next_step = automation.automation_steps.where('step_order > ?', step.step_order).order(:step_order).first
-      
+      enrolled_at_step = enrollments.where("current_step >= ?", step.step_order).count
+      next_step = automation.automation_steps.where("step_order > ?", step.step_order).order(:step_order).first
+
       if next_step
-        continued_to_next = enrollments.where('current_step >= ?', next_step.step_order).count
+        continued_to_next = enrollments.where("current_step >= ?", next_step.step_order).count
         drop_off_rate = enrolled_at_step > 0 ? ((enrolled_at_step - continued_to_next).to_f / enrolled_at_step * 100).round(2) : 0
-        
+
         drop_offs[step.id] = {
           step_order: step.step_order,
           enrolled_count: enrolled_at_step,
@@ -534,16 +534,16 @@ class EmailAutomationService
         }
       end
     end
-    
+
     drop_offs
   end
 
   def audit_log(message)
     @account.audit_logs.create!(
       user: Current.user,
-      action: 'email_automation',
+      action: "email_automation",
       details: message,
-      resource_type: 'EmailAutomation'
+      resource_type: "EmailAutomation"
     )
   rescue => e
     Rails.logger.warn "Failed to create audit log: #{e.message}"

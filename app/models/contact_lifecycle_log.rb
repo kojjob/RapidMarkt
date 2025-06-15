@@ -13,7 +13,7 @@ class ContactLifecycleLog < ApplicationRecord
   validates :from_stage, inclusion: { in: %w[lead prospect customer advocate churned] }, allow_blank: true
 
   # Scopes
-  scope :recent, -> { where('created_at >= ?', 30.days.ago) }
+  scope :recent, -> { where("created_at >= ?", 30.days.ago) }
   scope :for_stage, ->(stage) { where(to_stage: stage) }
   scope :from_stage, ->(stage) { where(from_stage: stage) }
   scope :ordered, -> { order(created_at: :desc) }
@@ -29,30 +29,30 @@ class ContactLifecycleLog < ApplicationRecord
 
   def progression?
     return false unless from_stage.present?
-    
+
     stage_order = %w[lead prospect customer advocate]
     from_index = stage_order.index(from_stage)
     to_index = stage_order.index(to_stage)
-    
+
     return false unless from_index && to_index
-    
+
     to_index > from_index
   end
 
   def regression?
     return false unless from_stage.present?
-    
+
     stage_order = %w[lead prospect customer advocate]
     from_index = stage_order.index(from_stage)
     to_index = stage_order.index(to_stage)
-    
+
     return false unless from_index && to_index
-    
+
     to_index < from_index
   end
 
   def churned?
-    to_stage == 'churned'
+    to_stage == "churned"
   end
 
   def time_since_change

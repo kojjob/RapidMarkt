@@ -94,7 +94,7 @@ RSpec.describe "Campaigns", type: :request do
         expect {
           post "/campaigns", params: params_with_unpermitted
         }.to change(Campaign, :count).by(1)
-        
+
         campaign = Campaign.last
         expect(campaign.account).to eq(account) # Should use @current_account
         expect(campaign.user).to eq(user)       # Should use current_user

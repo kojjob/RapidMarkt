@@ -8,11 +8,11 @@ class EmailDeliverabilityTrackerJob < ApplicationJob
   # Track deliverability for a specific email or campaign
   def perform(trackable_type, trackable_id, options = {})
     case trackable_type
-    when 'Campaign'
+    when "Campaign"
       track_campaign_deliverability(trackable_id, options)
-    when 'AutomationExecution'
+    when "AutomationExecution"
       track_automation_email_deliverability(trackable_id, options)
-    when 'bulk_check'
+    when "bulk_check"
       perform_bulk_deliverability_check(options)
     else
       raise ArgumentError, "Unknown trackable_type: #{trackable_type}"
@@ -23,7 +23,7 @@ class EmailDeliverabilityTrackerJob < ApplicationJob
 
   def track_campaign_deliverability(campaign_id, options)
     campaign = Campaign.find(campaign_id)
-    
+
     deliverability_metrics = {
       bounce_rate: calculate_bounce_rate(campaign),
       complaint_rate: calculate_complaint_rate(campaign),
@@ -37,8 +37,8 @@ class EmailDeliverabilityTrackerJob < ApplicationJob
 
     # Update campaign analytics
     campaign.analytics_data ||= {}
-    campaign.analytics_data['deliverability'] = deliverability_metrics
-    campaign.analytics_data['last_deliverability_check'] = Time.current
+    campaign.analytics_data["deliverability"] = deliverability_metrics
+    campaign.analytics_data["last_deliverability_check"] = Time.current
     campaign.save!
 
     # Check for domain reputation issues
@@ -64,7 +64,7 @@ class EmailDeliverabilityTrackerJob < ApplicationJob
     }
 
     execution.metadata ||= {}
-    execution.metadata['deliverability'] = deliverability_data
+    execution.metadata["deliverability"] = deliverability_data
     execution.save!
 
     # Update contact's deliverability score
@@ -73,15 +73,15 @@ class EmailDeliverabilityTrackerJob < ApplicationJob
 
   def perform_bulk_deliverability_check(options)
     # Check recent campaigns
-    recent_campaigns = Campaign.where('sent_at > ?', 24.hours.ago)
+    recent_campaigns = Campaign.where("sent_at > ?", 24.hours.ago)
     recent_campaigns.find_each do |campaign|
-      EmailDeliverabilityTrackerJob.perform_later('Campaign', campaign.id, options)
+      EmailDeliverabilityTrackerJob.perform_later("Campaign", campaign.id, options)
     end
 
     # Check automation executions from last 24 hours
-    recent_executions = AutomationExecution.email_sent.where('executed_at > ?', 24.hours.ago)
+    recent_executions = AutomationExecution.email_sent.where("executed_at > ?", 24.hours.ago)
     recent_executions.find_each do |execution|
-      EmailDeliverabilityTrackerJob.perform_later('AutomationExecution', execution.id, options)
+      EmailDeliverabilityTrackerJob.perform_later("AutomationExecution", execution.id, options)
     end
 
     # Generate domain reputation report
@@ -90,52 +90,52 @@ class EmailDeliverabilityTrackerJob < ApplicationJob
 
   def calculate_bounce_rate(campaign)
     return 0 if campaign.sent_count.zero?
-    
-    bounce_count = campaign.analytics_data&.dig('bounces') || 0
+
+    bounce_count = campaign.analytics_data&.dig("bounces") || 0
     (bounce_count.to_f / campaign.sent_count * 100).round(2)
   end
 
   def calculate_complaint_rate(campaign)
     return 0 if campaign.sent_count.zero?
-    
-    complaint_count = campaign.analytics_data&.dig('complaints') || 0
+
+    complaint_count = campaign.analytics_data&.dig("complaints") || 0
     (complaint_count.to_f / campaign.sent_count * 100).round(2)
   end
 
   def calculate_unsubscribe_rate(campaign)
     return 0 if campaign.sent_count.zero?
-    
-    unsubscribe_count = campaign.analytics_data&.dig('unsubscribes') || 0
+
+    unsubscribe_count = campaign.analytics_data&.dig("unsubscribes") || 0
     (unsubscribe_count.to_f / campaign.sent_count * 100).round(2)
   end
 
   def calculate_engagement_rate(campaign)
     return 0 if campaign.sent_count.zero?
-    
-    opens = campaign.analytics_data&.dig('unique_opens') || 0
-    clicks = campaign.analytics_data&.dig('unique_clicks') || 0
-    engagement_count = [opens, clicks].max
-    
+
+    opens = campaign.analytics_data&.dig("unique_opens") || 0
+    clicks = campaign.analytics_data&.dig("unique_clicks") || 0
+    engagement_count = [ opens, clicks ].max
+
     (engagement_count.to_f / campaign.sent_count * 100).round(2)
   end
 
   def calculate_deliverability_score(metrics)
     # Scoring algorithm based on industry benchmarks
     score = 100
-    
+
     # Penalize high bounce rates
     score -= (metrics[:bounce_rate] * 2) if metrics[:bounce_rate] > 2
-    
-    # Penalize high complaint rates  
+
+    # Penalize high complaint rates
     score -= (metrics[:complaint_rate] * 10) if metrics[:complaint_rate] > 0.1
-    
+
     # Penalize high unsubscribe rates
     score -= (metrics[:unsubscribe_rate] * 1.5) if metrics[:unsubscribe_rate] > 0.5
-    
+
     # Reward good engagement
     score += (metrics[:engagement_rate] * 0.5) if metrics[:engagement_rate] > 20
-    
-    [score, 0].max.round(1)
+
+    [ score, 0 ].max.round(1)
   end
 
   def check_domain_reputation(campaign)
@@ -144,7 +144,7 @@ class EmailDeliverabilityTrackerJob < ApplicationJob
     # - Google Postmaster Tools
     # - Microsoft SNDS
     # - Other reputation monitoring services
-    
+
     domain = extract_domain_from_campaign(campaign)
     reputation_data = {
       domain: domain,
@@ -170,7 +170,7 @@ class EmailDeliverabilityTrackerJob < ApplicationJob
 
   def update_contact_deliverability_score(contact, deliverability_data)
     current_score = contact.engagement_score || 50
-    
+
     # Adjust score based on deliverability
     if deliverability_data[:bounce_detected]
       current_score -= 10
@@ -182,7 +182,7 @@ class EmailDeliverabilityTrackerJob < ApplicationJob
       current_score += 10
     end
 
-    contact.update(engagement_score: [current_score, 0].max)
+    contact.update(engagement_score: [ current_score, 0 ].max)
   end
 
   def check_bounce_status(execution)
@@ -197,17 +197,17 @@ class EmailDeliverabilityTrackerJob < ApplicationJob
 
   def check_open_status(execution)
     # Placeholder - would check tracking pixels
-    [true, false].sample
+    [ true, false ].sample
   end
 
   def check_click_status(execution)
     # Placeholder - would check link tracking
-    [true, false].sample
+    [ true, false ].sample
   end
 
   def extract_domain_from_campaign(campaign)
     # Extract sending domain from campaign
-    campaign.from_email&.split('@')&.last || 'example.com'
+    campaign.from_email&.split("@")&.last || "example.com"
   end
 
   def check_blacklist_status(domain)
@@ -234,7 +234,7 @@ class EmailDeliverabilityTrackerJob < ApplicationJob
     # Calculate engagement score based on campaign interaction
     # This would integrate with actual tracking data
     base_score = contact.engagement_score || 50
-    
+
     # Placeholder logic
     base_score + rand(-5..10)
   end
