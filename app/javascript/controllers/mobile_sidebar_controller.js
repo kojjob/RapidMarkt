@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="mobile-sidebar"
 export default class extends Controller {
-  static targets = ["sidebar", "overlay", "menuButton"]
+  static targets = ["sidebar", "overlay", "menuButton", "searchInput", "clearSearch", "navigationList"]
 
   connect() {
     // Ensure sidebar starts hidden on mobile
@@ -13,6 +13,10 @@ export default class extends Controller {
     
     // Store initial focus element
     this.lastFocusedElement = null
+    
+    // Initialize search functionality
+    this.originalNavigationHTML = this.navigationListTarget.innerHTML
+    this.searchResults = []
   }
 
   toggle() {
@@ -53,6 +57,12 @@ export default class extends Controller {
     
     // Add event listeners for accessibility
     document.addEventListener("keydown", this.handleKeydown.bind(this))
+    
+    // Track usage
+    this.trackUsage('sidebar_opened')
+    
+    // Initialize gesture shortcuts
+    this.addGestureShortcuts()
   }
 
   close() {
@@ -86,6 +96,9 @@ export default class extends Controller {
       this.lastFocusedElement.focus()
       this.lastFocusedElement = null
     }
+    
+    // Track usage
+    this.trackUsage('sidebar_closed')
   }
 
   // Close sidebar when clicking outside (on overlay)
@@ -258,5 +271,145 @@ export default class extends Controller {
         firstElement.focus()
       }
     }
+  }
+
+  // Search functionality
+  search(event) {
+    const query = event.target.value.toLowerCase().trim()
+    
+    if (query === '') {
+      this.clearSearch()
+      return
+    }
+    
+    // Show clear button
+    if (this.hasClearSearchTarget) {
+      this.clearSearchTarget.classList.remove('hidden')
+    }
+    
+    // Search through navigation items
+    const navigationLinks = this.navigationListTarget.querySelectorAll('a[data-search-terms]')
+    const searchResults = []
+    
+    navigationLinks.forEach(link => {
+      const searchTerms = link.dataset.searchTerms.toLowerCase()
+      const linkText = link.textContent.toLowerCase()
+      
+      if (searchTerms.includes(query) || linkText.includes(query)) {
+        searchResults.push(link.cloneNode(true))
+      }
+    })
+    
+    // Display search results
+    this.displaySearchResults(searchResults, query)
+  }
+
+  displaySearchResults(results, query) {
+    if (results.length === 0) {
+      this.navigationListTarget.innerHTML = `
+        <div class="px-4 py-8 text-center">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">No results found</h3>
+          <p class="mt-1 text-sm text-gray-500">Try searching for a different term</p>
+        </div>
+      `
+      return
+    }
+    
+    // Create search results HTML
+    const resultsHTML = `
+      <div class="px-2 mb-4">
+        <h4 class="px-2 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          Search Results (${results.length})
+        </h4>
+        <div class="space-y-1">
+          ${results.map(link => {
+            // Highlight search terms
+            const linkHTML = link.outerHTML.replace(
+              new RegExp(`(${query})`, 'gi'),
+              '<mark class="bg-yellow-200 text-gray-900 px-1 rounded">$1</mark>'
+            )
+            return linkHTML
+          }).join('')}
+        </div>
+      </div>
+    `
+    
+    this.navigationListTarget.innerHTML = resultsHTML
+  }
+
+  clearSearch() {
+    if (this.hasSearchInputTarget) {
+      this.searchInputTarget.value = ''
+    }
+    
+    if (this.hasClearSearchTarget) {
+      this.clearSearchTarget.classList.add('hidden')
+    }
+    
+    // Restore original navigation
+    this.navigationListTarget.innerHTML = this.originalNavigationHTML
+  }
+
+  handleSearchKeydown(event) {
+    if (event.key === 'Escape') {
+      this.clearSearch()
+      this.searchInputTarget.blur()
+    } else if (event.key === 'Enter') {
+      // If there's only one result, navigate to it
+      const firstResult = this.navigationListTarget.querySelector('a')
+      if (firstResult && this.navigationListTarget.querySelectorAll('a').length === 1) {
+        firstResult.click()
+      }
+    }
+  }
+
+  // Enhanced gesture shortcuts
+  addGestureShortcuts() {
+    // Double tap to search
+    let tapCount = 0
+    let tapTimer = null
+    
+    this.sidebarTarget.addEventListener('touchend', (e) => {
+      tapCount++
+      
+      if (tapCount === 1) {
+        tapTimer = setTimeout(() => {
+          tapCount = 0
+        }, 300)
+      } else if (tapCount === 2) {
+        clearTimeout(tapTimer)
+        tapCount = 0
+        
+        // Focus search input on double tap
+        if (this.hasSearchInputTarget) {
+          this.searchInputTarget.focus()
+        }
+      }
+    })
+  }
+
+  // Track usage analytics
+  trackUsage(action, data = {}) {
+    // Simple usage tracking - can be extended with analytics service
+    const event = {
+      timestamp: new Date().toISOString(),
+      action: action,
+      data: data,
+      userAgent: navigator.userAgent
+    }
+    
+    // Store in localStorage for now (can be sent to analytics service)
+    const usage = JSON.parse(localStorage.getItem('mobileSidebarUsage') || '[]')
+    usage.push(event)
+    
+    // Keep only last 100 events
+    if (usage.length > 100) {
+      usage.splice(0, usage.length - 100)
+    }
+    
+    localStorage.setItem('mobileSidebarUsage', JSON.stringify(usage))
   }
 }
