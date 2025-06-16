@@ -1,33 +1,82 @@
 <% content_for :title, "Campaigns - RapidMarkt" %>
 
-<div class="px-4 sm:px-6 lg:px-8">
-  <!-- Page header -->
-  <div class="sm:flex sm:items-center">
-    <div class="sm:flex-auto">
-      <h1 class="text-2xl font-semibold text-gray-900">Campaigns</h1>
-      <p class="mt-2 text-sm text-gray-700">
-        Manage your email marketing campaigns and track their performance.
-      </p>
-    </div>
-    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-      <%= link_to "New Campaign", new_campaign_path, 
-          class: "inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto" %>
+<!-- Modern Campaigns Container -->
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+  <!-- Enhanced Header Section -->
+  <div class="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10">
+    <div class="px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <!-- Header Content -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center">
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl">
+                Email Campaigns
+              </h1>
+              <p class="mt-1 text-lg text-gray-600">
+                Manage your email marketing campaigns and track their performance.
+              </p>
+            </div>
+            <div class="ml-4 hidden sm:block">
+              <div class="flex items-center space-x-2">
+                <div class="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span class="text-sm text-gray-500">Live tracking</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
+          <%= link_to new_template_path, 
+              class: "inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            New Template
+          <% end %>
+          
+          <%= link_to new_campaign_path, 
+              class: "inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            New Campaign
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Filters -->
-  <div class="mt-6 bg-white shadow rounded-lg">
-    <div class="px-4 py-5 sm:p-6">
-      <%= form_with url: campaigns_path, method: :get, local: true, class: "space-y-4 sm:space-y-0 sm:flex sm:items-end sm:space-x-4" do |form| %>
+  <!-- Main Content -->
+  <div class="px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Enhanced Filters Section -->
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+      <div class="flex items-center mb-4">
+        <svg class="w-5 h-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"/>
+        </svg>
+        <h3 class="text-lg font-semibold text-gray-900">Filter Campaigns</h3>
+      </div>
+      
+      <%= form_with url: campaigns_path, method: :get, local: true, class: "space-y-4 lg:space-y-0 lg:flex lg:items-end lg:space-x-4" do |form| %>
         <div class="flex-1">
-          <%= form.label :search, "Search campaigns", class: "block text-sm font-medium text-gray-700" %>
-          <%= form.text_field :search, value: params[:search], 
-              placeholder: "Search by name or subject...",
-              class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+          <%= form.label :search, "Search campaigns", class: "block text-sm font-semibold text-gray-700 mb-2" %>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </div>
+            <%= form.text_field :search, value: params[:search], 
+                placeholder: "Search by name or subject...",
+                class: "pl-10 block w-full border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200 hover:border-gray-400" %>
+          </div>
         </div>
         
-        <div>
-          <%= form.label :status, "Status", class: "block text-sm font-medium text-gray-700" %>
+        <div class="min-w-0 flex-1 lg:max-w-xs">
+          <%= form.label :status, "Status", class: "block text-sm font-semibold text-gray-700 mb-2" %>
           <%= form.select :status, 
               options_for_select([
                 ['All Statuses', ''],
@@ -37,230 +86,303 @@
                 ['Sent', 'sent']
               ], params[:status]),
               {},
-              { class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" } %>
+              { class: "block w-full border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200 hover:border-gray-400" } %>
         </div>
         
-        <div>
+        <div class="flex space-x-3">
           <%= form.submit "Filter", 
-              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-        </div>
-        
-        <% if params[:search].present? || params[:status].present? %>
-          <div>
+              class: "inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" %>
+          
+          <% if params[:search].present? || params[:status].present? %>
             <%= link_to "Clear", campaigns_path, 
-                class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-          </div>
-        <% end %>
+                class: "inline-flex items-center px-6 py-3 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" %>
+          <% end %>
+        </div>
       <% end %>
     </div>
-  </div>
 
-  <!-- Bulk Actions -->
-  <% if @campaigns.any? %>
-    <div class="mt-6 bg-white shadow rounded-lg p-4" data-controller="bulk-actions">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-4">
-          <label class="flex items-center">
-            <input type="checkbox" data-action="change->bulk-actions#toggleAll" data-bulk-actions-target="selectAll" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-            <span class="ml-2 text-sm text-gray-700">Select All</span>
-          </label>
-          <span class="text-sm text-gray-500" data-bulk-actions-target="selectedCount">0 selected</span>
-        </div>
-        <div class="flex items-center space-x-2" data-bulk-actions-target="actions" style="display: none;">
-          <%= button_to "Send Selected", bulk_send_campaigns_path, 
-              params: { campaign_ids: [] },
-              data: { 
-                turbo_method: :post, 
-                turbo_confirm: "Are you sure you want to send the selected campaigns? This action cannot be undone.",
-                bulk_actions_target: "sendButton"
-              },
-              class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-          <%= button_to "Schedule Selected", bulk_schedule_campaigns_path,
-              params: { campaign_ids: [] },
-              data: { 
-                turbo_method: :post,
-                bulk_actions_target: "scheduleButton"
-              },
-              class: "inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-        </div>
-      </div>
-    </div>
-  <% end %>
-
-  <!-- Campaigns list -->
-  <div class="mt-8 bg-white shadow overflow-hidden sm:rounded-md">
+    <!-- Enhanced Bulk Actions -->
     <% if @campaigns.any? %>
-      <ul role="list" class="divide-y divide-gray-200">
-        <% @campaigns.each do |campaign| %>
-          <li data-controller="dropdown">
-            <div class="px-4 py-4 sm:px-6">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center min-w-0 flex-1">
-                  <div class="flex-shrink-0 mr-4">
-                    <input type="checkbox" 
-                           data-action="change->bulk-actions#updateSelection" 
-                           data-bulk-actions-target="campaignCheckbox" 
-                           data-campaign-id="<%= campaign.id %>"
-                           data-campaign-status="<%= campaign.status %>"
-                           class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                  </div>
-                  <div class="flex-shrink-0">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                      <%= case campaign.status
-                          when 'draft' then 'bg-gray-100 text-gray-800'
-                          when 'sending' then 'bg-yellow-100 text-yellow-800'
-                          when 'sent' then 'bg-green-100 text-green-800'
-                          when 'scheduled' then 'bg-blue-100 text-blue-800'
-                          else 'bg-gray-100 text-gray-800'
-                          end %>">
-                      <%= campaign.status.humanize %>
-                    </span>
-                  </div>
-                  <div class="ml-4 min-w-0 flex-1">
-                    <div class="flex items-center">
-                      <p class="text-sm font-medium text-indigo-600 truncate">
-                        <%= link_to campaign.name, campaign_path(campaign), class: "hover:text-indigo-900" %>
-                      </p>
-                    </div>
-                    <div class="mt-1">
-                      <p class="text-sm text-gray-900 truncate">
-                        Subject: <%= campaign.subject %>
-                      </p>
-                      <div class="mt-1 flex items-center text-sm text-gray-500">
-                        <p>
-                          Created <%= time_ago_in_words(campaign.created_at) %> ago
-                        </p>
-                        <% if campaign.scheduled_at.present? %>
-                          <span class="mx-2">•</span>
-                          <p>
-                            Scheduled for <%= campaign.scheduled_at.strftime("%B %d, %Y at %I:%M %p") %>
-                          </p>
-                        <% end %>
-                        <% if campaign.sent_at.present? %>
-                          <span class="mx-2">•</span>
-                          <p>
-                            Sent <%= time_ago_in_words(campaign.sent_at) %> ago
-                          </p>
-                        <% end %>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="flex items-center space-x-4">
-                  <% if campaign.sent? %>
-                    <div class="text-right">
-                      <p class="text-sm text-gray-900">
-                        <%= campaign.campaign_contacts.where.not(sent_at: nil).count %> sent
-                      </p>
-                      <p class="text-sm text-gray-500">
-                        <%= campaign.campaign_contacts.where.not(opened_at: nil).count %> opened
-                      </p>
-                    </div>
-                  <% end %>
-                  
-                  <!-- Actions dropdown -->
-                  <div class="relative">
-                    <button type="button" 
-                            data-action="click->dropdown#toggle"
-                            class="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                      </svg>
-                    </button>
-                    
-                    <div data-dropdown-target="menu" 
-                         class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                      <div class="py-1">
-                        <%= link_to "View", campaign_path(campaign), 
-                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
-                        <%= link_to "Edit", edit_campaign_path(campaign), 
-                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
-                        <%= link_to "Preview", preview_campaign_path(campaign), 
-                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100",
-                            target: "_blank" %>
-                        <% if campaign.draft? %>
-                          <%= link_to "Send Test", send_test_campaign_path(campaign), 
-                              data: { turbo_method: :post },
-                              class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
-                        <% end %>
-                        <% unless campaign.sent? %>
-                          <%= link_to "Delete", campaign_path(campaign), 
-                              data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this campaign?" },
-                              class: "block px-4 py-2 text-sm text-red-700 hover:bg-red-100" %>
-                        <% end %>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </li>
-        <% end %>
-      </ul>
-      
-      <!-- Pagination -->
-      <% if @campaigns.respond_to?(:total_pages) %>
-        <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
-          <div class="flex items-center justify-between">
-            <div class="flex-1 flex justify-between sm:hidden">
-              <% if @campaigns.prev_page %>
-                <%= link_to "Previous", campaigns_path(page: @campaigns.prev_page, search: params[:search], status: params[:status]), 
-                    class: "relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
-              <% end %>
-              <% if @campaigns.next_page %>
-                <%= link_to "Next", campaigns_path(page: @campaigns.next_page, search: params[:search], status: params[:status]), 
-                    class: "ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
-              <% end %>
-            </div>
-            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-              <div>
-                <p class="text-sm text-gray-700">
-                  Showing
-                  <span class="font-medium"><%= (@campaigns.current_page - 1) * @campaigns.limit_value + 1 %></span>
-                  to
-                  <span class="font-medium"><%= [@campaigns.current_page * @campaigns.limit_value, @campaigns.total_count].min %></span>
-                  of
-                  <span class="font-medium"><%= @campaigns.total_count %></span>
-                  results
-                </p>
-              </div>
-              <div>
-                <%= paginate @campaigns if defined?(Kaminari) %>
-              </div>
-            </div>
+      <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200 p-6 mb-6" data-controller="bulk-actions">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+          <div class="flex items-center space-x-4">
+            <label class="flex items-center group cursor-pointer">
+              <input type="checkbox" data-action="change->bulk-actions#toggleAll" data-bulk-actions-target="selectAll" class="rounded-lg border-gray-300 text-indigo-600 focus:ring-indigo-500 transition-all duration-200 transform group-hover:scale-105">
+              <span class="ml-3 text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">Select All</span>
+            </label>
+            <div class="h-4 w-px bg-gray-300"></div>
+            <span class="text-sm text-gray-500 font-medium" data-bulk-actions-target="selectedCount">0 selected</span>
           </div>
-        </div>
-      <% end %>
-    <% else %>
-      <div class="text-center py-12">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">
-          <% if params[:search].present? || params[:status].present? %>
-            No campaigns found
-          <% else %>
-            No campaigns
-          <% end %>
-        </h3>
-        <p class="mt-1 text-sm text-gray-500">
-          <% if params[:search].present? || params[:status].present? %>
-            Try adjusting your search or filter criteria.
-          <% else %>
-            Get started by creating your first email campaign.
-          <% end %>
-        </p>
-        <div class="mt-6">
-          <% if params[:search].present? || params[:status].present? %>
-            <%= link_to "Clear filters", campaigns_path, 
-                class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-          <% else %>
-            <%= link_to "New Campaign", new_campaign_path, 
-                class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-          <% end %>
+          
+          <div class="flex items-center space-x-3" data-bulk-actions-target="actions" style="display: none;">
+            <%= button_to "Send Selected", bulk_send_campaigns_path, 
+                params: { campaign_ids: [] },
+                data: { 
+                  turbo_method: :post, 
+                  turbo_confirm: "Are you sure you want to send the selected campaigns? This action cannot be undone.",
+                  bulk_actions_target: "sendButton"
+                },
+                class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" %>
+            <%= button_to "Schedule Selected", bulk_schedule_campaigns_path,
+                params: { campaign_ids: [] },
+                data: { 
+                  turbo_method: :post,
+                  bulk_actions_target: "scheduleButton"
+                },
+                class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" %>
+          </div>
         </div>
       </div>
     <% end %>
+
+    <!-- Enhanced Campaigns List -->
+    <div class="space-y-6">
+      <% if @campaigns.any? %>
+        <div class="grid gap-6">
+          <% @campaigns.each do |campaign| %>
+            <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1" data-controller="dropdown">
+              <div class="p-6">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center min-w-0 flex-1 space-x-4">
+                    <div class="flex-shrink-0">
+                      <input type="checkbox" 
+                             data-action="change->bulk-actions#updateSelection" 
+                             data-bulk-actions-target="campaignCheckbox" 
+                             data-campaign-id="<%= campaign.id %>"
+                             data-campaign-status="<%= campaign.status %>"
+                             class="rounded-lg border-gray-300 text-indigo-600 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-105">
+                    </div>
+                    
+                    <div class="flex-shrink-0">
+                      <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm
+                        <%= case campaign.status
+                            when 'draft' then 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800'
+                            when 'sending' then 'bg-gradient-to-r from-yellow-100 to-amber-200 text-yellow-800'
+                            when 'sent' then 'bg-gradient-to-r from-green-100 to-emerald-200 text-green-800'
+                            when 'scheduled' then 'bg-gradient-to-r from-blue-100 to-indigo-200 text-blue-800'
+                            else 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800'
+                            end %>">
+                        <%= campaign.status.humanize %>
+                      </span>
+                    </div>
+                    
+                    <div class="min-w-0 flex-1">
+                      <div class="flex items-center">
+                        <h3 class="text-lg font-semibold text-gray-900 truncate">
+                          <%= link_to campaign.name, campaign_path(campaign), class: "hover:text-indigo-600 transition-colors duration-200" %>
+                        </h3>
+                      </div>
+                      <div class="mt-2">
+                        <p class="text-sm text-gray-600 truncate font-medium">
+                          Subject: <span class="text-gray-900"><%= campaign.subject %></span>
+                        </p>
+                        <div class="mt-2 flex flex-wrap items-center text-sm text-gray-500 space-x-4">
+                          <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Created <%= time_ago_in_words(campaign.created_at) %> ago
+                          </div>
+                          <% if campaign.scheduled_at.present? %>
+                            <div class="flex items-center">
+                              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                              </svg>
+                              Scheduled for <%= campaign.scheduled_at.strftime("%B %d, %Y at %I:%M %p") %>
+                            </div>
+                          <% end %>
+                          <% if campaign.sent_at.present? %>
+                            <div class="flex items-center">
+                              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                              </svg>
+                              Sent <%= time_ago_in_words(campaign.sent_at) %> ago
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="flex items-center space-x-6">
+                    <% if campaign.sent? %>
+                      <div class="text-right">
+                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+                          <p class="text-sm font-semibold text-green-800">
+                            <%= number_with_delimiter(campaign.campaign_contacts.where.not(sent_at: nil).count) %>
+                          </p>
+                          <p class="text-xs text-green-600">emails sent</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200 mt-2">
+                          <p class="text-sm font-semibold text-blue-800">
+                            <%= number_with_delimiter(campaign.campaign_contacts.where.not(opened_at: nil).count) %>
+                          </p>
+                          <p class="text-xs text-blue-600">opened</p>
+                        </div>
+                      </div>
+                    <% end %>
+                    
+                    <div class="relative">
+                      <button type="button" 
+                              data-action="click->dropdown#toggle"
+                              class="group inline-flex items-center p-3 border border-transparent rounded-xl shadow-sm text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-105">
+                        <svg class="h-5 w-5 group-hover:rotate-90 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                        </svg>
+                      </button>
+                      
+                      <div data-dropdown-target="menu" 
+                           class="hidden origin-top-right absolute right-0 mt-2 w-56 rounded-2xl shadow-xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10 border border-gray-200">
+                        <div class="py-2">
+                          <%= link_to campaign_path(campaign), 
+                              class: "flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:text-indigo-700 transition-all duration-200" do %>
+                            <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            View Details
+                          <% end %>
+                          <%= link_to edit_campaign_path(campaign), 
+                              class: "flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 transition-all duration-200" do %>
+                            <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Edit Campaign
+                          <% end %>
+                          <%= link_to preview_campaign_path(campaign), 
+                              target: "_blank",
+                              class: "flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 hover:text-green-700 transition-all duration-200" do %>
+                            <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                            </svg>
+                            Preview
+                          <% end %>
+                          <% if campaign.draft? %>
+                            <%= link_to send_test_campaign_path(campaign), 
+                                data: { turbo_method: :post },
+                                class: "flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-amber-50 hover:text-yellow-700 transition-all duration-200" do %>
+                              <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                              </svg>
+                              Send Test
+                            <% end %>
+                          <% end %>
+                          <% unless campaign.sent? %>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <%= link_to campaign_path(campaign), 
+                                data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this campaign?" },
+                                class: "flex items-center px-4 py-3 text-sm text-red-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:text-red-800 transition-all duration-200" do %>
+                              <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                              </svg>
+                              Delete Campaign
+                            <% end %>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        
+        <!-- Enhanced Pagination -->
+        <% if @campaigns.respond_to?(:total_pages) %>
+          <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200 mt-8 p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+              <div class="flex items-center space-x-2">
+                <span class="text-sm text-gray-600">
+                  Showing
+                  <span class="font-semibold text-gray-900"><%= (@campaigns.current_page - 1) * @campaigns.limit_value + 1 %></span>
+                  to
+                  <span class="font-semibold text-gray-900"><%= [@campaigns.current_page * @campaigns.limit_value, @campaigns.total_count].min %></span>
+                  of
+                  <span class="font-semibold text-gray-900"><%= number_with_delimiter(@campaigns.total_count) %></span>
+                  campaigns
+                </span>
+              </div>
+              
+              <div class="flex items-center space-x-2">
+                <% if @campaigns.prev_page %>
+                  <%= link_to campaigns_path(page: @campaigns.prev_page, search: params[:search], status: params[:status]), 
+                      class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" do %>
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    Previous
+                  <% end %>
+                <% end %>
+                
+                <% if @campaigns.next_page %>
+                  <%= link_to campaigns_path(page: @campaigns.next_page, search: params[:search], status: params[:status]), 
+                      class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" do %>
+                    Next
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <!-- Enhanced Empty State -->
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200 p-12 text-center">
+          <div class="max-w-md mx-auto">
+            <div class="w-16 h-16 mx-auto bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mb-6">
+              <svg class="w-8 h-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+              <% if params[:search].present? || params[:status].present? %>
+                No campaigns found
+              <% else %>
+                Create your first campaign
+              <% end %>
+            </h3>
+            
+            <p class="text-gray-600 mb-8">
+              <% if params[:search].present? || params[:status].present? %>
+                Try adjusting your search or filter criteria to find the campaigns you're looking for.
+              <% else %>
+                Get started by creating your first email marketing campaign and reaching your audience.
+              <% end %>
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+              <% if params[:search].present? || params[:status].present? %>
+                <%= link_to campaigns_path, 
+                    class: "inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" do %>
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                  Clear filters
+                <% end %>
+              <% else %>
+                <%= link_to new_template_path, 
+                    class: "inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" do %>
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  Browse Templates
+                <% end %>
+                <%= link_to new_campaign_path, 
+                    class: "inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" do %>
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  Create Campaign
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>
