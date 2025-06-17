@@ -8,3 +8,8 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+@import "tailwind/application.css";
+
+/* Custom application styles */
+@import "custom/icon_sizes.css";

@@ -4,7 +4,7 @@ class AutomationsController < ApplicationController
   before_action :set_automation, only: [ :show, :edit, :update, :destroy, :activate, :pause, :duplicate, :analytics ]
 
   def index
-    @automations = current_account.email_automations
+    @automations = @current_account.email_automations
                                  .includes(:automation_steps, :automation_enrollments)
                                  .order(:created_at)
 

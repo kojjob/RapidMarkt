@@ -1,62 +1,69 @@
-<div class="min-h-full">
-  <!-- Breadcrumb -->
-  <nav class="flex" aria-label="Breadcrumb">
-    <ol role="list" class="flex items-center space-x-4">
-      <li>
-        <div>
-          <%= link_to dashboard_index_path, class: "text-gray-400 hover:text-gray-500" do %>
-            <svg class="flex-shrink-0 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+<% content_for :title, "Edit Contact - RapidMarkt" %>
+
+<!-- Modern Edit Contact Container -->
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+  <!-- Enhanced Header Section -->
+  <div class="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10">
+    <div class="px-4 sm:px-6 lg:px-8 py-6">
+      <!-- Modern Breadcrumb -->
+      <nav class="flex items-center space-x-4 mb-4" aria-label="Breadcrumb">
+        <%= link_to contacts_path, class: "inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors duration-200" do %>
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          Back to Contacts
+        <% end %>
+        <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        <%= link_to @contact.first_name + " " + @contact.last_name, contact_path(@contact), class: "text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors duration-200 truncate max-w-xs" %>
+        <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        <span class="text-sm font-medium text-gray-900">Edit</span>
+      </nav>
+      
+      <!-- Header Content -->
+      <div class="flex items-center justify-between">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl">
+                Edit Contact
+              </h1>
+              <p class="mt-1 text-lg text-gray-600">
+                Update contact information and manage tags.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Contact Status and Actions -->
+        <div class="flex items-center space-x-3">
+          <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm
+            <%= @contact.subscribed? ? 'bg-gradient-to-r from-green-100 to-emerald-200 text-green-800' : 'bg-gradient-to-r from-red-100 to-pink-200 text-red-800' %>">
+            <%= @contact.status.humanize %>
+          </span>
+          <%= link_to contact_path(@contact), class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
             </svg>
-            <span class="sr-only">Home</span>
+            View Contact
           <% end %>
         </div>
-      </li>
-      <li>
-        <div class="flex items-center">
-          <svg class="flex-shrink-0 h-5 w-5 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-          </svg>
-          <%= link_to "Contacts", contacts_path, class: "ml-4 text-sm font-medium text-gray-500 hover:text-gray-700" %>
-        </div>
-      </li>
-      <li>
-        <div class="flex items-center">
-          <svg class="flex-shrink-0 h-5 w-5 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-          </svg>
-          <span class="ml-4 text-sm font-medium text-gray-500">Edit Contact</span>
-        </div>
-      </li>
-    </ol>
-  </nav>
-
-  <!-- Page header -->
-  <div class="mt-8">
-    <div class="md:flex md:items-center md:justify-between">
-      <div class="flex-1 min-w-0">
-        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-          Edit Contact
-        </h2>
-        <p class="mt-1 text-sm text-gray-500">
-          Update contact information and manage tags.
-        </p>
-      </div>
-      <div class="mt-4 flex md:mt-0 md:ml-4">
-        <%= link_to contact_path(@contact), 
-            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
-          <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-          </svg>
-          View Contact
-        <% end %>
       </div>
     </div>
   </div>
 
-  <!-- Form -->
-  <div class="mt-8">
+  <!-- Main Content -->
+  <div class="px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Contact Edit Form -->
     <%= render 'form', contact: @contact %>
   </div>
 </div>

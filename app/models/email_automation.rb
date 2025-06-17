@@ -40,8 +40,7 @@ class EmailAutomation < ApplicationRecord
   scope :by_trigger_type, ->(type) { where(trigger_type: type) }
   scope :recently_active, -> { where("updated_at >= ?", 7.days.ago) }
 
-  # JSON serialization for trigger conditions
-  serialize :trigger_conditions, coder: JSON
+  # trigger_conditions is already a jsonb column in the database
 
   # Callbacks
   before_save :validate_trigger_conditions
