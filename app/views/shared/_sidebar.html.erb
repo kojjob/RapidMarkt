@@ -1,0 +1,131 @@
+<!-- Desktop Sidebar -->
+<div class="hidden md:flex md:w-64 md:flex-col">
+  <div class="flex flex-col flex-grow pt-5 bg-white overflow-y-auto border-r border-gray-200">
+    <!-- Logo -->
+    <div class="flex items-center flex-shrink-0 px-4">
+      <%= link_to root_path, class: "text-2xl font-bold text-indigo-600" do %>
+        RapidMarkt
+      <% end %>
+    </div>
+    
+    <!-- Navigation -->
+    <div class="mt-8 flex-grow flex flex-col">
+      <nav class="flex-1 px-2 space-y-1">
+        <!-- Dashboard -->
+        <%= link_to dashboard_path, class: "#{current_page?(dashboard_path) ? 'bg-indigo-100 border-r-2 border-indigo-500 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'} group flex items-center px-2 py-2 text-sm font-medium rounded-md" do %>
+          <svg class="#{current_page?(dashboard_path) ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'} mr-3 flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z" />
+          </svg>
+          Dashboard
+        <% end %>
+        
+        <!-- Campaigns -->
+        <%= link_to campaigns_path, class: "#{current_page?(campaigns_path) || current_page?(new_campaign_path) ? 'bg-indigo-100 border-r-2 border-indigo-500 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'} group flex items-center px-2 py-2 text-sm font-medium rounded-md" do %>
+          <svg class="#{current_page?(campaigns_path) || current_page?(new_campaign_path) ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'} mr-3 flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+          </svg>
+          Campaigns
+        <% end %>
+        
+        <!-- Contacts -->
+        <%= link_to contacts_path, class: "#{current_page?(contacts_path) || current_page?(new_contact_path) ? 'bg-indigo-100 border-r-2 border-indigo-500 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'} group flex items-center px-2 py-2 text-sm font-medium rounded-md" do %>
+          <svg class="#{current_page?(contacts_path) || current_page?(new_contact_path) ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'} mr-3 flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          Contacts
+        <% end %>
+        
+        <!-- Templates -->
+        <%= link_to templates_path, class: "#{current_page?(templates_path) || current_page?(new_template_path) ? 'bg-indigo-100 border-r-2 border-indigo-500 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'} group flex items-center px-2 py-2 text-sm font-medium rounded-md" do %>
+          <svg class="#{current_page?(templates_path) || current_page?(new_template_path) ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'} mr-3 flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Templates
+        <% end %>
+        
+        <!-- Automations -->
+        <%= link_to automations_path, class: "#{current_page?(automations_path) || current_page?(new_automation_path) ? 'bg-indigo-100 border-r-2 border-indigo-500 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'} group flex items-center px-2 py-2 text-sm font-medium rounded-md" do %>
+          <svg class="#{current_page?(automations_path) || current_page?(new_automation_path) ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'} mr-3 flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          Automations
+        <% end %>
+        
+        <!-- Brand Voices -->
+        <%= link_to brand_voices_path, class: "#{current_page?(brand_voices_path) || current_page?(new_brand_voice_path) ? 'bg-indigo-100 border-r-2 border-indigo-500 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'} group flex items-center px-2 py-2 text-sm font-medium rounded-md" do %>
+          <svg class="#{current_page?(brand_voices_path) || current_page?(new_brand_voice_path) ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'} mr-3 flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+          </svg>
+          Brand Voices
+        <% end %>
+        
+        <!-- Tags -->
+        <%= link_to tags_path, class: "#{current_page?(tags_path) || current_page?(new_tag_path) ? 'bg-indigo-100 border-r-2 border-indigo-500 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'} group flex items-center px-2 py-2 text-sm font-medium rounded-md" do %>
+          <svg class="#{current_page?(tags_path) || current_page?(new_tag_path) ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'} mr-3 flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+          </svg>
+          Tags
+        <% end %>
+        
+        <!-- Analytics -->
+        <%= link_to analytics_path, class: "#{current_page?(analytics_path) ? 'bg-indigo-100 border-r-2 border-indigo-500 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'} group flex items-center px-2 py-2 text-sm font-medium rounded-md" do %>
+          <svg class="#{current_page?(analytics_path) ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'} mr-3 flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          Analytics
+        <% end %>
+      </nav>
+    </div>
+    
+    <!-- User Menu -->
+    <div class="flex-shrink-0 flex border-t border-gray-200 p-4">
+      <div class="flex-shrink-0 w-full group block" data-controller="dropdown">
+        <div class="flex items-center">
+          <div class="h-9 w-9 rounded-full bg-indigo-500 flex items-center justify-center">
+            <span class="text-sm font-medium text-white">
+              <%= current_user.first_name&.first || current_user.email.first.upcase %>
+            </span>
+          </div>
+          <div class="ml-3 flex-1">
+            <p class="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+              <%= current_user.first_name || current_user.email.split('@').first %>
+            </p>
+            <button class="text-xs font-medium text-gray-500 group-hover:text-gray-700 flex items-center"
+                    data-action="click->dropdown#toggle"
+                    aria-expanded="false"
+                    aria-haspopup="true">
+              View profile
+              <svg class="ml-1 h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <div class="origin-bottom-left absolute bottom-16 left-4 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden z-50"
+             data-dropdown-target="menu"
+             role="menu"
+             aria-orientation="vertical">
+          <div class="py-1" role="none">
+            <%= link_to "Account Settings", account_path, 
+                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100", 
+                role: "menuitem" %>
+            <%= link_to "Team", team_account_path, 
+                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100", 
+                role: "menuitem" %>
+            <%= link_to "Billing", billing_account_path, 
+                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100", 
+                role: "menuitem" %>
+            <hr class="my-1">
+            <%= link_to "Sign out", destroy_user_session_path, 
+                data: { turbo_method: :delete },
+                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100", 
+                role: "menuitem" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

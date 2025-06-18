@@ -43,6 +43,10 @@ class BrandVoice < ApplicationRecord
     writing_style_rules || []
   end
 
+  def writing_style_rules_hash
+    writing_style_rules || {}
+  end
+
   private
 
   def set_defaults
@@ -52,6 +56,6 @@ class BrandVoice < ApplicationRecord
       "avoid_words" => [],
       "emoji_usage" => "moderate"
     }
-    self.writing_style_rules ||= []
+    self.writing_style_rules ||= {}
   end
 end

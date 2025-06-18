@@ -28,12 +28,12 @@ class AutomationsController < ApplicationController
   end
 
   def new
-    @automation = current_account.email_automations.build
-    @templates = current_account.templates.active
+    @automation = @current_account.email_automations.build
+    @templates = @current_account.templates.active
   end
 
   def create
-    @automation = current_account.email_automations.build(automation_params)
+    @automation = @current_account.email_automations.build(automation_params)
 
     if @automation.save
       # Create initial steps if provided
@@ -41,7 +41,7 @@ class AutomationsController < ApplicationController
 
       redirect_to @automation, notice: "Automation was successfully created."
     else
-      @templates = current_account.templates.active
+      @templates = @current_account.templates.active
       render :new, status: :unprocessable_entity
     end
   end

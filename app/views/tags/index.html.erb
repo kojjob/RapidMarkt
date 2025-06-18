@@ -31,7 +31,7 @@
           <div class="ml-5 w-0 flex-1">
             <dl>
               <dt class="text-sm font-medium text-gray-500 truncate">Total Tags</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @tags.count %></dd>
+              <dd class="text-lg font-medium text-gray-900"><%= @total_tags_count %></dd>
             </dl>
           </div>
         </div>
@@ -67,7 +67,7 @@
           <div class="ml-5 w-0 flex-1">
             <dl>
               <dt class="text-sm font-medium text-gray-500 truncate">Avg. Contacts per Tag</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @tags.count > 0 ? (@tags.sum(&:contacts_count) / @tags.count.to_f).round(1) : 0 %></dd>
+              <dd class="text-lg font-medium text-gray-900"><%= @total_tags_count > 0 ? (@tags.sum(&:contacts_count) / @total_tags_count.to_f).round(1) : 0 %></dd>
             </dl>
           </div>
         </div>
@@ -91,7 +91,7 @@
             </div>
             <div class="mt-8">
               <h3 class="text-lg font-medium">
-                <%= link_to tag.name, tag_path(tag), class: "focus:outline-none" do %>
+                <%= link_to tag_path(tag), class: "focus:outline-none" do %>
                   <span class="absolute inset-0" aria-hidden="true"></span>
                   <%= tag.name %>
                 <% end %>

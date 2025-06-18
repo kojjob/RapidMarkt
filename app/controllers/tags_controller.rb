@@ -3,11 +3,11 @@ class TagsController < ApplicationController
 
   def index
     @tags = @current_account.tags
-                           .left_joins(:contact_tags)
-                           .group("tags.id")
-                           .select("tags.*, COUNT(contact_tags.id) as contacts_count")
+                           .select("tags.*, (SELECT COUNT(*) FROM contact_tags WHERE contact_tags.tag_id = tags.id) as contacts_count")
                            .order(:name)
                            .page(params[:page])
+    
+    @total_tags_count = @current_account.tags.count
   end
 
   def show

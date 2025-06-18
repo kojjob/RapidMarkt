@@ -68,15 +68,15 @@
       <% end %>
 
       <!-- Vocabulary Preferences -->
-      <% if @brand_voice.vocabulary_preferences_data.values.any?(&:present?) %>
+      <% if @brand_voice.vocabulary_preferences_hash.values.any?(&:present?) %>
         <div class="bg-white shadow rounded-lg p-6">
           <h2 class="text-lg font-medium text-gray-900 mb-4">📚 Vocabulary Preferences</h2>
           <div class="space-y-4">
-            <% if @brand_voice.vocabulary_preferences_data['preferred_words'].present? %>
+            <% if @brand_voice.vocabulary_preferences_hash['preferred_words'].present? %>
               <div>
                 <h3 class="text-sm font-medium text-gray-700 mb-2">✅ Preferred Words/Phrases</h3>
                 <div class="flex flex-wrap gap-1">
-                  <% @brand_voice.vocabulary_preferences_data['preferred_words'].split(',').map(&:strip).each do |word| %>
+                  <% @brand_voice.vocabulary_preferences_hash['preferred_words'].split(',').map(&:strip).each do |word| %>
                     <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
                       <%= word %>
                     </span>
@@ -85,11 +85,11 @@
               </div>
             <% end %>
             
-            <% if @brand_voice.vocabulary_preferences_data['avoid_words'].present? %>
+            <% if @brand_voice.vocabulary_preferences_hash['avoid_words'].present? %>
               <div>
                 <h3 class="text-sm font-medium text-gray-700 mb-2">❌ Words to Avoid</h3>
                 <div class="flex flex-wrap gap-1">
-                  <% @brand_voice.vocabulary_preferences_data['avoid_words'].split(',').map(&:strip).each do |word| %>
+                  <% @brand_voice.vocabulary_preferences_hash['avoid_words'].split(',').map(&:strip).each do |word| %>
                     <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">
                       <%= word %>
                     </span>
@@ -98,11 +98,11 @@
               </div>
             <% end %>
             
-            <% if @brand_voice.vocabulary_preferences_data['industry_terms'].present? %>
+            <% if @brand_voice.vocabulary_preferences_hash['industry_terms'].present? %>
               <div>
                 <h3 class="text-sm font-medium text-gray-700 mb-2">🏢 Industry Terminology</h3>
                 <div class="flex flex-wrap gap-1">
-                  <% @brand_voice.vocabulary_preferences_data['industry_terms'].split(',').map(&:strip).each do |term| %>
+                  <% @brand_voice.vocabulary_preferences_hash['industry_terms'].split(',').map(&:strip).each do |term| %>
                     <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800">
                       <%= term %>
                     </span>
@@ -115,33 +115,33 @@
       <% end %>
 
       <!-- Writing Style Rules -->
-      <% if @brand_voice.writing_style_rules_data.values.any?(&:present?) %>
+      <% if @brand_voice.writing_style_rules_hash.values.any?(&:present?) %>
         <div class="bg-white shadow rounded-lg p-6">
           <h2 class="text-lg font-medium text-gray-900 mb-4">✍️ Writing Style Rules</h2>
           <div class="space-y-4">
-            <% if @brand_voice.writing_style_rules_data['sentence_length'].present? %>
+            <% if @brand_voice.writing_style_rules['sentence_length'].present? %>
               <div class="flex items-center justify-between py-2 border-b border-gray-200">
                 <span class="text-sm font-medium text-gray-700">Sentence Length</span>
                 <span class="text-sm text-gray-900 capitalize">
-                  <%= @brand_voice.writing_style_rules_data['sentence_length'].humanize %>
+                  <%= @brand_voice.writing_style_rules['sentence_length'].humanize %>
                 </span>
               </div>
             <% end %>
             
-            <% if @brand_voice.writing_style_rules_data['formality'].present? %>
+            <% if @brand_voice.writing_style_rules['formality'].present? %>
               <div class="flex items-center justify-between py-2 border-b border-gray-200">
                 <span class="text-sm font-medium text-gray-700">Formality Level</span>
                 <span class="text-sm text-gray-900 capitalize">
-                  <%= @brand_voice.writing_style_rules_data['formality'].humanize %>
+                  <%= @brand_voice.writing_style_rules['formality'].humanize %>
                 </span>
               </div>
             <% end %>
             
-            <% if @brand_voice.writing_style_rules_data['guidelines'].present? %>
+            <% if @brand_voice.writing_style_rules['guidelines'].present? %>
               <div class="pt-2">
                 <h3 class="text-sm font-medium text-gray-700 mb-2">Additional Guidelines</h3>
                 <p class="text-sm text-gray-600 leading-relaxed">
-                  <%= simple_format(@brand_voice.writing_style_rules_data['guidelines']) %>
+                  <%= simple_format(@brand_voice.writing_style_rules['guidelines']) %>
                 </p>
               </div>
             <% end %>
