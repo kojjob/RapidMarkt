@@ -1,0 +1,11 @@
+<!-- AI Progress Tracking Scripts -->
+<%= javascript_include_tag 'ai_progress' %>
+
+<!-- ActionCable Configuration -->
+<script>
+  window.App = {};
+  App.cable = ActionCable.createConsumer();
+</script>
+
+<!-- CSRF Token for AJAX requests -->
+<%= csrf_meta_tags %>

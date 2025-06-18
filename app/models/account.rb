@@ -8,6 +8,12 @@ class Account < ApplicationRecord
   has_many :tags, dependent: :destroy
   has_many :brand_voices, dependent: :destroy
   has_many :email_automations, dependent: :destroy
+  
+  # AI-related associations
+  has_many :ai_providers, dependent: :destroy
+  has_many :ai_usage_logs, dependent: :destroy
+  has_many :ai_insights, dependent: :destroy
+  has_many :content_generations, dependent: :destroy
 
   # Validations
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }

@@ -16,14 +16,26 @@ default: &default
       processes: <%= ENV.fetch("AUTOMATION_CONCURRENCY", 1) %>
       polling_interval: 0.5
       
+    # AI operations - high priority for real-time content generation
+    - queues: "ai_operations"
+      threads: 3
+      processes: 1
+      polling_interval: 0.5
+      
     # Enrichment and bulk operations - medium priority
     - queues: "enrichment,bulk_operations,automation_scheduler"
       threads: 2
       processes: 1
       polling_interval: 1.0
       
-    # Maintenance and default - lower priority
-    - queues: "maintenance,default"
+    # AI bulk and analytics - medium-low priority
+    - queues: "ai_bulk_operations,ai_analytics,ai_monitoring"
+      threads: 2
+      processes: 1
+      polling_interval: 1.5
+      
+    # AI optimization and maintenance - lower priority
+    - queues: "ai_optimization,maintenance,default"
       threads: 2
       processes: 1
       polling_interval: 2.0
@@ -60,12 +72,22 @@ production:
       processes: <%= ENV.fetch("AUTOMATION_CONCURRENCY", 2) %>
       polling_interval: 0.5
       
+    - queues: "ai_operations"
+      threads: 4
+      processes: 1
+      polling_interval: 0.3
+      
     - queues: "enrichment,bulk_operations"
       threads: 3
       processes: 1
       polling_interval: 1.0
       
-    - queues: "automation_scheduler,maintenance,default"
+    - queues: "ai_bulk_operations,ai_analytics,ai_monitoring"
+      threads: 3
+      processes: 1
+      polling_interval: 1.0
+      
+    - queues: "automation_scheduler,ai_optimization,maintenance,default"
       threads: 2
       processes: 1
       polling_interval: 2.0

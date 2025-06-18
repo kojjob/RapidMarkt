@@ -1,4 +1,4 @@
-<% content_for :title, "Dashboard - RapidMarkt" %>
+<% content_for :title, "AI-Powered Dashboard - RapidMarkt" %>
 
 <!-- Modern Dashboard Container -->
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -14,13 +14,14 @@
                 Good <%= Time.current.hour < 12 ? 'morning' : Time.current.hour < 18 ? 'afternoon' : 'evening' %>!
               </h1>
               <p class="mt-1 text-lg text-gray-600">
-                Here's what's happening with your marketing campaigns today.
+                AI-powered insights and multi-LLM content generation at your fingertips.
               </p>
             </div>
             <div class="ml-4 hidden sm:block">
-              <div class="flex items-center space-x-2">
+              <div id="ai-status" class="flex items-center space-x-2">
                 <div class="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span class="text-sm text-gray-500">Live updates</span>
+                <span class="text-sm text-gray-500">AI Online</span>
+                <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full ml-2">3 Providers</span>
               </div>
             </div>
           </div>
@@ -28,6 +29,14 @@
         
         <!-- Quick Actions -->
         <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
+          <%= link_to ai_dashboard_path, 
+              class: "inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+            AI Dashboard
+          <% end %>
+          
           <%= link_to new_campaign_path, 
               class: "inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" do %>
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

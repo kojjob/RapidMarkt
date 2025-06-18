@@ -42,6 +42,7 @@ gem "pdfkit" # PDF generation
 # API and External Integrations
 gem "faraday" # HTTP client library
 gem "faraday-retry" # Retry middleware for Faraday
+gem "httparty" # Simple HTTP client for API integrations
 
 # Monitoring and Performance
 gem "rack-mini-profiler" # Performance profiler

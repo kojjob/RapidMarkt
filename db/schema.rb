@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_15_080643) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_16_080958) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -29,11 +29,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_080643) do
     t.integer "activity_count", default: 0
     t.decimal "engagement_score", precision: 5, scale: 2
     t.jsonb "tracking_data", default: {}
+    t.string "company_name"
+    t.string "phone"
+    t.string "address"
+    t.string "city"
+    t.string "state"
+    t.string "zip_code"
+    t.string "country"
+    t.string "stripe_customer_id"
+    t.datetime "usage_reset_date"
+    t.datetime "last_usage_check"
     t.index ["engagement_score"], name: "index_accounts_on_engagement_score"
     t.index ["last_activity_at"], name: "index_accounts_on_last_activity_at"
     t.index ["status"], name: "index_accounts_on_status"
+    t.index ["stripe_customer_id"], name: "index_accounts_on_stripe_customer_id", unique: true
     t.index ["subdomain"], name: "index_accounts_on_subdomain", unique: true
     t.index ["tracking_data"], name: "index_accounts_on_tracking_data", using: :gin
+    t.index ["usage_reset_date"], name: "index_accounts_on_usage_reset_date"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -62,6 +74,88 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_080643) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "ai_insights", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "ai_provider_id", null: false
+    t.bigint "user_id"
+    t.string "insightable_type"
+    t.bigint "insightable_id"
+    t.string "insight_type", null: false
+    t.string "title", null: false
+    t.text "content", null: false
+    t.integer "confidence_score", null: false
+    t.string "priority", default: "medium"
+    t.string "status", default: "pending"
+    t.json "metadata"
+    t.datetime "implemented_at"
+    t.datetime "dismissed_at"
+    t.text "implementation_notes"
+    t.text "dismissal_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "created_at"], name: "index_ai_insights_on_account_id_and_created_at"
+    t.index ["account_id", "insight_type"], name: "index_ai_insights_on_account_id_and_insight_type"
+    t.index ["account_id", "priority"], name: "index_ai_insights_on_account_id_and_priority"
+    t.index ["account_id", "status"], name: "index_ai_insights_on_account_id_and_status"
+    t.index ["account_id"], name: "index_ai_insights_on_account_id"
+    t.index ["ai_provider_id"], name: "index_ai_insights_on_ai_provider_id"
+    t.index ["confidence_score"], name: "index_ai_insights_on_confidence_score"
+    t.index ["insightable_type", "insightable_id"], name: "index_ai_insights_on_insightable"
+    t.index ["insightable_type", "insightable_id"], name: "index_ai_insights_on_insightable_type_and_insightable_id"
+    t.index ["user_id"], name: "index_ai_insights_on_user_id"
+  end
+
+  create_table "ai_providers", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "name", null: false
+    t.string "provider_type", null: false
+    t.string "api_endpoint", null: false
+    t.text "api_key"
+    t.text "api_secret"
+    t.string "status", default: "active"
+    t.string "health_status", default: "unknown"
+    t.integer "priority", default: 0
+    t.datetime "last_health_check"
+    t.text "last_error"
+    t.json "configuration"
+    t.json "rate_limits"
+    t.json "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "priority"], name: "index_ai_providers_on_account_id_and_priority"
+    t.index ["account_id", "provider_type"], name: "index_ai_providers_on_account_id_and_provider_type"
+    t.index ["account_id", "status"], name: "index_ai_providers_on_account_id_and_status"
+    t.index ["account_id"], name: "index_ai_providers_on_account_id"
+  end
+
+  create_table "ai_usage_logs", force: :cascade do |t|
+    t.bigint "ai_provider_id", null: false
+    t.bigint "account_id", null: false
+    t.bigint "user_id"
+    t.string "loggable_type"
+    t.bigint "loggable_id"
+    t.string "operation_type", null: false
+    t.string "model_used", null: false
+    t.integer "tokens_used", null: false
+    t.decimal "response_time_ms", precision: 10, scale: 2, null: false
+    t.decimal "cost", precision: 10, scale: 6, null: false
+    t.boolean "success", default: true
+    t.json "request_metadata"
+    t.json "response_metadata"
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "created_at"], name: "index_ai_usage_logs_on_account_id_and_created_at"
+    t.index ["account_id"], name: "index_ai_usage_logs_on_account_id"
+    t.index ["ai_provider_id", "created_at"], name: "index_ai_usage_logs_on_ai_provider_id_and_created_at"
+    t.index ["ai_provider_id"], name: "index_ai_usage_logs_on_ai_provider_id"
+    t.index ["loggable_type", "loggable_id"], name: "index_ai_usage_logs_on_loggable"
+    t.index ["loggable_type", "loggable_id"], name: "index_ai_usage_logs_on_loggable_type_and_loggable_id"
+    t.index ["operation_type", "created_at"], name: "index_ai_usage_logs_on_operation_type_and_created_at"
+    t.index ["success", "created_at"], name: "index_ai_usage_logs_on_success_and_created_at"
+    t.index ["user_id"], name: "index_ai_usage_logs_on_user_id"
   end
 
   create_table "audit_logs", force: :cascade do |t|
@@ -309,6 +403,48 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_080643) do
     t.index ["value_score"], name: "index_contacts_on_value_score"
   end
 
+  create_table "content_generations", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "ai_provider_id", null: false
+    t.bigint "user_id", null: false
+    t.string "generatable_type"
+    t.bigint "generatable_id"
+    t.string "content_type", null: false
+    t.text "prompt", null: false
+    t.text "generated_content", null: false
+    t.string "status", default: "draft"
+    t.integer "quality_score"
+    t.integer "performance_score"
+    t.json "performance_metrics"
+    t.json "metadata"
+    t.datetime "approved_at"
+    t.integer "approved_by"
+    t.datetime "rejected_at"
+    t.text "rejection_reason"
+    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "progress_percentage", default: 0
+    t.text "error_message"
+    t.integer "retry_count", default: 0
+    t.string "job_id"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.index ["account_id", "content_type"], name: "index_content_generations_on_account_id_and_content_type"
+    t.index ["account_id", "created_at"], name: "index_content_generations_on_account_id_and_created_at"
+    t.index ["account_id", "status"], name: "index_content_generations_on_account_id_and_status"
+    t.index ["account_id"], name: "index_content_generations_on_account_id"
+    t.index ["ai_provider_id", "created_at"], name: "index_content_generations_on_ai_provider_id_and_created_at"
+    t.index ["ai_provider_id"], name: "index_content_generations_on_ai_provider_id"
+    t.index ["generatable_type", "generatable_id"], name: "idx_on_generatable_type_generatable_id_ef92d17847"
+    t.index ["generatable_type", "generatable_id"], name: "index_content_generations_on_generatable"
+    t.index ["job_id"], name: "index_content_generations_on_job_id"
+    t.index ["performance_score"], name: "index_content_generations_on_performance_score"
+    t.index ["quality_score"], name: "index_content_generations_on_quality_score"
+    t.index ["status"], name: "index_content_generations_on_status"
+    t.index ["user_id"], name: "index_content_generations_on_user_id"
+  end
+
   create_table "email_automations", force: :cascade do |t|
     t.string "name", null: false
     t.text "description"
@@ -357,6 +493,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_080643) do
     t.index ["user_id"], name: "index_onboarding_progresses_on_user_id"
   end
 
+  create_table "subscription_usages", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.datetime "period_start", null: false
+    t.datetime "period_end", null: false
+    t.integer "contacts_count", default: 0
+    t.integer "campaigns_sent_count", default: 0
+    t.integer "templates_count", default: 0
+    t.bigint "storage_used", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "period_start"], name: "index_subscription_usages_on_account_id_and_period_start", unique: true
+    t.index ["account_id"], name: "index_subscription_usages_on_account_id"
+    t.index ["period_end"], name: "index_subscription_usages_on_period_end"
+    t.index ["period_start"], name: "index_subscription_usages_on_period_start"
+  end
+
   create_table "subscriptions", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "stripe_subscription_id"
@@ -368,7 +520,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_080643) do
     t.datetime "trial_end"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "stripe_price_id"
+    t.integer "quantity", default: 1
+    t.boolean "cancel_at_period_end", default: false
+    t.datetime "canceled_at"
     t.index ["account_id"], name: "index_subscriptions_on_account_id"
+    t.index ["cancel_at_period_end"], name: "index_subscriptions_on_cancel_at_period_end"
+    t.index ["stripe_price_id"], name: "index_subscriptions_on_stripe_price_id"
   end
 
   create_table "tags", force: :cascade do |t|
@@ -379,6 +537,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_080643) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_tags_on_account_id"
+  end
+
+  create_table "template_versions", force: :cascade do |t|
+    t.bigint "template_id", null: false
+    t.integer "version_number"
+    t.text "content"
+    t.text "subject"
+    t.json "layout_data", default: {}
+    t.bigint "created_by_id", null: false
+    t.string "created_reason"
+    t.json "ai_suggestions", default: {}
+    t.string "content_tone"
+    t.string "industry"
+    t.string "target_audience"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_template_versions_on_created_by_id"
+    t.index ["template_id", "version_number"], name: "index_template_versions_on_template_id_and_version_number", unique: true
+    t.index ["template_id"], name: "index_template_versions_on_template_id"
   end
 
   create_table "templates", force: :cascade do |t|
@@ -410,6 +587,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_080643) do
     t.jsonb "design_config", default: {}
     t.boolean "ab_test_enabled", default: false
     t.integer "ab_test_original_id"
+    t.json "layout_data", default: {}
+    t.json "ai_suggestions", default: {}
+    t.string "industry"
+    t.string "content_tone", default: "professional"
+    t.string "target_audience"
+    t.integer "version_number", default: 1
+    t.boolean "is_current_version", default: true
+    t.bigint "parent_template_id"
+    t.datetime "last_ai_enhancement_at", precision: nil
+    t.string "builder_mode", default: "visual"
     t.index ["ab_test_original_id"], name: "index_templates_on_ab_test_original_id"
     t.index ["account_id"], name: "index_templates_on_account_id"
     t.index ["brand_voice_id"], name: "index_templates_on_brand_voice_id"
@@ -417,11 +604,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_080643) do
     t.index ["design_config"], name: "index_templates_on_design_config", using: :gin
     t.index ["design_system"], name: "index_templates_on_design_system"
     t.index ["engagement_score"], name: "index_templates_on_engagement_score"
+    t.index ["industry"], name: "index_templates_on_industry"
+    t.index ["is_current_version"], name: "index_templates_on_is_current_version"
     t.index ["is_public"], name: "index_templates_on_is_public"
     t.index ["last_activity_at"], name: "index_templates_on_last_activity_at"
+    t.index ["parent_template_id"], name: "index_templates_on_parent_template_id"
     t.index ["tags"], name: "index_templates_on_tags", using: :gin
     t.index ["tracking_data"], name: "index_templates_on_tracking_data", using: :gin
     t.index ["user_id"], name: "index_templates_on_user_id"
+    t.index ["version_number"], name: "index_templates_on_version_number"
   end
 
   create_table "user_sessions", force: :cascade do |t|
@@ -463,6 +654,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_080643) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "ai_insights", "accounts"
+  add_foreign_key "ai_insights", "ai_providers"
+  add_foreign_key "ai_insights", "users"
+  add_foreign_key "ai_providers", "accounts"
+  add_foreign_key "ai_usage_logs", "accounts"
+  add_foreign_key "ai_usage_logs", "ai_providers"
+  add_foreign_key "ai_usage_logs", "users"
   add_foreign_key "audit_logs", "users"
   add_foreign_key "automation_enrollments", "contacts"
   add_foreign_key "automation_enrollments", "email_automations"
@@ -485,11 +683,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_080643) do
   add_foreign_key "contact_tags", "contacts"
   add_foreign_key "contact_tags", "tags"
   add_foreign_key "contacts", "accounts"
+  add_foreign_key "content_generations", "accounts"
+  add_foreign_key "content_generations", "ai_providers"
+  add_foreign_key "content_generations", "users"
   add_foreign_key "email_automations", "accounts"
   add_foreign_key "email_automations", "email_automations", column: "ab_test_original_id"
   add_foreign_key "onboarding_progresses", "users"
+  add_foreign_key "subscription_usages", "accounts"
   add_foreign_key "subscriptions", "accounts"
   add_foreign_key "tags", "accounts"
+  add_foreign_key "template_versions", "templates"
+  add_foreign_key "template_versions", "users", column: "created_by_id"
   add_foreign_key "templates", "accounts"
   add_foreign_key "templates", "brand_voices"
   add_foreign_key "templates", "templates", column: "ab_test_original_id"

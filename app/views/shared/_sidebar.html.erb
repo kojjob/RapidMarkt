@@ -41,6 +41,17 @@
                 <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
               <% end %>
             <% end %>
+            
+            <%= link_to ai_dashboard_path, class: "#{current_page?(ai_dashboard_path) ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-300 hover:bg-slate-700 hover:text-white'} group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200" do %>
+              <svg class="#{current_page?(ai_dashboard_path) ? 'text-white' : 'text-slate-400 group-hover:text-white'} mr-3 flex-shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <span class="flex-1">AI Dashboard</span>
+              <span class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">AI</span>
+              <% if current_page?(ai_dashboard_path) %>
+                <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+              <% end %>
+            <% end %>
           </div>
         </div>
         

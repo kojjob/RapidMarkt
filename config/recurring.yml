@@ -20,6 +20,18 @@ development:
     class: ProcessAutomationExecutionJob
     queue: automation
     schedule: every 1 minute
+    
+  # AI provider health checks every 10 minutes
+  ai_health_check:
+    class: AiProviderHealthCheckJob
+    queue: ai_monitoring
+    schedule: every 10 minutes
+    
+  # AI usage analytics every hour
+  ai_usage_analytics:
+    class: AiUsageAnalyticsJob
+    queue: ai_analytics
+    schedule: every hour
 
 # Production environment - optimized intervals
 production:
@@ -70,6 +82,30 @@ production:
     class: AnalyticsProcessorJob
     queue: maintenance
     schedule: at 4am every day
+    
+  # AI provider health checks every 5 minutes
+  ai_health_check:
+    class: AiProviderHealthCheckJob
+    queue: ai_monitoring
+    schedule: every 5 minutes
+    
+  # AI usage analytics every 30 minutes
+  ai_usage_analytics:
+    class: AiUsageAnalyticsJob
+    queue: ai_analytics
+    schedule: every 30 minutes
+    
+  # AI insight generation every 6 hours
+  ai_insight_generation:
+    class: AiInsightGenerationJob
+    queue: ai_analytics
+    schedule: every 6 hours
+    
+  # AI cost optimization daily at 5 AM
+  ai_cost_optimization:
+    class: AiCostOptimizationJob
+    queue: ai_optimization
+    schedule: at 5am every day
 
 # Test environment - no recurring jobs to avoid interference
 test:

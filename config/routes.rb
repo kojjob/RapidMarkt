@@ -20,6 +20,33 @@ Rails.application.routes.draw do
   # Dashboard
   get "dashboard", to: "dashboard#index"
 
+  # AI Dashboard
+  get "ai_dashboard", to: "ai_dashboard#index"
+  namespace :ai_dashboard do
+    post :generate_content
+    post :optimize_content
+    get :insights
+    get :analytics
+    get :providers
+    get :content_generations
+    get :real_time_metrics
+    get 'generation_status/:id', to: 'ai_dashboard#generation_status'
+    post 'bulk_generate', to: 'ai_dashboard#bulk_generate'
+    
+    resources :providers, only: [] do
+      member do
+        post :health_check
+      end
+    end
+    
+    resources :content_generations, only: [] do
+      member do
+        post :approve
+        post :reject
+      end
+    end
+  end
+
   # Campaigns
   resources :campaigns do
     member do
