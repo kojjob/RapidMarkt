@@ -1,0 +1,153 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-8">
+      <div class="md:flex md:items-center md:justify-between">
+        <div class="min-w-0 flex-1">
+          <h1 class="text-3xl font-bold text-gray-900">Team Management</h1>
+          <p class="mt-2 text-sm text-gray-600">Manage your team members and invitations</p>
+        </div>
+        <div class="mt-4 md:ml-4 md:mt-0">
+          <%= link_to account_path, class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
+            <svg class="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Account
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Team Members List -->
+      <div class="lg:col-span-2">
+        <div class="bg-white shadow-sm rounded-lg">
+          <div class="px-6 py-5 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Team Members</h3>
+            <p class="mt-1 text-sm text-gray-600"><%= @team_members.count %> members</p>
+          </div>
+          <div class="divide-y divide-gray-200">
+            <% if @team_members.any? %>
+              <% @team_members.each do |member| %>
+                <div class="px-6 py-4 flex items-center justify-between">
+                  <div class="flex items-center space-x-3">
+                    <div class="flex-shrink-0">
+                      <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                        <span class="text-sm font-medium text-indigo-800">
+                          <%= member.full_name.split.map(&:first).join.upcase %>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-sm font-medium text-gray-900"><%= member.full_name %></p>
+                      <p class="text-sm text-gray-500"><%= member.email %></p>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <%= member == @current_account.owner ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800' %>">
+                      <%= member == @current_account.owner ? 'Owner' : 'Member' %>
+                    </span>
+                    <% unless member == @current_account.owner || member == current_user %>
+                      <%= link_to remove_user_account_path(user_id: member.id), method: :delete, 
+                          confirm: "Are you sure you want to remove #{member.full_name} from the team?",
+                          class: "text-red-600 hover:text-red-900 text-sm font-medium" do %>
+                        Remove
+                      <% end %>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="px-6 py-12 text-center">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No team members</h3>
+                <p class="mt-1 text-sm text-gray-500">Get started by inviting your first team member.</p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Pending Invitations -->
+        <% if @pending_invitations&.any? %>
+          <div class="mt-8 bg-white shadow-sm rounded-lg">
+            <div class="px-6 py-5 border-b border-gray-200">
+              <h3 class="text-lg font-semibold text-gray-900">Pending Invitations</h3>
+              <p class="mt-1 text-sm text-gray-600"><%= @pending_invitations.count %> pending</p>
+            </div>
+            <div class="divide-y divide-gray-200">
+              <% @pending_invitations.each do |invitation| %>
+                <div class="px-6 py-4 flex items-center justify-between">
+                  <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-gray-900"><%= invitation.email %></p>
+                    <p class="text-sm text-gray-500">Invited <%= time_ago_in_words(invitation.created_at) %> ago</p>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800">
+                      Pending
+                    </span>
+                    <%= link_to cancel_invitation_account_path(invitation_id: invitation.id), method: :delete,
+                        confirm: "Are you sure you want to cancel this invitation?",
+                        class: "text-red-600 hover:text-red-900 text-sm font-medium" do %>
+                      Cancel
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Invite New Member -->
+      <div class="lg:col-span-1">
+        <div class="bg-white shadow-sm rounded-lg">
+          <div class="px-6 py-5 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Invite Team Member</h3>
+            <p class="mt-1 text-sm text-gray-600">Send an invitation to join your team</p>
+          </div>
+          <div class="px-6 py-5">
+            <%= form_with url: invite_user_account_path, method: :post, local: true, class: "space-y-4" do |form| %>
+              <div>
+                <%= form.label :email, "Email Address", class: "block text-sm font-medium text-gray-700" %>
+                <%= form.email_field :email, required: true, 
+                    class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+                    placeholder: "colleague@example.com" %>
+              </div>
+              <div>
+                <%= form.submit "Send Invitation", 
+                    class: "w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Team Stats -->
+        <div class="mt-6 bg-white shadow-sm rounded-lg">
+          <div class="px-6 py-5">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Team Overview</h3>
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-600">Total Members</span>
+                <span class="text-sm font-medium text-gray-900"><%= @team_members.count %></span>
+              </div>
+              <% if @pending_invitations&.any? %>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">Pending Invitations</span>
+                  <span class="text-sm font-medium text-gray-900"><%= @pending_invitations.count %></span>
+                </div>
+              <% end %>
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-600">Plan Limit</span>
+                <span class="text-sm font-medium text-gray-900">
+                  <%= @current_account.plan_limits[:team_members] == Float::INFINITY ? 'Unlimited' : @current_account.plan_limits[:team_members] %>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

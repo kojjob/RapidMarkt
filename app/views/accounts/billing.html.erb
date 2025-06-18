@@ -1,0 +1,283 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-8">
+      <div class="md:flex md:items-center md:justify-between">
+        <div class="min-w-0 flex-1">
+          <h1 class="text-3xl font-bold text-gray-900">Billing & Subscription</h1>
+          <p class="mt-2 text-sm text-gray-600">Manage your subscription, billing information, and payment methods</p>
+        </div>
+        <div class="mt-4 md:ml-4 md:mt-0">
+          <%= link_to account_path, class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
+            <svg class="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Account
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Current Subscription -->
+      <div class="lg:col-span-2 space-y-8">
+        <div class="bg-white shadow-sm rounded-lg">
+          <div class="px-6 py-5 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Current Subscription</h3>
+            <p class="mt-1 text-sm text-gray-600">Your current plan and billing information</p>
+          </div>
+          <div class="px-6 py-5">
+            <% if @subscription %>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Plan</label>
+                  <div class="mt-1 flex items-center space-x-2">
+                    <span class="text-2xl font-bold text-gray-900 capitalize"><%= @subscription.plan_name || @current_account.plan || 'Free' %></span>
+                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <%= @subscription.active? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                      <%= @subscription.status&.humanize || 'Active' %>
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Monthly Cost</label>
+                  <div class="mt-1">
+                    <span class="text-2xl font-bold text-gray-900">
+                      $<%= @subscription.amount || (@current_account.plan == 'pro' ? '29' : (@current_account.plan == 'enterprise' ? '99' : '0')) %>
+                    </span>
+                    <span class="text-sm text-gray-500">/month</span>
+                  </div>
+                </div>
+                <% if @subscription.next_billing_date %>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700">Next Billing Date</label>
+                    <div class="mt-1">
+                      <span class="text-lg font-medium text-gray-900"><%= @subscription.next_billing_date.strftime("%B %d, %Y") %></span>
+                    </div>
+                  </div>
+                <% end %>
+                <% if @subscription.created_at %>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700">Subscription Started</label>
+                    <div class="mt-1">
+                      <span class="text-lg font-medium text-gray-900"><%= @subscription.created_at.strftime("%B %d, %Y") %></span>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="text-center py-8">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                <h3 class="mt-2 text-lg font-medium text-gray-900">Free Plan</h3>
+                <p class="mt-1 text-sm text-gray-500">You're currently on the free plan</p>
+                <div class="mt-6">
+                  <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                    Upgrade Plan
+                  </button>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Available Plans -->
+        <div class="bg-white shadow-sm rounded-lg">
+          <div class="px-6 py-5 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Available Plans</h3>
+            <p class="mt-1 text-sm text-gray-600">Choose the plan that best fits your needs</p>
+          </div>
+          <div class="px-6 py-5">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Free Plan -->
+              <div class="border rounded-lg p-6 <%= (@current_account.plan == 'free' || @current_account.plan.blank?) ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200' %>">
+                <div class="text-center">
+                  <h4 class="text-lg font-semibold text-gray-900">Free</h4>
+                  <div class="mt-2">
+                    <span class="text-3xl font-bold text-gray-900">$0</span>
+                    <span class="text-sm text-gray-500">/month</span>
+                  </div>
+                  <ul class="mt-4 space-y-2 text-sm text-gray-600">
+                    <li>• Up to 100 contacts</li>
+                    <li>• 1 campaign per month</li>
+                    <li>• 1 template</li>
+                    <li>• 1 team member</li>
+                    <li>• Basic support</li>
+                  </ul>
+                  <% if @current_account.plan == 'free' || @current_account.plan.blank? %>
+                    <div class="mt-6">
+                      <span class="w-full inline-flex justify-center items-center px-4 py-2 border border-indigo-500 text-sm font-medium rounded-md text-indigo-600 bg-white">
+                        Current Plan
+                      </span>
+                    </div>
+                  <% else %>
+                    <div class="mt-6">
+                      <button type="button" class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Downgrade
+                      </button>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+
+              <!-- Pro Plan -->
+              <div class="border rounded-lg p-6 <%= @current_account.plan == 'pro' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200' %>">
+                <div class="text-center">
+                  <h4 class="text-lg font-semibold text-gray-900">Pro</h4>
+                  <div class="mt-2">
+                    <span class="text-3xl font-bold text-gray-900">$29</span>
+                    <span class="text-sm text-gray-500">/month</span>
+                  </div>
+                  <ul class="mt-4 space-y-2 text-sm text-gray-600">
+                    <li>• Up to 5,000 contacts</li>
+                    <li>• Unlimited campaigns</li>
+                    <li>• 10 templates</li>
+                    <li>• 5 team members</li>
+                    <li>• Priority support</li>
+                    <li>• Advanced analytics</li>
+                  </ul>
+                  <% if @current_account.plan == 'pro' %>
+                    <div class="mt-6">
+                      <span class="w-full inline-flex justify-center items-center px-4 py-2 border border-indigo-500 text-sm font-medium rounded-md text-indigo-600 bg-white">
+                        Current Plan
+                      </span>
+                    </div>
+                  <% else %>
+                    <div class="mt-6">
+                      <button type="button" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                        <%= (@current_account.plan == 'free' || @current_account.plan.blank?) ? 'Upgrade' : 'Switch' %> to Pro
+                      </button>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+
+              <!-- Enterprise Plan -->
+              <div class="border rounded-lg p-6 <%= @current_account.plan == 'enterprise' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200' %>">
+                <div class="text-center">
+                  <h4 class="text-lg font-semibold text-gray-900">Enterprise</h4>
+                  <div class="mt-2">
+                    <span class="text-3xl font-bold text-gray-900">$99</span>
+                    <span class="text-sm text-gray-500">/month</span>
+                  </div>
+                  <ul class="mt-4 space-y-2 text-sm text-gray-600">
+                    <li>• Unlimited contacts</li>
+                    <li>• Unlimited campaigns</li>
+                    <li>• Unlimited templates</li>
+                    <li>• Unlimited team members</li>
+                    <li>• 24/7 support</li>
+                    <li>• Custom integrations</li>
+                  </ul>
+                  <% if @current_account.plan == 'enterprise' %>
+                    <div class="mt-6">
+                      <span class="w-full inline-flex justify-center items-center px-4 py-2 border border-indigo-500 text-sm font-medium rounded-md text-indigo-600 bg-white">
+                        Current Plan
+                      </span>
+                    </div>
+                  <% else %>
+                    <div class="mt-6">
+                      <button type="button" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                        <%= (@current_account.plan == 'free' || @current_account.plan.blank?) ? 'Upgrade' : 'Switch' %> to Enterprise
+                      </button>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Billing History -->
+        <div class="bg-white shadow-sm rounded-lg">
+          <div class="px-6 py-5 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Billing History</h3>
+            <p class="mt-1 text-sm text-gray-600">Your recent invoices and payments</p>
+          </div>
+          <div class="px-6 py-5">
+            <div class="text-center py-8">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">No billing history</h3>
+              <p class="mt-1 text-sm text-gray-500">Your invoices and payment history will appear here</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Billing Information -->
+      <div class="lg:col-span-1 space-y-6">
+        <div class="bg-white shadow-sm rounded-lg">
+          <div class="px-6 py-5">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Summary</h3>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Account Name</label>
+                <p class="mt-1 text-sm text-gray-900"><%= @current_account.name || 'Not set' %></p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Current Plan</label>
+                <p class="mt-1 text-sm text-gray-900 capitalize"><%= @current_account.plan || 'Free' %></p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Account Status</label>
+                <span class="mt-1 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <%= @current_account.active? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                  <%= @current_account.status.humanize %>
+                </span>
+              </div>
+              <% if @subscription&.next_billing_date %>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Next Billing</label>
+                  <p class="mt-1 text-sm text-gray-900"><%= @subscription.next_billing_date.strftime("%B %d, %Y") %></p>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white shadow-sm rounded-lg">
+          <div class="px-6 py-5">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Payment Method</h3>
+            <div class="text-center py-4">
+              <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              <p class="mt-2 text-sm text-gray-500">No payment method on file</p>
+              <button type="button" class="mt-3 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                Add Payment Method
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white shadow-sm rounded-lg">
+          <div class="px-6 py-5">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+            <div class="space-y-3">
+              <button type="button" class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                <svg class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Download Invoice
+              </button>
+              <button type="button" class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                <svg class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                Update Payment Method
+              </button>
+              <% if @subscription %>
+                <button type="button" class="w-full inline-flex items-center justify-center px-4 py-2 border border-red-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50">
+                  <svg class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  Cancel Subscription
+                </button>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
