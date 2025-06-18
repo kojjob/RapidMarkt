@@ -39,10 +39,10 @@ RSpec.describe TagsController, type: :controller do
     it 'orders tags by name' do
       tag_a = create(:tag, account: account, name: 'alpha')
       tag_z = create(:tag, account: account, name: 'zulu')
-      
+
       get :index
       tags = assigns(:tags).to_a
-      expect(tags.map(&:name)).to eq(['alpha', 'zulu'])
+      expect(tags.map(&:name)).to eq([ 'alpha', 'zulu' ])
     end
 
     it 'does not cause SQL syntax errors with COUNT queries' do
@@ -59,7 +59,7 @@ RSpec.describe TagsController, type: :controller do
     it 'assigns contacts for the tag' do
       contact = create(:contact, account: account)
       tag.contacts << contact
-      
+
       get :show, params: { id: tag.id }
       expect(assigns(:contacts)).to include(contact)
     end

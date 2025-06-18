@@ -6,7 +6,7 @@ class TagsController < ApplicationController
                            .select("tags.*, (SELECT COUNT(*) FROM contact_tags WHERE contact_tags.tag_id = tags.id) as contacts_count")
                            .order(:name)
                            .page(params[:page])
-    
+
     @total_tags_count = @current_account.tags.count
   end
 
