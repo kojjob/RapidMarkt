@@ -3,7 +3,7 @@ FactoryBot.define do
     account
     name { "Professional Voice" }
     tone { "professional" }
-    personality_traits { ["Confident", "knowledgeable", "approachable"] }
+    personality_traits { [ "Confident", "knowledgeable", "approachable" ] }
     vocabulary_preferences {
       {
         "preferred_words" => [
@@ -11,7 +11,7 @@ FactoryBot.define do
           { "from" => "nice", "to" => "outstanding" },
           { "from" => "great", "to" => "remarkable" }
         ],
-        "avoid_words" => ["bad", "terrible", "awful"],
+        "avoid_words" => [ "bad", "terrible", "awful" ],
         "emoji_usage" => "moderate"
       }
     }
