@@ -58,6 +58,7 @@ Rails.application.routes.draw do
       post :auto_save
       get :components
       post :generate
+      post :generate_ai_template
     end
   end
 

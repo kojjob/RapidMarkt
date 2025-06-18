@@ -21,7 +21,7 @@
   <!-- Form -->
   <div class="bg-white shadow rounded-lg">
     <div class="px-6 py-8">
-      <%= form_with model: @automation, local: true, class: "space-y-6" do |form| %>
+      <%= form_with model: @automation, url: automations_path, local: true, class: "space-y-6" do |form| %>
         <% if @automation.errors.any? %>
           <div class="rounded-md bg-red-50 p-4">
             <div class="flex">

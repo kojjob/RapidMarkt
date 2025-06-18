@@ -1,267 +1,509 @@
 <% content_for :title, "Account Overview" %>
 
-<div class="px-4 sm:px-6 lg:px-8">
-  <!-- Header -->
-  <div class="md:flex md:items-center md:justify-between">
-    <div class="min-w-0 flex-1">
-      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-        Account Overview
-      </h2>
-      <div class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
-        <div class="mt-2 flex items-center text-sm text-gray-500">
-          <svg class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07v3.469c0 1.126-.694 2.191-1.83 2.54-1.952.599-4.024.921-6.17.921s-4.219-.322-6.17-.921C2.694 12.73 2 11.665 2 10.539V7.07c0-1.32.947-2.488 2.294-2.676A41.047 41.047 0 016 4.193V3.75zm6.5 0v.325a41.622 41.622 0 00-5 0V3.75c0-.69.56-1.25 1.25-1.25h2.5c.69 0 1.25.56 1.25 1.25zM10 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-          </svg>
-          Account ID: <%= @current_account.id %>
-        </div>
-        <div class="mt-2 flex items-center text-sm text-gray-500">
-          <svg class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z" clip-rule="evenodd" />
-          </svg>
-          Created <%= @current_account.created_at.strftime("%B %d, %Y") %>
-        </div>
-      </div>
-    </div>
-    <div class="mt-4 flex md:ml-4 md:mt-0">
-      <%= link_to edit_account_path, class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
-        <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z" />
-        </svg>
-        Edit Account
-      <% end %>
-    </div>
-  </div>
-
-  <!-- Account Stats -->
-  <div class="mt-8">
-    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-      <!-- Team Members -->
-      <div class="bg-white overflow-hidden shadow rounded-lg">
-        <div class="p-5">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+<div class="min-h-screen bg-gray-50">
+  <div class="px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Enhanced Header with Account Status -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-8">
+      <div class="md:flex md:items-center md:justify-between">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center space-x-3">
+            <h1 class="text-3xl font-bold text-gray-900">
+              <%= @current_account.name.present? ? @current_account.name : "#{@current_account.owner&.full_name || 'Your'} Account" %>
+            </h1>
+            <span class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium <%= @current_account.active? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+              <%= @current_account.status.humanize %>
+            </span>
+          </div>
+          <div class="mt-2 flex flex-col sm:flex-row sm:flex-wrap sm:space-x-6">
+            <div class="flex items-center text-sm text-gray-500">
+              <svg class="mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
+              <%= @current_account.subdomain %>.rapidmarkt.com
             </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">Team Members</dt>
-                <dd class="text-lg font-medium text-gray-900"><%= @team_members.count %></dd>
-              </dl>
+            <div class="flex items-center text-sm text-gray-500">
+              <svg class="mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a4 4 0 118 0v4m-4 12v-2m0 0V9a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V9a2 2 0 012-2h6z" />
+              </svg>
+              ID: <%= @current_account.id %>
+            </div>
+            <div class="flex items-center text-sm text-gray-500">
+              <svg class="mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a4 4 0 118 0v4m-4 12v-2m0 0V9a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V9a2 2 0 012-2h6z" />
+              </svg>
+              Since <%= @current_account.created_at.strftime("%B %Y") %>
             </div>
           </div>
         </div>
-        <div class="bg-gray-50 px-5 py-3">
-          <%= link_to team_account_path, class: "text-sm text-indigo-600 hover:text-indigo-900" do %>
-            View all members
+        <div class="mt-4 flex space-x-3 md:ml-4 md:mt-0">
+          <%= link_to team_account_path, class: "inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500" do %>
+            <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+            </svg>
+            Manage Team
+          <% end %>
+          <%= link_to edit_account_path, class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
+            <svg class="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Edit Account
           <% end %>
         </div>
       </div>
+    </div>
 
-      <!-- Contacts -->
-      <div class="bg-white overflow-hidden shadow rounded-lg">
-        <div class="p-5">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+    <!-- Plan Overview & Usage Stats -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      <!-- Current Plan Card -->
+      <div class="lg:col-span-1">
+        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold">Current Plan</h3>
+              <p class="text-2xl font-bold capitalize mt-1"><%= @current_account.plan %></p>
+            </div>
+            <div class="bg-white bg-opacity-20 rounded-lg p-3">
+              <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
               </svg>
             </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">Total Contacts</dt>
-                <dd class="text-lg font-medium text-gray-900"><%= @usage_stats[:contacts] || 0 %></dd>
-              </dl>
+          </div>
+          <% if @subscription&.next_billing_date %>
+            <p class="text-sm mt-4 opacity-90">
+              Next billing: <%= @subscription.next_billing_date.strftime("%B %d, %Y") %>
+            </p>
+          <% end %>
+          <div class="mt-4">
+            <%= link_to billing_account_path, class: "inline-flex items-center text-sm font-medium text-white hover:text-indigo-100" do %>
+              Manage billing
+              <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Usage Statistics -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Usage Overview</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <% 
+              plan_limits = @current_account.plan_limits
+              contacts_count = @current_account.contacts.count
+              campaigns_count = @current_account.campaigns.where(created_at: Date.current.beginning_of_month..Date.current.end_of_month).count
+              templates_count = @current_account.templates.count
+            %>
+            
+            <!-- Contacts Usage -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-gray-600">Contacts</span>
+                <span class="text-xs text-gray-500">
+                  <%= contacts_count %> / <%= plan_limits[:contacts] == Float::INFINITY ? '∞' : number_with_delimiter(plan_limits[:contacts]) %>
+                </span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <% usage_percentage = plan_limits[:contacts] == Float::INFINITY ? 0 : [(contacts_count.to_f / plan_limits[:contacts] * 100), 100].min %>
+                <div class="bg-blue-500 h-2 rounded-full" style="width: <%= usage_percentage %>%"></div>
+              </div>
+            </div>
+
+            <!-- Campaigns This Month -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-gray-600">Campaigns (This Month)</span>
+                <span class="text-xs text-gray-500">
+                  <%= campaigns_count %> / <%= plan_limits[:campaigns_per_month] == Float::INFINITY ? '∞' : plan_limits[:campaigns_per_month] %>
+                </span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <% usage_percentage = plan_limits[:campaigns_per_month] == Float::INFINITY ? 0 : [(campaigns_count.to_f / plan_limits[:campaigns_per_month] * 100), 100].min %>
+                <div class="bg-green-500 h-2 rounded-full" style="width: <%= usage_percentage %>%"></div>
+              </div>
+            </div>
+
+            <!-- Templates -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-gray-600">Templates</span>
+                <span class="text-xs text-gray-500">
+                  <%= templates_count %> / <%= plan_limits[:templates] == Float::INFINITY ? '∞' : plan_limits[:templates] %>
+                </span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <% usage_percentage = plan_limits[:templates] == Float::INFINITY ? 0 : [(templates_count.to_f / plan_limits[:templates] * 100), 100].min %>
+                <div class="bg-purple-500 h-2 rounded-full" style="width: <%= usage_percentage %>%"></div>
+              </div>
+            </div>
+
+            <!-- Team Members -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-gray-600">Team Members</span>
+                <span class="text-xs text-gray-500"><%= @team_members.count %></span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                </svg>
+                <span class="text-sm text-gray-900"><%= @team_members.count %> active members</span>
+              </div>
             </div>
           </div>
         </div>
-        <div class="bg-gray-50 px-5 py-3">
-          <%= link_to contacts_path, class: "text-sm text-indigo-600 hover:text-indigo-900" do %>
-            View contacts
-          <% end %>
-        </div>
       </div>
+    </div>
 
-      <!-- Email Campaigns -->
-      <div class="bg-white overflow-hidden shadow rounded-lg">
+    <!-- Quick Actions & Stats -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+      <!-- Create Campaign -->
+      <div class="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-shadow">
         <div class="p-5">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75z" />
-              </svg>
+              <div class="bg-blue-100 rounded-lg p-3">
+                <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
             </div>
             <div class="ml-5 w-0 flex-1">
               <dl>
                 <dt class="text-sm font-medium text-gray-500 truncate">Email Campaigns</dt>
-                <dd class="text-lg font-medium text-gray-900"><%= @usage_stats[:campaigns] || 0 %></dd>
+                <dd class="text-lg font-semibold text-gray-900"><%= @current_account.campaigns.count %></dd>
               </dl>
             </div>
           </div>
         </div>
         <div class="bg-gray-50 px-5 py-3">
-          <%= link_to campaigns_path, class: "text-sm text-indigo-600 hover:text-indigo-900" do %>
-            View campaigns
+          <%= link_to new_campaign_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" do %>
+            Create campaign →
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Manage Contacts -->
+      <div class="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-shadow">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="bg-green-100 rounded-lg p-3">
+                <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Total Contacts</dt>
+                <dd class="text-lg font-semibold text-gray-900"><%= number_with_delimiter(@current_account.contacts.count) %></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <%= link_to contacts_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" do %>
+            Manage contacts →
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Templates -->
+      <div class="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-shadow">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="bg-purple-100 rounded-lg p-3">
+                <svg class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Templates</dt>
+                <dd class="text-lg font-semibold text-gray-900"><%= @current_account.templates.count %></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <%= link_to templates_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" do %>
+            View templates →
           <% end %>
         </div>
       </div>
 
       <!-- Automations -->
-      <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-shadow">
         <div class="p-5">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12a7.5 7.5 0 0015 0m-15 0a7.5 7.5 0 1115 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077l1.41-.513m14.095-5.13l1.41-.513M5.106 17.785l1.15-.964m11.49-9.642l1.149-.964M7.501 19.795l.75-1.3m7.5-12.99l.75-1.3m-6.063 16.658l.26-1.477m2.605-14.772l.26-1.477m0 17.726l-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205L12 12m6.894 5.785l-1.149-.964M6.256 7.178l-1.15-.964m15.352 8.864l-1.41-.513M4.954 9.435l-1.41-.514M12.002 12l-3.75 6.495" />
-              </svg>
+              <div class="bg-orange-100 rounded-lg p-3">
+                <svg class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
             </div>
             <div class="ml-5 w-0 flex-1">
               <dl>
                 <dt class="text-sm font-medium text-gray-500 truncate">Automations</dt>
-                <dd class="text-lg font-medium text-gray-900"><%= @usage_stats[:automations] || 0 %></dd>
+                <dd class="text-lg font-semibold text-gray-900"><%= @current_account.email_automations.count %></dd>
               </dl>
             </div>
           </div>
         </div>
         <div class="bg-gray-50 px-5 py-3">
-          <%= link_to automations_path, class: "text-sm text-indigo-600 hover:text-indigo-900" do %>
-            View automations
-          <% end %>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Subscription & Team Section -->
-  <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
-    <!-- Subscription Info -->
-    <div class="bg-white shadow rounded-lg">
-      <div class="px-4 py-5 sm:p-6">
-        <h3 class="text-lg font-medium leading-6 text-gray-900">Subscription</h3>
-        <div class="mt-5">
-          <% if @subscription %>
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm font-medium text-gray-500">Current Plan</p>
-                <p class="text-lg font-semibold text-gray-900 capitalize"><%= @subscription.plan_name || 'Free' %></p>
-              </div>
-              <div class="text-right">
-                <p class="text-sm font-medium text-gray-500">Status</p>
-                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <%= @subscription.active? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-                  <%= @subscription.status&.humanize || 'Active' %>
-                </span>
-              </div>
-            </div>
-            <% if @subscription.next_billing_date %>
-              <div class="mt-4">
-                <p class="text-sm text-gray-500">
-                  Next billing: <%= @subscription.next_billing_date.strftime("%B %d, %Y") %>
-                </p>
-              </div>
-            <% end %>
-          <% else %>
-            <div class="text-center py-4">
-              <p class="text-sm text-gray-500">No active subscription</p>
-              <div class="mt-4">
-                <%= link_to billing_account_path, class: "inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500" do %>
-                  View Billing
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-        </div>
-        <div class="mt-5">
-          <%= link_to billing_account_path, class: "w-full flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" do %>
-            Manage Billing
+          <%= link_to automations_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" do %>
+            View automations →
           <% end %>
         </div>
       </div>
     </div>
 
-    <!-- Team Members -->
-    <div class="bg-white shadow rounded-lg">
-      <div class="px-4 py-5 sm:p-6">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-medium leading-6 text-gray-900">Team Members</h3>
-          <%= link_to team_account_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" do %>
-            View all
-          <% end %>
-        </div>
-        <div class="mt-5">
-          <% if @team_members.any? %>
-            <div class="flow-root">
-              <ul role="list" class="-my-5 divide-y divide-gray-200">
-                <% @team_members.limit(5).each do |member| %>
-                  <li class="py-4">
-                    <div class="flex items-center space-x-4">
-                      <div class="flex-shrink-0">
-                        <div class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center">
-                          <span class="text-sm font-medium text-white"><%= member.first_name&.first&.upcase %><%= member.last_name&.first&.upcase %></span>
-                        </div>
-                      </div>
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 truncate">
-                          <%= member.full_name %>
-                        </p>
-                        <p class="text-sm text-gray-500 truncate">
-                          <%= member.email %>
-                        </p>
-                      </div>
-                      <div>
-                        <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
-                          <%= member.user_roles.first&.role&.humanize || 'Member' %>
-                        </span>
-                      </div>
+    <!-- Recent Activity & Team Section -->
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-2 mb-8">
+      <!-- Recent Activity -->
+      <div class="bg-white shadow-sm rounded-lg">
+        <div class="px-6 py-5">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+          <div class="space-y-4">
+            <% recent_campaigns = @current_account.campaigns.order(created_at: :desc).limit(3) %>
+            <% if recent_campaigns.any? %>
+              <% recent_campaigns.each do |campaign| %>
+                <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                  <div class="flex-shrink-0">
+                    <div class="bg-blue-100 rounded-full p-2">
+                      <svg class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
                     </div>
-                  </li>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">
+                      <%= campaign.subject.present? ? campaign.subject : "Campaign ##{campaign.id}" %>
+                    </p>
+                    <p class="text-xs text-gray-500">
+                      Created <%= time_ago_in_words(campaign.created_at) %> ago
+                    </p>
+                  </div>
+                  <div class="flex-shrink-0">
+                    <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium <%= campaign.status == 'sent' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                      <%= campaign.status&.humanize || 'Draft' %>
+                    </span>
+                  </div>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="text-center py-6">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 009.586 13H7" />
+                </svg>
+                <p class="mt-2 text-sm text-gray-500">No recent campaigns</p>
+                <%= link_to new_campaign_path, class: "mt-3 inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-500" do %>
+                  Create your first campaign
+                  <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
                 <% end %>
-              </ul>
-            </div>
-            <% if @team_members.count > 5 %>
-              <div class="mt-4 text-center">
-                <p class="text-sm text-gray-500">And <%= @team_members.count - 5 %> more members</p>
               </div>
             <% end %>
-          <% else %>
-            <div class="text-center py-4">
-              <p class="text-sm text-gray-500">No team members yet</p>
-              <div class="mt-4">
-                <%= link_to team_account_path, class: "inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500" do %>
-                  Invite Members
+          </div>
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <%= link_to campaigns_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" do %>
+              View all campaigns →
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Members -->
+      <div class="bg-white shadow-sm rounded-lg">
+        <div class="px-6 py-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Team Members</h3>
+            <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+              <%= @team_members.count %> members
+            </span>
+          </div>
+          <div class="space-y-3">
+            <% if @team_members.any? %>
+              <% @team_members.limit(4).each do |member| %>
+                <div class="flex items-center space-x-3">
+                  <div class="flex-shrink-0">
+                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                      <span class="text-sm font-semibold text-white">
+                        <%= member.first_name&.first&.upcase || member.email.first.upcase %><%= member.last_name&.first&.upcase || '' %>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">
+                      <%= member.full_name.present? ? member.full_name : member.email.split('@').first.humanize %>
+                    </p>
+                    <p class="text-xs text-gray-500 truncate">
+                      <%= member.email %>
+                    </p>
+                  </div>
+                  <div class="flex-shrink-0">
+                    <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium <%= member.role == 'owner' ? 'bg-yellow-100 text-yellow-800' : member.role == 'admin' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' %>">
+                      <%= member.role&.humanize || 'Member' %>
+                    </span>
+                  </div>
+                </div>
+              <% end %>
+              <% if @team_members.count > 4 %>
+                <div class="text-center pt-2">
+                  <p class="text-xs text-gray-500">And <%= @team_members.count - 4 %> more members</p>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="text-center py-6">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                </svg>
+                <p class="mt-2 text-sm text-gray-500">No team members yet</p>
+                <%= link_to team_account_path, class: "mt-3 inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-500" do %>
+                  Invite team members
+                  <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
                 <% end %>
               </div>
-            </div>
-          <% end %>
+            <% end %>
+          </div>
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <%= link_to team_account_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" do %>
+              Manage team →
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Account Details -->
-  <div class="mt-8">
-    <div class="bg-white shadow rounded-lg">
-      <div class="px-4 py-5 sm:p-6">
-        <h3 class="text-lg font-medium leading-6 text-gray-900">Account Details</h3>
-        <div class="mt-5 border-t border-gray-200">
-          <dl class="divide-y divide-gray-200">
-            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-              <dt class="text-sm font-medium text-gray-500">Account Name</dt>
-              <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"><%= @current_account.name || 'Not set' %></dd>
+    <!-- Account Settings & Billing Section -->
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3 mb-8">
+      <!-- Account Settings -->
+      <div class="lg:col-span-2 bg-white shadow-sm rounded-lg">
+        <div class="px-6 py-5">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Settings</h3>
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Account Name</label>
+                <div class="mt-1 flex items-center space-x-2">
+                  <span class="text-sm text-gray-900"><%= @current_account.name %></span>
+                  <%= link_to edit_account_path, class: "text-sm text-indigo-600 hover:text-indigo-500" do %>
+                    Edit
+                  <% end %>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Subdomain</label>
+                <div class="mt-1">
+                  <span class="text-sm text-gray-900 font-mono bg-gray-50 px-2 py-1 rounded"><%= @current_account.subdomain %>.rapidmarkt.com</span>
+                </div>
+              </div>
             </div>
-            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-              <dt class="text-sm font-medium text-gray-500">Account ID</dt>
-              <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"><%= @current_account.id %></dd>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Account ID</label>
+                <div class="mt-1">
+                  <span class="text-sm text-gray-500 font-mono">#<%= @current_account.id %></span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Status</label>
+                <div class="mt-1">
+                  <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <%= @current_account.active? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                    <%= @current_account.status&.humanize || 'Active' %>
+                  </span>
+                </div>
+              </div>
             </div>
-            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-              <dt class="text-sm font-medium text-gray-500">Created</dt>
-              <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"><%= @current_account.created_at.strftime("%B %d, %Y at %I:%M %p") %></dd>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Created</label>
+                <div class="mt-1">
+                  <span class="text-sm text-gray-900"><%= @current_account.created_at.strftime("%B %d, %Y") %></span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Last Updated</label>
+                <div class="mt-1">
+                  <span class="text-sm text-gray-900"><%= time_ago_in_words(@current_account.updated_at) %> ago</span>
+                </div>
+              </div>
             </div>
-            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-              <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-              <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"><%= @current_account.updated_at.strftime("%B %d, %Y at %I:%M %p") %></dd>
+          </div>
+          <div class="mt-6 pt-4 border-t border-gray-200">
+            <div class="flex space-x-3">
+              <%= link_to edit_account_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" do %>
+                <svg class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Edit Account
+              <% end %>
+              <%= link_to settings_account_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" do %>
+                <svg class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Settings
+              <% end %>
             </div>
-          </dl>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subscription & Billing -->
+      <div class="bg-white shadow-sm rounded-lg">
+        <div class="px-6 py-5">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Subscription</h3>
+          <% if @subscription %>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Current Plan</label>
+                <div class="mt-1">
+                  <span class="text-lg font-semibold text-gray-900 capitalize"><%= @subscription.plan_name || @current_account.plan || 'Free' %></span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Status</label>
+                <div class="mt-1">
+                  <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <%= @subscription.active? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                    <%= @subscription.status&.humanize || 'Active' %>
+                  </span>
+                </div>
+              </div>
+              <% if @subscription.next_billing_date %>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Next Billing</label>
+                  <div class="mt-1">
+                    <span class="text-sm text-gray-900"><%= @subscription.next_billing_date.strftime("%B %d, %Y") %></span>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="text-center py-4">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              <p class="mt-2 text-sm text-gray-500">Free Plan</p>
+              <p class="text-xs text-gray-400">Upgrade to unlock more features</p>
+            </div>
+          <% end %>
+          <div class="mt-6 pt-4 border-t border-gray-200">
+            <%= link_to billing_account_path, class: "w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700" do %>
+              <svg class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              Manage Billing
+            <% end %>
+          </div>
         </div>
       </div>
     </div>

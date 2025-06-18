@@ -3,145 +3,542 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Campaign Preview: <%= @campaign.subject %></title>
+  <title>Campaign Preview - <%= @campaign.name %></title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: <%= @campaign.font_family || 'Inter' %>, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.6;
-      color: #333;
-      max-width: 600px;
-      margin: 0 auto;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .preview-container {
+      display: flex;
+      min-height: 100vh;
+      gap: 20px;
       padding: 20px;
-      background-color: #f8f9fa;
+      justify-content: center;
+      align-items: flex-start;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .sidebar {
+      width: 300px;
+      min-width: 280px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 24px;
+      height: fit-content;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 20px;
     }
     .email-container {
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      flex: 1;
+      max-width: 700px;
+      min-width: 600px;
+      background-color: <%= @campaign.background_color || '#ffffff' %>;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
       overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .email-container:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.35);
     }
     .email-header {
-      background-color: #4f46e5;
+      background: <%= @campaign.design_theme == 'modern' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 
+                      @campaign.design_theme == 'elegant' ? 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)' :
+                      @campaign.design_theme == 'bold' ? 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)' :
+                      @campaign.design_theme == 'minimal' ? 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)' :
+                      'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)' %>;
       color: white;
-      padding: 20px;
+      padding: 40px 30px;
       text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .email-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.3;
     }
     .email-header h1 {
       margin: 0;
-      font-size: 24px;
-      font-weight: 600;
+      font-size: 32px;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .logo-container {
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .logo-container img {
+      max-height: 60px;
+      max-width: 200px;
+      object-fit: contain;
     }
     .email-content {
-      padding: 30px;
+      padding: 40px 30px;
+      color: <%= @campaign.text_color || '#1f2937' %>;
     }
     .preview-notice {
-      background-color: #fef3c7;
-      border: 1px solid #f59e0b;
-      border-radius: 6px;
-      padding: 12px;
-      margin-bottom: 20px;
-      font-size: 14px;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
       color: #92400e;
+      font-size: 14px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .preview-notice i {
+      font-size: 18px;
     }
     .personalization {
-      background-color: #f0f9ff;
-      border: 1px solid #0ea5e9;
-      border-radius: 6px;
-      padding: 15px;
-      margin-bottom: 20px;
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: none;
+      padding: 24px;
+      margin-bottom: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
     .personalization h3 {
-      margin: 0 0 10px 0;
+      margin: 0 0 16px 0;
       color: #0c4a6e;
-      font-size: 16px;
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .personalization p {
-      margin: 5px 0;
+      margin: 8px 0;
       font-size: 14px;
       color: #0369a1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .media-section {
+      margin: 30px 0;
+      padding: 24px;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .media-item {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    .media-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .media-item img {
+      max-width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .media-item video {
+      max-width: 100%;
+      height: 120px;
+      border-radius: 6px;
+      margin-bottom: 8px;
     }
     .email-footer {
-      background-color: #f8f9fa;
-      padding: 20px;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      padding: 30px;
       text-align: center;
-      font-size: 12px;
-      color: #6b7280;
-      border-top: 1px solid #e5e7eb;
+      font-size: 13px;
+      color: #64748b;
+      border-top: 1px solid #e2e8f0;
     }
     .btn {
       display: inline-block;
-      padding: 12px 24px;
-      background-color: #4f46e5;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
       color: white;
       text-decoration: none;
-      border-radius: 6px;
-      font-weight: 500;
-      margin: 10px 0;
+      border-radius: 8px;
+      font-weight: 600;
+      margin: 12px 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
     .btn:hover {
-      background-color: #4338ca;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.2);
     }
+    .btn-secondary {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    }
+    .sidebar h3 {
+      color: #1f2937;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .media-upload {
+      margin-bottom: 24px;
+    }
+    .upload-area {
+      border: 2px dashed #d1d5db;
+      border-radius: 8px;
+      padding: 24px;
+      text-align: center;
+      background: #f9fafb;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .upload-area:hover {
+      border-color: #4f46e5;
+      background: #f0f9ff;
+    }
+    .upload-area.dragover {
+      border-color: #4f46e5;
+      background: #eff6ff;
+    }
+    .campaign-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0369a1;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    @media (max-width: 1200px) {
+       .preview-container {
+         max-width: 100%;
+         padding: 15px;
+       }
+       .sidebar {
+         width: 280px;
+         min-width: 260px;
+       }
+       .email-container {
+         min-width: 500px;
+       }
+     }
+     @media (max-width: 768px) {
+       .preview-container {
+         flex-direction: column;
+         padding: 10px;
+         align-items: center;
+       }
+       .sidebar {
+         width: 100%;
+         max-width: 600px;
+         order: 2;
+         position: static;
+       }
+       .email-container {
+         order: 1;
+         width: 100%;
+         max-width: 600px;
+         min-width: auto;
+       }
+       .email-header {
+         padding: 30px 20px;
+       }
+       .email-header h1 {
+         font-size: 24px;
+       }
+       .email-content {
+         padding: 30px 20px;
+       }
+     }
   </style>
 </head>
 <body>
-  <div class="email-container">
-    <div class="email-header">
-      <h1><%= @campaign.subject %></h1>
-    </div>
-    
-    <div class="email-content">
-      <div class="preview-notice">
-        <strong>📧 Campaign Preview</strong> - This is how your email will appear to recipients
+  <div class="preview-container">
+    <!-- Sidebar with controls and stats -->
+    <div class="sidebar">
+      <h3><i class="fas fa-chart-line"></i> Campaign Stats</h3>
+      <div class="campaign-stats">
+        <div class="stat-card">
+          <div class="stat-value"><%= @campaign.open_rate&.round(1) || '0' %>%</div>
+          <div class="stat-label">Open Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value"><%= @campaign.click_rate&.round(1) || '0' %>%</div>
+          <div class="stat-label">Click Rate</div>
+        </div>
       </div>
       
-      <div class="personalization">
-        <h3>🎯 Personalization Preview</h3>
-        <p><strong>Recipient:</strong> <%= @contact.first_name %> <%= @contact.last_name %></p>
-        <p><strong>Email:</strong> <%= @contact.email %></p>
-        <p><strong>Campaign:</strong> <%= @campaign.name %></p>
-        <% if @campaign.from_name.present? %>
-          <p><strong>From:</strong> <%= @campaign.from_name %> &lt;<%= @campaign.from_email || 'noreply@example.com' %>&gt;</p>
+      <h3><i class="fas fa-upload"></i> Media Upload</h3>
+      <div class="media-upload">
+        <div class="upload-area" onclick="document.getElementById('mediaUpload').click()">
+          <i class="fas fa-cloud-upload-alt" style="font-size: 24px; color: #6b7280; margin-bottom: 8px;"></i>
+          <p style="margin: 0; color: #6b7280; font-size: 14px;">Click to upload images, videos, or audio</p>
+          <p style="margin: 4px 0 0 0; color: #9ca3af; font-size: 12px;">Supports: JPG, PNG, MP4, MP3, WAV</p>
+        </div>
+        <input type="file" id="mediaUpload" multiple accept="image/*,video/*,audio/*" style="display: none;">
+      </div>
+      
+      <h3><i class="fas fa-palette"></i> Quick Actions</h3>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <% if @campaign.draft? %>
+          <a href="<%= edit_campaign_path(@campaign) %>" class="btn" style="margin: 0; text-align: center;">
+            <i class="fas fa-edit"></i> Edit Campaign
+          </a>
+        <% end %>
+        <button class="btn btn-secondary" style="margin: 0; border: none; cursor: pointer;" onclick="window.print()">
+          <i class="fas fa-print"></i> Print Preview
+        </button>
+        <button class="btn btn-secondary" style="margin: 0; border: none; cursor: pointer;" onclick="sharePreview()">
+          <i class="fas fa-share"></i> Share Preview
+        </button>
+      </div>
+      
+      <div style="margin-top: 24px; padding: 16px; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 8px;">
+        <p style="margin: 0; font-size: 14px; color: #059669; font-weight: 600;">
+          <i class="fas fa-info-circle"></i> Status: <%= @campaign.status.titleize %>
+        </p>
+        <% if @campaign.scheduled_at %>
+          <p style="margin: 4px 0 0 0; font-size: 12px; color: #065f46;">
+            Scheduled: <%= @campaign.scheduled_at.strftime("%B %d, %Y at %I:%M %p") %>
+          </p>
         <% end %>
       </div>
-      
-      <div class="email-body">
-        <% if @campaign.template&.body.present? %>
-          <%= simple_format(@campaign.template.body) %>
-        <% else %>
-          <p>Hello <%= @contact.first_name %>,</p>
-          
-          <p>This is a preview of your campaign content. Your actual email content will appear here once you've added it to the campaign.</p>
-          
-          <p>You can personalize your emails using variables like:</p>
-          <ul>
-            <li>{{first_name}} - Recipient's first name</li>
-            <li>{{last_name}} - Recipient's last name</li>
-            <li>{{email}} - Recipient's email address</li>
-            <li>{{company}} - Recipient's company (if available)</li>
-          </ul>
-          
-          <p>Best regards,<br>
-          Your Team</p>
-        <% end %>
-      </div>
-      
-
     </div>
     
-    <div class="email-footer">
-      <p>This email was sent as part of the "<%= @campaign.name %>" campaign.</p>
-      <p>You are receiving this because you subscribed to our mailing list.</p>
-      <p><a href="#" style="color: #6b7280;">Unsubscribe</a> | <a href="#" style="color: #6b7280;">Update Preferences</a></p>
+    <!-- Main email preview -->
+    <div class="email-container">
+      <div class="email-header">
+        <% if @campaign.logo_url.present? %>
+          <div class="logo-container">
+            <img src="<%= @campaign.logo_url %>" alt="Logo">
+          </div>
+        <% end %>
+        <h1><%= @campaign.subject %></h1>
+      </div>
+      
+      <% if @campaign.header_image_url.present? %>
+        <div style="width: 100%; height: 200px; overflow: hidden;">
+          <img src="<%= @campaign.header_image_url %>" alt="Header" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+      <% end %>
+      
+      <div class="email-content">
+        <div class="preview-notice">
+          <i class="fas fa-eye"></i>
+          <div>
+            <strong>Campaign Preview</strong><br>
+            <small>This is how your email will appear to recipients</small>
+          </div>
+        </div>
+        
+        <div class="personalization">
+          <h3><i class="fas fa-user-tag"></i> Personalization Preview</h3>
+          <p><i class="fas fa-user"></i> <strong>Recipient:</strong> <%= @contact.first_name %> <%= @contact.last_name %></p>
+          <p><i class="fas fa-envelope"></i> <strong>Email:</strong> <%= @contact.email %></p>
+          <p><i class="fas fa-bullhorn"></i> <strong>Campaign:</strong> <%= @campaign.name %></p>
+          <% if @campaign.from_name.present? %>
+            <p><i class="fas fa-paper-plane"></i> <strong>From:</strong> <%= @campaign.from_name %> &lt;<%= @campaign.from_email || 'noreply@example.com' %>&gt;</p>
+          <% end %>
+        </div>
+        
+        <% if @campaign.media_urls.present? && @campaign.media_type != 'text' %>
+          <div class="media-section">
+            <h3 style="margin: 0 0 16px 0; color: #0369a1; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-photo-video"></i> Campaign Media
+            </h3>
+            <div class="media-grid">
+              <% JSON.parse(@campaign.media_urls).each do |media_url| %>
+                <div class="media-item">
+                  <% if media_url.match?(/\.(jpg|jpeg|png|gif|webp)$/i) %>
+                    <img src="<%= media_url %>" alt="Campaign Image">
+                    <p style="margin: 0; font-size: 12px; color: #6b7280;">Image</p>
+                  <% elsif media_url.match?(/\.(mp4|webm|ogg)$/i) %>
+                    <video controls>
+                      <source src="<%= media_url %>" type="video/mp4">
+                    </video>
+                    <p style="margin: 0; font-size: 12px; color: #6b7280;">Video</p>
+                  <% elsif media_url.match?(/\.(mp3|wav|ogg)$/i) %>
+                    <div style="padding: 40px 0;">
+                      <i class="fas fa-music" style="font-size: 32px; color: #6b7280;"></i>
+                    </div>
+                    <audio controls style="width: 100%; margin-bottom: 8px;">
+                      <source src="<%= media_url %>" type="audio/mpeg">
+                    </audio>
+                    <p style="margin: 0; font-size: 12px; color: #6b7280;">Audio</p>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+        
+        <div class="email-body">
+          <% if @campaign.template&.body.present? %>
+            <%= simple_format(@campaign.template.body) %>
+          <% elsif @campaign.content.present? %>
+            <%= simple_format(@campaign.content) %>
+          <% else %>
+            <p>Hello <%= @contact.first_name %>,</p>
+            
+            <p>This is a preview of your campaign content. Your actual email content will appear here once you've added it to the campaign.</p>
+            
+            <p>You can personalize your emails using variables like:</p>
+            <ul style="background: #f8fafc; padding: 16px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+              <li><code>{{first_name}}</code> - Recipient's first name</li>
+              <li><code>{{last_name}}</code> - Recipient's last name</li>
+              <li><code>{{email}}</code> - Recipient's email address</li>
+              <li><code>{{company}}</code> - Recipient's company (if available)</li>
+            </ul>
+            
+            <% if @campaign.call_to_action_text.present? && @campaign.call_to_action_url.present? %>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="<%= @campaign.call_to_action_url %>" class="btn">
+                  <%= @campaign.call_to_action_text %>
+                </a>
+              </div>
+            <% end %>
+            
+            <p>Best regards,<br>
+            Your Team</p>
+          <% end %>
+        </div>
+      </div>
+      
+      <div class="email-footer">
+        <p><strong>This email was sent as part of the "<%= @campaign.name %>" campaign.</strong></p>
+        <p>You are receiving this because you subscribed to our mailing list.</p>
+        <div style="margin-top: 16px;">
+          <a href="#" style="color: #6b7280; text-decoration: none; margin: 0 8px;">
+            <i class="fas fa-unlink"></i> Unsubscribe
+          </a>
+          |
+          <a href="#" style="color: #6b7280; text-decoration: none; margin: 0 8px;">
+            <i class="fas fa-cog"></i> Update Preferences
+          </a>
+        </div>
+        <% if @campaign.social_sharing_enabled %>
+          <div style="margin-top: 16px;">
+            <a href="#" style="color: #6b7280; margin: 0 8px; font-size: 18px;"><i class="fab fa-facebook"></i></a>
+            <a href="#" style="color: #6b7280; margin: 0 8px; font-size: 18px;"><i class="fab fa-twitter"></i></a>
+            <a href="#" style="color: #6b7280; margin: 0 8px; font-size: 18px;"><i class="fab fa-linkedin"></i></a>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
   
-  <div style="text-align: center; margin-top: 20px; padding: 20px;">
-    <p style="color: #6b7280; font-size: 14px; margin-bottom: 15px;">
-      📊 Campaign Status: <strong style="color: #059669;"><%= @campaign.status.titleize %></strong>
-    </p>
-    <% if @campaign.draft? %>
-      <a href="<%= edit_campaign_path(@campaign) %>" class="btn">✏️ Edit Campaign</a>
-    <% end %>
-  </div>
+  <script>
+    // Media upload functionality
+    document.getElementById('mediaUpload').addEventListener('change', function(e) {
+      const files = Array.from(e.target.files);
+      if (files.length > 0) {
+        alert(`Selected ${files.length} file(s): ${files.map(f => f.name).join(', ')}`);
+        // Here you would typically upload the files to your server
+        // and update the campaign's media_urls field
+      }
+    });
+    
+    // Drag and drop functionality
+    const uploadArea = document.querySelector('.upload-area');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight(e) {
+      uploadArea.classList.add('dragover');
+    }
+    
+    function unhighlight(e) {
+      uploadArea.classList.remove('dragover');
+    }
+    
+    uploadArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      
+      if (files.length > 0) {
+        alert(`Dropped ${files.length} file(s): ${Array.from(files).map(f => f.name).join(', ')}`);
+        // Handle file upload here
+      }
+    }
+    
+    // Share preview functionality
+    function sharePreview() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Campaign Preview - <%= @campaign.name %>',
+          text: 'Check out this campaign preview',
+          url: window.location.href
+        });
+      } else {
+        // Fallback: copy URL to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          alert('Preview URL copied to clipboard!');
+        });
+      }
+    }
+  </script>
 </body>
 </html>

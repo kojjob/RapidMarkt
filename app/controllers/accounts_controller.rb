@@ -5,7 +5,7 @@ class AccountsController < ApplicationController
   def show
     @subscription = @current_account.subscription
     @usage_stats = calculate_usage_stats
-    @team_members = @current_account.users.includes(:user_roles).order(:created_at)
+    @team_members = @current_account.users.order(:created_at)
   end
 
   def edit
@@ -26,7 +26,7 @@ class AccountsController < ApplicationController
   end
 
   def team
-    @team_members = @current_account.users.includes(:user_roles).order(:created_at)
+    @team_members = @current_account.users.order(:created_at)
     @pending_invitations = @current_account.user_invitations.pending.order(:created_at)
   end
 
@@ -38,7 +38,7 @@ class AccountsController < ApplicationController
       UserInvitationMailer.invite(@invitation).deliver_later
       redirect_to team_account_path, notice: "Invitation sent successfully."
     else
-      @team_members = @current_account.users.includes(:user_roles).order(:created_at)
+      @team_members = @current_account.users.order(:created_at)
       @pending_invitations = @current_account.user_invitations.pending.order(:created_at)
       render :team, status: :unprocessable_entity
     end
@@ -52,7 +52,7 @@ class AccountsController < ApplicationController
     elsif user.owner?
       redirect_to team_account_path, alert: "Cannot remove the account owner."
     else
-      user.user_roles.where(account: @current_account).destroy_all
+      user.destroy
       redirect_to team_account_path, notice: "User removed from account."
     end
   end

@@ -27,4 +27,10 @@ class User < ApplicationRecord
   def owner?
     role == "owner"
   end
+
+  def can_use_ai_features?
+    # For now, all users can use AI features
+    # This can be extended to check subscription plans, feature flags, etc.
+    true
+  end
 end
