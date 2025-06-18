@@ -1,5 +1,6 @@
 class BrandVoice < ApplicationRecord
   belongs_to :account
+  has_many :templates, dependent: :nullify
 
   validates :name, presence: true, length: { maximum: 100 }
   validates :tone, presence: true
@@ -36,6 +37,10 @@ class BrandVoice < ApplicationRecord
   end
 
   def vocabulary_preferences_hash
+    vocabulary_preferences || {}
+  end
+
+  def vocabulary_preferences_data
     vocabulary_preferences || {}
   end
 

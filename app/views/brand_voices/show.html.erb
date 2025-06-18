@@ -76,10 +76,19 @@
               <div>
                 <h3 class="text-sm font-medium text-gray-700 mb-2">✅ Preferred Words/Phrases</h3>
                 <div class="flex flex-wrap gap-1">
-                  <% @brand_voice.vocabulary_preferences_hash['preferred_words'].split(',').map(&:strip).each do |word| %>
-                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                      <%= word %>
-                    </span>
+                  <% if @brand_voice.vocabulary_preferences_hash['preferred_words'].is_a?(Array) %>
+                    <% @brand_voice.vocabulary_preferences_hash['preferred_words'].each do |word_mapping| %>
+                      <% display_word = word_mapping.is_a?(Hash) ? "#{word_mapping['from']} → #{word_mapping['to']}" : word_mapping %>
+                      <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                        <%= display_word %>
+                      </span>
+                    <% end %>
+                  <% else %>
+                    <% @brand_voice.vocabulary_preferences_hash['preferred_words'].split(',').map(&:strip).each do |word| %>
+                      <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                        <%= word %>
+                      </span>
+                    <% end %>
                   <% end %>
                 </div>
               </div>
@@ -89,10 +98,18 @@
               <div>
                 <h3 class="text-sm font-medium text-gray-700 mb-2">❌ Words to Avoid</h3>
                 <div class="flex flex-wrap gap-1">
-                  <% @brand_voice.vocabulary_preferences_hash['avoid_words'].split(',').map(&:strip).each do |word| %>
-                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">
-                      <%= word %>
-                    </span>
+                  <% if @brand_voice.vocabulary_preferences_hash['avoid_words'].is_a?(Array) %>
+                    <% @brand_voice.vocabulary_preferences_hash['avoid_words'].each do |word| %>
+                      <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">
+                        <%= word %>
+                      </span>
+                    <% end %>
+                  <% else %>
+                    <% @brand_voice.vocabulary_preferences_hash['avoid_words'].split(',').map(&:strip).each do |word| %>
+                      <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">
+                        <%= word %>
+                      </span>
+                    <% end %>
                   <% end %>
                 </div>
               </div>

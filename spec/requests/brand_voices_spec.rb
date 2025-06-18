@@ -1,16 +1,24 @@
 require 'rails_helper'
 
 RSpec.describe "BrandVoices", type: :request do
+  let(:account) { create(:account) }
+  let(:user) { create(:user, account: account) }
+  let(:brand_voice) { create(:brand_voice, account: account) }
+
+  before do
+    sign_in user
+  end
+
   describe "GET /index" do
     it "returns http success" do
-      get "/brand_voices/index"
+      get "/brand_voices"
       expect(response).to have_http_status(:success)
     end
   end
 
   describe "GET /show" do
     it "returns http success" do
-      get "/brand_voices/show"
+      get "/brand_voices/#{brand_voice.id}"
       expect(response).to have_http_status(:success)
     end
   end
@@ -22,31 +30,31 @@ RSpec.describe "BrandVoices", type: :request do
     end
   end
 
-  describe "GET /create" do
+  describe "POST /create" do
     it "returns http success" do
-      get "/brand_voices/create"
-      expect(response).to have_http_status(:success)
+      post "/brand_voices", params: { brand_voice: { name: 'Test Voice', tone: 'professional', description: 'Test description' } }
+      expect(response).to have_http_status(:redirect)
     end
   end
 
   describe "GET /edit" do
     it "returns http success" do
-      get "/brand_voices/edit"
+      get "/brand_voices/#{brand_voice.id}/edit"
       expect(response).to have_http_status(:success)
     end
   end
 
-  describe "GET /update" do
+  describe "PATCH /update" do
     it "returns http success" do
-      get "/brand_voices/update"
-      expect(response).to have_http_status(:success)
+      patch "/brand_voices/#{brand_voice.id}", params: { brand_voice: { name: 'Updated Voice' } }
+      expect(response).to have_http_status(:redirect)
     end
   end
 
-  describe "GET /destroy" do
+  describe "DELETE /destroy" do
     it "returns http success" do
-      get "/brand_voices/destroy"
-      expect(response).to have_http_status(:success)
+      delete "/brand_voices/#{brand_voice.id}"
+      expect(response).to have_http_status(:redirect)
     end
   end
 end
