@@ -1,15 +1,35 @@
-<div class="min-h-screen bg-gray-50">
-  <div class="px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Header -->
-    <div class="bg-white shadow-sm rounded-lg p-6 mb-8">
-      <div class="md:flex md:items-center md:justify-between">
-        <div class="min-w-0 flex-1">
-          <h1 class="text-3xl font-bold text-gray-900">Account Settings</h1>
-          <p class="mt-2 text-sm text-gray-600">Manage your account preferences and settings</p>
+<!-- Modern Account Settings Container -->
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+  <!-- Enhanced Header Section -->
+  <div class="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10">
+    <div class="px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <!-- Header Content -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl">
+                Account Settings
+              </h1>
+              <p class="mt-1 text-lg text-gray-600">
+                Manage your account preferences and settings
+              </p>
+            </div>
+          </div>
         </div>
-        <div class="mt-4 md:ml-4 md:mt-0">
-          <%= link_to account_path, class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
-            <svg class="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        
+        <!-- Navigation Actions -->
+        <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
+          <%= link_to account_path, class: "inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" do %>
+            <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Back to Account
@@ -17,114 +37,175 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="px-4 sm:px-6 lg:px-8 py-8">
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Settings Form -->
+      <!-- Enhanced Settings Form -->
       <div class="lg:col-span-2">
-        <div class="bg-white shadow-sm rounded-lg">
-          <div class="px-6 py-5 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">User Preferences</h3>
-            <p class="mt-1 text-sm text-gray-600">Update your personal settings and preferences</p>
+        <div class="bg-white/70 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-200">
+          <div class="px-6 py-6 border-b border-gray-200">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-xl font-semibold text-gray-900">User Preferences</h3>
+                <p class="mt-1 text-sm text-gray-600">Update your personal settings and preferences</p>
+              </div>
+            </div>
           </div>
-          <div class="px-6 py-5">
+          <div class="px-6 py-6">
             <%= form_with model: current_user, url: update_settings_account_path, method: :patch, local: true, class: "space-y-6" do |form| %>
-              <!-- Email Notifications -->
-              <div>
-                <h4 class="text-base font-medium text-gray-900 mb-4">Email Notifications</h4>
-                <div class="space-y-3">
-                  <div class="flex items-start">
-                    <div class="flex items-center h-5">
-                      <%= form.check_box :email_notifications, 
-                          class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded",
-                          checked: current_user.email_notifications.nil? ? true : current_user.email_notifications %>
-                    </div>
-                    <div class="ml-3 text-sm">
-                      <%= form.label :email_notifications, "Campaign notifications", class: "font-medium text-gray-700" %>
-                      <p class="text-gray-500">Get notified when campaigns are sent or completed</p>
+              <!-- Enhanced Email Notifications -->
+              <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+                <div class="flex items-center mb-6">
+                  <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                      </svg>
                     </div>
                   </div>
-                  <div class="flex items-start">
-                    <div class="flex items-center h-5">
-                      <%= form.check_box :marketing_emails, 
-                          class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded",
-                          checked: current_user.marketing_emails.nil? ? true : current_user.marketing_emails %>
-                    </div>
-                    <div class="ml-3 text-sm">
-                      <%= form.label :marketing_emails, "Marketing updates", class: "font-medium text-gray-700" %>
-                      <p class="text-gray-500">Receive updates about new features and tips</p>
+                  <h4 class="ml-3 text-lg font-semibold text-gray-900">Email Notifications</h4>
+                </div>
+                <div class="space-y-4">
+                  <div class="bg-white/60 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                    <div class="flex items-start">
+                      <div class="flex items-center h-5">
+                        <%= form.check_box :email_notifications, 
+                            class: "focus:ring-indigo-500 h-5 w-5 text-indigo-600 border-gray-300 rounded-md shadow-sm",
+                            checked: current_user.email_notifications.nil? ? true : current_user.email_notifications %>
+                      </div>
+                      <div class="ml-4">
+                        <%= form.label :email_notifications, "Campaign notifications", class: "text-sm font-semibold text-gray-900" %>
+                        <p class="text-sm text-gray-600 mt-1">Get notified when campaigns are sent or completed</p>
+                      </div>
                     </div>
                   </div>
-                  <div class="flex items-start">
-                    <div class="flex items-center h-5">
-                      <%= form.check_box :security_alerts, 
-                          class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded",
-                          checked: current_user.security_alerts.nil? ? true : current_user.security_alerts %>
+                  <div class="bg-white/60 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                    <div class="flex items-start">
+                      <div class="flex items-center h-5">
+                        <%= form.check_box :marketing_emails, 
+                            class: "focus:ring-indigo-500 h-5 w-5 text-indigo-600 border-gray-300 rounded-md shadow-sm",
+                            checked: current_user.marketing_emails.nil? ? true : current_user.marketing_emails %>
+                      </div>
+                      <div class="ml-4">
+                        <%= form.label :marketing_emails, "Marketing updates", class: "text-sm font-semibold text-gray-900" %>
+                        <p class="text-sm text-gray-600 mt-1">Receive updates about new features and tips</p>
+                      </div>
                     </div>
-                    <div class="ml-3 text-sm">
-                      <%= form.label :security_alerts, "Security alerts", class: "font-medium text-gray-700" %>
-                      <p class="text-gray-500">Important security notifications and login alerts</p>
+                  </div>
+                  <div class="bg-white/60 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                    <div class="flex items-start">
+                      <div class="flex items-center h-5">
+                        <%= form.check_box :security_alerts, 
+                            class: "focus:ring-indigo-500 h-5 w-5 text-indigo-600 border-gray-300 rounded-md shadow-sm",
+                            checked: current_user.security_alerts.nil? ? true : current_user.security_alerts %>
+                      </div>
+                      <div class="ml-4">
+                        <%= form.label :security_alerts, "Security alerts", class: "text-sm font-semibold text-gray-900" %>
+                        <p class="text-sm text-gray-600 mt-1">Important security notifications and login alerts</p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Timezone -->
-              <div>
-                <h4 class="text-base font-medium text-gray-900 mb-4">Timezone & Locale</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <%= form.label :timezone, "Timezone", class: "block text-sm font-medium text-gray-700" %>
+              <!-- Enhanced Timezone & Locale -->
+              <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100">
+                <div class="flex items-center mb-6">
+                  <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <h4 class="ml-3 text-lg font-semibold text-gray-900">Timezone & Locale</h4>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="bg-white/60 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                    <%= form.label :timezone, "Timezone", class: "block text-sm font-semibold text-gray-900 mb-2" %>
                     <%= form.select :timezone, 
                         options_for_select(ActiveSupport::TimeZone.all.map { |tz| [tz.to_s, tz.name] }, current_user.timezone || 'UTC'),
                         { prompt: 'Select timezone' },
-                        { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" } %>
+                        { class: "block w-full rounded-xl border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 text-sm bg-white/80" } %>
                   </div>
-                  <div>
-                    <%= form.label :language, "Language", class: "block text-sm font-medium text-gray-700" %>
+                  <div class="bg-white/60 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                    <%= form.label :language, "Language", class: "block text-sm font-semibold text-gray-900 mb-2" %>
                     <%= form.select :language, 
                         options_for_select([['English', 'en'], ['Spanish', 'es'], ['French', 'fr']], current_user.language || 'en'),
                         {},
-                        { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" } %>
+                        { class: "block w-full rounded-xl border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 text-sm bg-white/80" } %>
                   </div>
                 </div>
               </div>
 
-              <!-- Dashboard Preferences -->
-              <div>
-                <h4 class="text-base font-medium text-gray-900 mb-4">Dashboard Preferences</h4>
-                <div class="space-y-3">
-                  <div class="flex items-start">
-                    <div class="flex items-center h-5">
-                      <%= form.check_box :show_welcome_tour, 
-                          class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded",
-                          checked: current_user.show_welcome_tour.nil? ? true : current_user.show_welcome_tour %>
-                    </div>
-                    <div class="ml-3 text-sm">
-                      <%= form.label :show_welcome_tour, "Show welcome tour", class: "font-medium text-gray-700" %>
-                      <p class="text-gray-500">Display guided tours for new features</p>
+              <!-- Enhanced Dashboard Preferences -->
+              <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-100">
+                <div class="flex items-center mb-6">
+                  <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                      </svg>
                     </div>
                   </div>
-                  <div class="flex items-start">
-                    <div class="flex items-center h-5">
-                      <%= form.check_box :compact_view, 
-                          class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded",
-                          checked: current_user.compact_view || false %>
+                  <h4 class="ml-3 text-lg font-semibold text-gray-900">Dashboard Preferences</h4>
+                </div>
+                <div class="space-y-4">
+                  <div class="bg-white/60 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                    <div class="flex items-start">
+                      <div class="flex items-center h-5">
+                        <%= form.check_box :show_welcome_tour, 
+                            class: "focus:ring-green-500 h-5 w-5 text-green-600 border-gray-300 rounded-md shadow-sm",
+                            checked: current_user.show_welcome_tour.nil? ? true : current_user.show_welcome_tour %>
+                      </div>
+                      <div class="ml-4">
+                        <%= form.label :show_welcome_tour, "Show welcome tour", class: "text-sm font-semibold text-gray-900" %>
+                        <p class="text-sm text-gray-600 mt-1">Display guided tours for new features</p>
+                      </div>
                     </div>
-                    <div class="ml-3 text-sm">
-                      <%= form.label :compact_view, "Compact view", class: "font-medium text-gray-700" %>
-                      <p class="text-gray-500">Use a more compact layout for lists and tables</p>
+                  </div>
+                  <div class="bg-white/60 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                    <div class="flex items-start">
+                      <div class="flex items-center h-5">
+                        <%= form.check_box :compact_view, 
+                            class: "focus:ring-green-500 h-5 w-5 text-green-600 border-gray-300 rounded-md shadow-sm",
+                            checked: current_user.compact_view || false %>
+                      </div>
+                      <div class="ml-4">
+                        <%= form.label :compact_view, "Compact view", class: "text-sm font-semibold text-gray-900" %>
+                        <p class="text-sm text-gray-600 mt-1">Use a more compact layout for lists and tables</p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div class="pt-4 border-t border-gray-200">
-                <div class="flex justify-end space-x-3">
-                  <%= link_to account_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" do %>
+              <!-- Enhanced Action Buttons -->
+              <div class="pt-6 border-t border-gray-200">
+                <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
+                  <%= link_to account_path, class: "inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" do %>
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
                     Cancel
                   <% end %>
                   <%= form.submit "Save Settings", 
-                      class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+                      class: "inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Save Settings
+                  <% end %>
                 </div>
               </div>
             <% end %>
@@ -132,27 +213,36 @@
         </div>
       </div>
 
-      <!-- Settings Info -->
+      <!-- Enhanced Settings Info -->
       <div class="lg:col-span-1">
-        <div class="bg-white shadow-sm rounded-lg">
-          <div class="px-6 py-5">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
-            <div class="space-y-3">
-              <div>
-                <label class="block text-sm font-medium text-gray-700">Account Name</label>
-                <p class="mt-1 text-sm text-gray-900"><%= @current_account.name || 'Not set' %></p>
+        <div class="bg-white/70 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-200">
+          <div class="px-6 py-6">
+            <div class="flex items-center mb-6">
+              <div class="flex-shrink-0">
+                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700">Account Owner</label>
-                <p class="mt-1 text-sm text-gray-900"><%= @current_account.owner&.full_name %></p>
+              <h3 class="ml-3 text-xl font-semibold text-gray-900">Account Information</h3>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-100">
+                <label class="block text-sm font-semibold text-gray-900">Account Name</label>
+                <p class="mt-1 text-sm text-gray-700 font-medium"><%= @current_account.name || 'Not set' %></p>
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700">Current Plan</label>
-                <p class="mt-1 text-sm text-gray-900 capitalize"><%= @current_account.plan || 'Free' %></p>
+              <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-100">
+                <label class="block text-sm font-semibold text-gray-900">Account Owner</label>
+                <p class="mt-1 text-sm text-gray-700 font-medium"><%= @current_account.owner&.full_name %></p>
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700">Account Status</label>
-                <span class="mt-1 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <%= @current_account.active? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+              <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-100">
+                <label class="block text-sm font-semibold text-gray-900">Current Plan</label>
+                <p class="mt-1 text-sm text-gray-700 font-medium capitalize"><%= @current_account.plan || 'Free' %></p>
+              </div>
+              <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-4 border border-yellow-100">
+                <label class="block text-sm font-semibold text-gray-900">Account Status</label>
+                <span class="mt-2 inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold <%= @current_account.active? ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200' %>">
                   <%= @current_account.status.humanize %>
                 </span>
               </div>
@@ -160,24 +250,33 @@
           </div>
         </div>
 
-        <div class="mt-6 bg-white shadow-sm rounded-lg">
-          <div class="px-6 py-5">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-            <div class="space-y-3">
-              <%= link_to edit_account_path, class: "w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" do %>
-                <svg class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="mt-6 bg-white/70 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-200">
+          <div class="px-6 py-6">
+            <div class="flex items-center mb-6">
+              <div class="flex-shrink-0">
+                <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  </svg>
+                </div>
+              </div>
+              <h3 class="ml-3 text-xl font-semibold text-gray-900">Quick Actions</h3>
+            </div>
+            <div class="space-y-4">
+              <%= link_to edit_account_path, class: "w-full inline-flex items-center justify-center px-4 py-3 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" do %>
+                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
                 Edit Account Details
               <% end %>
-              <%= link_to team_account_path, class: "w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" do %>
-                <svg class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <%= link_to team_account_path, class: "w-full inline-flex items-center justify-center px-4 py-3 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" do %>
+                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
                 </svg>
                 Manage Team
               <% end %>
-              <%= link_to billing_account_path, class: "w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" do %>
-                <svg class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <%= link_to billing_account_path, class: "w-full inline-flex items-center justify-center px-4 py-3 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200" do %>
+                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
                 Billing & Subscription
