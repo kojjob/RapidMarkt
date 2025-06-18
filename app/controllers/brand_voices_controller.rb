@@ -84,9 +84,9 @@ class BrandVoicesController < ApplicationController
       :name, :tone, :description,
       personality_traits: [],
       vocabulary_preferences: [
-        preferred_words: [ :from, :to ],
-        avoid_words: [],
-        emoji_usage: []
+        { preferred_words: [ :from, :to ] },
+        { avoid_words: [] },
+        :emoji_usage
       ],
       writing_style_rules: [
         :type, :preference, :style, :structure

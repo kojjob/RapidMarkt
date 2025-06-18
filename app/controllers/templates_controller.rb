@@ -97,7 +97,7 @@ class TemplatesController < ApplicationController
     elsif params[:template_id].present?
       @template = @current_account.templates.find(params[:template_id])
     end
-    render layout: false
+    render layout: "builder"
   end
 
   def auto_save
@@ -116,44 +116,6 @@ class TemplatesController < ApplicationController
       # Store in session for new templates
       session[:template_draft] = { content: content, updated_at: Time.current }
       render json: { success: true, message: "Draft saved to session", last_saved: Time.current.strftime("%H:%M") }
-    end
-  end
-
-  def generate_ai_template
-    prompt = params[:prompt]
-    platform = params[:platform]
-    content_type = params[:content_type]
-    industry = params[:industry]
-    tone = params[:tone]
-
-    if prompt.blank?
-      redirect_to new_template_path, alert: "Please provide a description for your template."
-      return
-    end
-
-    # Generate AI template using the private method
-    generated_template = ai_template_generator(
-      prompt: prompt,
-      platform: platform,
-      content_type: content_type,
-      industry: industry,
-      tone: tone
-    )
-
-    # Create a new template with the generated content
-    @template = @current_account.templates.build(
-      name: "AI Generated - #{content_type.humanize} for #{platform.humanize}",
-      body: generated_template[:html],
-      template_type: platform == "email" ? "email" : "promotional",
-      status: "draft",
-      description: "AI generated #{content_type} template for #{platform} - #{prompt.truncate(100)}",
-      user: current_user
-    )
-
-    if @template.save
-      redirect_to edit_template_path(@template), notice: "AI template generated successfully!"
-    else
-      redirect_to new_template_path, alert: "Failed to generate template. Please try again."
     end
   end
 
